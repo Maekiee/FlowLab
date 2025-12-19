@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Cachu
-//
-//  Created by 박도원 on 12/10/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -13,7 +6,7 @@ struct ContentView: View {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            
         }
         .padding()
     }
