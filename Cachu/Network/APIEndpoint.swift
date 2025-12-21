@@ -6,9 +6,17 @@ enum APIEndpoint: EndpointProtocol {
     case refresh(token: String)
     case userProfile
     
+    var requiresAuth: Bool {
+        switch self {
+        case .login: return false
+        case .userProfile: return true
+        default: return true
+        }
+    }
+    
     // TODO: 실제 서버 주소로 변경하세요
     var baseURL: String {
-        return "http://some api end point adress is here"
+        return AppConfig.baseURL
     }
     
     var path: String {
@@ -27,7 +35,10 @@ enum APIEndpoint: EndpointProtocol {
     }
     
     var headers: [String: String]? {
-        return ["Content-Type": "application/json"]
+        return [
+            "Content-Type" : "application/json",
+            "SeSACKey" : AppConfig.SeSACKey,
+        ]
     }
     
     var body: [String: Any]? {

@@ -13,4 +13,5 @@ protocol EndpointProtocol {
     var method: String { get }
     var headers: [String: String]? { get }
     var body: [String: Any]? { get }
+    var requiresAuth: Bool { get }
 }

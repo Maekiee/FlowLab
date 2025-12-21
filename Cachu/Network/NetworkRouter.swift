@@ -27,7 +27,9 @@ final class NetworkRouter: NetworkRouterProtocol {
         
         // Interceptor: Adapt
         if let interceptor {
-            request = await interceptor.adapt(request)
+            if endpoint.requiresAuth {
+                request = await interceptor.adapt(request)
+            }
         }
         
         return try await performRequest(request, responseType: responseType)
