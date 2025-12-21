@@ -69,9 +69,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 @main
 struct CachuApp: App {
-    private let container = DIContainer()
+//    private let container = DIContainer()
+    let env = AppEnvironment()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    init() {
+        env.setup()
+    }
+    
+    
     
     var body: some Scene {
         WindowGroup {

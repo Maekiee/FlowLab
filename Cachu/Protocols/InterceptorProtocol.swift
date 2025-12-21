@@ -1,7 +1,16 @@
 
 import Foundation
 
-protocol InterceptorProtocol {
-    func adapt(_ request: URLRequest) async -> URLRequest
-    func retry(_ request: URLRequest, with response: HTTPURLResponse) async -> URLRequest?
+
+enum RetryResult: Sendable {
+    case retry
+    case doNotRetry
+    case doNotRetryWithError(Error)
 }
+
+protocol InterceptorProtocol {
+    func adapt(_ request: URLRequest, for endpoint: Endpoint) async -> URLRequest
+    func retry(_ request: URLRequest, dueTo result: Result<HTTPURLResponse, Error>) async -> RetryResult
+}
+
+

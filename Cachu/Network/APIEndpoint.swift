@@ -1,54 +1,43 @@
 import Foundation
 
 
-enum APIEndpoint: EndpointProtocol {
-    case login(email: String, pass: String)
-    case refresh(token: String)
-    case userProfile
+enum APIEndpoint: Endpoint {
+    case login
+    case getProfile
     
-    var requiresAuth: Bool {
-        switch self {
-        case .login: return false
-        case .userProfile: return true
-        default: return true
-        }
-    }
-    
-    // TODO: 실제 서버 주소로 변경하세요
-    var baseURL: String {
-        return AppConfig.baseURL
+    var baseURL: URL {
+        return URL(string: AppConfig.baseURL)!
     }
     
     var path: String {
         switch self {
-        case .login: return "/auth/login"
-        case .refresh: return "/auth/refresh"
-        case .userProfile: return "/users/me"
+        case .login: return "/login"
+        case .getProfile: return "/profile"
         }
     }
     
-    var method: String {
+    var method: HTTPMethod {
         switch self {
-        case .login, .refresh: return "POST"
-        case .userProfile: return "GET"
+        case .login: return .post
+        case .getProfile: return .get
         }
     }
     
-    var headers: [String: String]? {
-        return [
-            "Content-Type" : "application/json",
-            "SeSACKey" : AppConfig.SeSACKey,
-        ]
-    }
-    
-    var body: [String: Any]? {
+    var body: Data? {
         switch self {
-        case .login(let email, let pass):
-            return ["email": email, "password": pass]
-        case .refresh(let token):
-            return ["refreshToken": token]
-        default:
+        case .login:
+            // 딕셔너리([String: Any]) 대신 Encodable -> Data 변환
             return nil
+        case .getProfile:
+            return nil
+        }
+    }
+    
+    // ✅ 작성하신 의도대로 인증 여부 제어
+    var requiresAuth: Bool {
+        switch self {
+        case .login: return false // 로그인엔 토큰 필요 없음
+        case .getProfile: return true
         }
     }
 }
