@@ -27,7 +27,7 @@ final class ApiClient: NetworkServiceProtocol {
     }
     
     // 재귀 호출을 위한 내부 메서드
-    private func performRequest<T: Decodable>(_ request: URLRequest, endpoint: Endpoint, type: T.Type) async throws -> T {
+    private func performRequest<T: Decodable>(_ request: URLRequest, endpoint: Endpoint, type: T.Type, retryCount: Int = 0) async throws -> T {
         
         // 1. Adapt (요청 가로채기)
         let finalRequest = await interceptor?.adapt(request, for: endpoint) ?? request
@@ -44,12 +44,16 @@ final class ApiClient: NetworkServiceProtocol {
             if !(200...299).contains(httpResponse.statusCode) {
                 // Interceptor에게 재시도 여부 확인
                 if let interceptor = interceptor {
+                    guard retryCount < 2 else {
+                        throw NetworkError.serverError(statusCode: httpResponse.statusCode)
+                    }
+                    
                     let retryResult = await interceptor.retry(finalRequest, dueTo: .success(httpResponse))
                     
                     switch retryResult {
                     case .retry:
                         // 재귀 호출
-                        return try await performRequest(request, endpoint: endpoint, type: type)
+                        return try await performRequest(request, endpoint: endpoint, type: type, retryCount: retryCount + 1)
                     case .doNotRetryWithError(let error):
                         throw error
                     case .doNotRetry:
@@ -66,11 +70,11 @@ final class ApiClient: NetworkServiceProtocol {
             
         } catch {
             // 5. Retry Check (네트워크 에러 기반)
-            if let interceptor = interceptor {
+            if let interceptor = interceptor, retryCount < 2 {
                 let retryResult = await interceptor.retry(finalRequest, dueTo: .failure(error))
                 
                 if case .retry = retryResult {
-                    return try await performRequest(request, endpoint: endpoint, type: type)
+                    return try await performRequest(request, endpoint: endpoint, type: type, retryCount: retryCount + 1)
                 }
             }
             throw error
@@ -80,7 +84,7 @@ final class ApiClient: NetworkServiceProtocol {
     private func createURL(from endpoint: Endpoint) -> URL? {
         var components = URLComponents(url: endpoint.baseURL, resolvingAgainstBaseURL: true)
         components?.path = endpoint.path
-        // queryItems가 있다면 추가 로직 필요 (Endpoint 프로토콜 확장 시)
+        components?.queryItems = endpoint.queryItems
         return components?.url
     }
 }

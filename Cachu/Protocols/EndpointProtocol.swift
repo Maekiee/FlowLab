@@ -1,13 +1,5 @@
 import Foundation
 
-enum HTTPMethod: String, Sendable {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case delete = "DELETE"
-    case patch = "PATCH"
-}
-
 protocol Endpoint: Sendable {
     var baseURL: URL { get }
     var path: String { get }
@@ -15,6 +7,7 @@ protocol Endpoint: Sendable {
     var headers: [String: String]? { get }
     var body: Data? { get }
     var requiresAuth: Bool { get }
+    var queryItems: [URLQueryItem]? { get }
 }
 
 extension Endpoint {
@@ -30,4 +23,6 @@ extension Endpoint {
     var requiresAuth: Bool {
         return true
     }
+    
+    var queryItems: [URLQueryItem]? { return nil }
 }
