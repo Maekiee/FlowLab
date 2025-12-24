@@ -4,6 +4,7 @@ import Foundation
 enum APIEndpoint: Endpoint {
     case login
     case getProfile
+    case join(JoinRequestDTO)
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -13,12 +14,13 @@ enum APIEndpoint: Endpoint {
         switch self {
         case .login: return "/login"
         case .getProfile: return "/profile"
+        case . join: return "/users/join"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .login: return .post
+        case .login, .join: return .post
         case .getProfile: return .get
         }
     }
@@ -30,13 +32,15 @@ enum APIEndpoint: Endpoint {
             return nil
         case .getProfile:
             return nil
+        case .join(let joinDTO):
+            return try? JSONEncoder().encode(joinDTO)
         }
     }
     
     // ✅ 작성하신 의도대로 인증 여부 제어
     var requiresAuth: Bool {
         switch self {
-        case .login: return false // 로그인엔 토큰 필요 없음
+        case .login, .join(_): return false // 로그인엔 토큰 필요 없음
         case .getProfile: return true
         }
     }

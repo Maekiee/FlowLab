@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct LoginView: View {
+    @StateObject private var viewModel: SignUpViewModel
+    
+    init(viewModel: SignUpViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            if viewModel.isLoading {
+                ProgressView()
+            }
+            
+            Button("회원가입 요청") {
+                viewModel.requestSignUp()
+            }
+        }
     }
 }
 
-#Preview {
-    LoginView()
-}
+//#Preview {
+//    LoginView()
+//}

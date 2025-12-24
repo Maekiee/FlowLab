@@ -75,7 +75,7 @@ struct CachuApp: App {
         
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            LoginView(viewModel: container.makeSignUpViewModel())
         }
     }
 }
