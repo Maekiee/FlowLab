@@ -37,6 +37,17 @@ enum APIEndpoint: Endpoint {
         }
     }
     
+//    var headers: [String : String] {
+//        return
+//    }
+    
+//    var headers: [String: String]? {
+//            return [
+//                "Content-Type": "application/json",
+//                "SesacKey": AppConfig.SeSACKey,
+//            ]
+//        }
+    
     // ✅ 작성하신 의도대로 인증 여부 제어
     var requiresAuth: Bool {
         switch self {

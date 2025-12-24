@@ -16,12 +16,12 @@ final class SignUpViewModel: ObservableObject {
     func requestSignUp() {
         // 입력받은 값으로 DTO 생성
         let requestDTO = JoinRequestDTO(
-            email: "dowon3@sesac.com",
+            email: "dowon5@sesac.com",
             password: "dowontest123!",
-            nick: "쿠키",
-            phoneNum: "01012341234",
+            nick: "쿠키5",
+            phoneNum: "01039438239",
             introduction: "안녕하세요",
-            deviceToken: "" // 실제로는 TokenManager 등에서 가져옴
+            deviceToken: ""
         )
         
         Task {

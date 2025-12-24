@@ -82,9 +82,11 @@ final class ApiClient: NetworkServiceProtocol {
     }
     
     private func createURL(from endpoint: Endpoint) -> URL? {
-        var components = URLComponents(url: endpoint.baseURL, resolvingAgainstBaseURL: true)
-        components?.path = endpoint.path
-        components?.queryItems = endpoint.queryItems
-        return components?.url
+        guard var components = URLComponents(url: endpoint.baseURL, resolvingAgainstBaseURL: true) else {
+            return nil
+        }
+        components.path += endpoint.path
+        components.queryItems = endpoint.queryItems
+        return components.url
     }
 }
