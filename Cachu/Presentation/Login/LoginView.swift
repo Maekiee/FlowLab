@@ -1,33 +1,20 @@
-//
-//  LoginView.swift
-//  Cachu
-//
-//  Created by 박도원 on 12/20/25.
-//
-
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel: SignUpViewModel
+    @Environment(Coordinator.self) var coordinator
     
-    init(viewModel: SignUpViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init() {
     }
     
     
     var body: some View {
         VStack {
-            if viewModel.isLoading {
-                ProgressView()
-            }
+            Text("Login View")
             
-            Button("회원가입 요청") {
-                viewModel.requestSignUp()
+            Button("Go to Sign up") {
+                coordinator.push(.signup)
             }
         }
     }
 }
 
-//#Preview {
-//    LoginView()
-//}
