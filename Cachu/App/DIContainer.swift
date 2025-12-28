@@ -12,20 +12,28 @@ final class DIContainer: Sendable {
         self.networkService = ApiClient(interceptor: interceptor)
     }
     
-    // MARK: - Repository Factories
+}
+
+
+// MARK: - Repository Factories
+extension DIContainer {
     func makeSignUpRepository() -> SignUpRepositoryProtocol {
         return SignUpRepository(network: networkService)
     }
-    
-    // MARK: - ViewModel Factories
+}
+
+
+// MARK: - Store Factories
+extension DIContainer {
     @MainActor
-    func makeSignUpViewModel() -> SignUpViewModel {
-        return SignUpViewModel(repository: makeSignUpRepository())
+    func makeSignUpStore() -> SignUpStore {
+        return SignUpStore(repository: makeSignUpRepository())
     }
 }
 
+
+// MARK: - View Factories
 extension DIContainer: AppViewFactory {
-    
     @MainActor
     func makeLoginView() -> AnyView {
         return AnyView(LoginView())
@@ -33,8 +41,7 @@ extension DIContainer: AppViewFactory {
     
     @MainActor
     func makeSignUpView() -> AnyView {
-        let viewModel = makeSignUpViewModel()
-        return AnyView(SignUpView())
+        let store = makeSignUpStore()
+        return AnyView(SignUpView(store: store))
     }
-    
 }

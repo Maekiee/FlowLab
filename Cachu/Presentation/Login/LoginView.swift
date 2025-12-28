@@ -9,7 +9,13 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-            Text("Login View")
+            
+            Button {
+                print(#function)
+            } label: {
+                Text("카카오")
+            }
+
             
             Button("Go to Sign up") {
                 coordinator.push(.signup)
