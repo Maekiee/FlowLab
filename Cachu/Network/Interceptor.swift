@@ -41,3 +41,11 @@ final class Interceptor: InterceptorProtocol {
         }
     }
 }
+
+{
+  "user_id": "65472ac3f19e8a1c3a6ed949",
+  "email": "sesac_re_jack@gmail.com",
+  "nick": "친절한공인중개사",
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGU4YTg3YzNhMzQ4M2NkYjM1NmU5ZiIsImlhdCI6MTcyOTAwNjIxNSwiZXhwIjoxNzI5MzY2MjE1LCJpc3MiOiJzZXNhY18zIn0.wYRKKg8rES6HPpzNBeSm27cvVwQNRgIKLNGHb2L8aEo",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGU4YTg3YzNhMzQ4M2NkYjM1NmU5ZiIsImlhdCI6MTcyOTAwNjIxNSwiZXhwIjoxNzMyNjA2MjE1LCJpc3MiOiJzZXNhY18zIn0.z6hT51FpCnqoVGdVJk9aZUEGk-e-KHOzyxGIDFXV_9U"
+}

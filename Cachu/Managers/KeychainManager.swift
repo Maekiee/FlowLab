@@ -1,4 +1,13 @@
 import Foundation
+import Security
+
+enum KeychainError: Error {
+    case itemNotFound
+    case duplicateItem
+    case invalidItemFormat
+    case unexpectedStatus(OSStatus)
+}
+
 
 final class KeychainManager: KeychainManagerProtocol {
     
@@ -9,7 +18,8 @@ final class KeychainManager: KeychainManagerProtocol {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
-            kSecValueData as String: data
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock // 기기가 잠겨있어도 백그라운드 작업 등에서 접근 가능 설정
         ]
         
         // 기존 아이템 삭제 후 저장 (덮어쓰기 보장)
@@ -18,7 +28,7 @@ final class KeychainManager: KeychainManagerProtocol {
         let status = SecItemAdd(query as CFDictionary, nil)
         
         guard status == errSecSuccess else {
-            throw KeychainError.unknown(status)
+            throw KeychainError.unexpectedStatus(status)
         }
     }
     
@@ -31,11 +41,11 @@ final class KeychainManager: KeychainManagerProtocol {
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
         
-        var dataTypeRef: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
         
         if status == errSecSuccess {
-            return dataTypeRef as? Data
+            return item as? Data
         }
         return nil
     }
@@ -50,7 +60,7 @@ final class KeychainManager: KeychainManagerProtocol {
         let status = SecItemDelete(query as CFDictionary)
         
         guard status == errSecSuccess || status == errSecItemNotFound else {
-            throw KeychainError.unknown(status)
+            throw KeychainError.unexpectedStatus(status)
         }
     }
 }

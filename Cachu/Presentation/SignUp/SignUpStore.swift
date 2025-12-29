@@ -34,8 +34,6 @@ enum SignUpSideEffect: Equatable {
 @MainActor
 @Observable
 final class SignUpStore {
-    
-    
     private(set) var state = SignUpState()
     private(set) var isLoading = false
     private(set) var errorMessage: String?
@@ -51,11 +49,11 @@ final class SignUpStore {
         self.repository = repository
     }
     
-    func dispatch(_ intent: SignUpIntent) {
+    func action(_ intent: SignUpIntent) {
         switch intent {
         case .updateEmail(let text):
             state.email = text
-            state.errorMessage = nil // 입력 시 에러 초기화
+            state.errorMessage = nil
         case .updatePassword(let text):
             state.password = text
             state.errorMessage = nil
@@ -70,13 +68,7 @@ final class SignUpStore {
         }
     }
     
-    func requestSignUp() {
-        print("이메일 값", state.email)
-        print("비밀번호 값", state.password)
-        print("닉네임 값", state.nickname)
-        print("폰 번호 값", state.phoneNumber)
-        print("인트로 값", state.introduce)
-        
+    private func requestSignUp() {
         let userResterInfo = JoinRequestDTO(
             email: state.email,
             password: state.password,
@@ -84,15 +76,6 @@ final class SignUpStore {
             phoneNum: state.phoneNumber,
             introduction: state.introduce,
             deviceToken: "")
-//        // 입력받은 값으로 DTO 생성
-//        let requestDTO = JoinRequestDTO(
-//            email: "dowon4@sesac.com",
-//            password: "dowontest123!",
-//            nick: "쿠키4",
-//            phoneNum: "01039438239",
-//            introduction: "안녕하세요",
-//            deviceToken: ""
-//        )
         
         Task {
             isLoading = true

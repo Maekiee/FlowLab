@@ -4,24 +4,32 @@ actor TokenManager: TokenManagerProtocol {
     
     private let keychain: KeychainManagerProtocol
     private let session: URLSession
+    private let refreshURL: URL
+    
+    private var refreshTask: Task<Bool, Error>?
     
     // 현재 갱신 중인지 확인하는 플래그 (중복 요청 방지)
     private var isRefreshing = false
     
-    public init(keychain: KeychainManagerProtocol = KeychainManager(), session: URLSession = .shared) {
+    init(
+        keychain: KeychainManagerProtocol = KeychainManager(),
+        session: URLSession = .shared,
+        refreshURL: URL = URL(string:"https://api.yourservice.com/v1/auth/refresh")!
+    ) {
         self.keychain = keychain
         self.session = session
+        self.refreshURL
     }
     
     // MARK: - Token Access
-    public func getAccessToken() -> String? {
+    func getAccessToken() -> String? {
         guard let data = keychain.read(service: TokenKey.service, account: TokenKey.accessToken) else {
             return nil
         }
         return String(data: data, encoding: .utf8)
     }
     
-    public func getRefreshToken() -> String? {
+    func getRefreshToken() -> String? {
         guard let data = keychain.read(service: TokenKey.service, account: TokenKey.refreshToken) else {
             return nil
         }
@@ -29,7 +37,7 @@ actor TokenManager: TokenManagerProtocol {
     }
     
     // MARK: - Token Management
-    public func saveTokens(accessToken: String, refreshToken: String) throws {
+    func saveTokens(accessToken: String, refreshToken: String) throws {
         if let accessData = accessToken.data(using: .utf8) {
             try keychain.save(data: accessData, service: TokenKey.service, account: TokenKey.accessToken)
         }
@@ -38,31 +46,36 @@ actor TokenManager: TokenManagerProtocol {
         }
     }
     
-    public func clearTokens() throws {
+    func clearTokens() throws {
         try keychain.delete(service: TokenKey.service, account: TokenKey.accessToken)
         try keychain.delete(service: TokenKey.service, account: TokenKey.refreshToken)
     }
     
-    // MARK: - Refresh Logic
-    public func refreshTokens() async throws -> Bool {
-        // 1. 이미 갱신 중이라면 대기하거나 실패 처리 (여기서는 간단히 false 반환하거나, Task를 공유하는 로직 추가 가능)
-        if isRefreshing { return false }
-        isRefreshing = true
+    // MARK: - Refresh Logic (Task Coalescing Applied)
+    func refreshTokens() async throws -> Bool {
+        // 1. 이미 진행 중인 Task가 있다면 그 결과를 기다렸다가 반환 (Wait for existing task)
+        if let existingTask = refreshTask {
+            return try await existingTask.value
+        }
         
-        // defer 블록을 사용하여 메서드가 끝나면 무조건 플래그 해제
-        defer { isRefreshing = false }
+        // 2. 새로운 Task 생성
+        let task = Task<Bool, Error> {
+            defer { self.refreshTask = nil } // 작업 종료 시 Task 초기화
+            
+            return try await performRefreshToken()
+        }
         
+        self.refreshTask = task
+        return try await task.value
+    }
+    
+    func performRefreshToken() async throws -> Bool {
         guard let refreshToken = getRefreshToken() else { return false }
         
-        // 2. 리프레시 API 호출
-        // ⚠️ 중요: 여기서 NetworkClient를 쓰면 Interceptor가 다시 끼어들어 무한 루프 가능성 있음.
-        // 따라서 순수 URLSession이나 별도의 AuthAPI를 호출해야 함.
-        guard let url = URL(string: "https://api.example.com/auth/refresh") else { return false }
-        
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: refreshURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+        // Bearer 포맷 등 서버 스펙에 맞게 수정
         let body = ["refreshToken": refreshToken]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         
@@ -70,22 +83,21 @@ actor TokenManager: TokenManagerProtocol {
             let (data, response) = try await session.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                // 갱신 실패 시 로그아웃 처리 등을 위해 토큰 삭제
+                print("❌ Refresh Failed: Status Code Error")
                 try? clearTokens()
                 return false
             }
             
             let tokenData = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
-            
-            // 3. 새로운 토큰 저장
             try saveTokens(accessToken: tokenData.accessToken, refreshToken: tokenData.refreshToken)
+            
             print("✅ Token Refreshed Successfully")
             return true
             
         } catch {
-            print("❌ Token Refresh Failed: \(error)")
+            print("❌ Refresh Failed: \(error)")
             try? clearTokens()
-            return false
+            throw error // 필요 시 에러 전파
         }
     }
 }
