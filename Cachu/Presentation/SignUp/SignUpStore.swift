@@ -27,6 +27,7 @@ enum SignUpIntent {
 
 enum SignUpSideEffect: Equatable {
     case navigateToLogin
+    case navigateToMain
     case showToast(message: String)
 }
 
@@ -37,16 +38,23 @@ final class SignUpStore {
     private(set) var state = SignUpState()
     private(set) var isLoading = false
     private(set) var errorMessage: String?
+    
     private let effectSubject = PassthroughSubject<SignUpSideEffect, Never>()
     
     var effect: AnyPublisher<SignUpSideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
     }
     
-    private let repository: SignUpRepositoryProtocol
     
-    init(repository: SignUpRepositoryProtocol) {
+    private let repository: SignUpRepositoryProtocol
+    private let tokenManager: TokenManagerProtocol
+    
+    init(
+        repository: SignUpRepositoryProtocol,
+        tokenManager: TokenManagerProtocol
+    ) {
         self.repository = repository
+        self.tokenManager = tokenManager
     }
     
     func action(_ intent: SignUpIntent) {
@@ -84,7 +92,13 @@ final class SignUpStore {
             do {
                 let response = try await repository.signUp(request: userResterInfo)
                 print("✅ 회원가입 성공: \(response)")
-                // 성공 후 화면 전환 처리 등
+                
+                try await tokenManager.saveTokens(
+                    accessToken: response.accessToken,
+                    refreshToken: response.refreshToken
+                )
+                
+                effectSubject.send(.navigateToMain)
             } catch {
                 print("❌ 회원가입 실패: \(error)")
                 self.errorMessage = error.localizedDescription

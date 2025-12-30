@@ -27,7 +27,10 @@ extension DIContainer {
 extension DIContainer {
     @MainActor
     func makeSignUpStore() -> SignUpStore {
-        return SignUpStore(repository: makeSignUpRepository())
+        return SignUpStore(
+            repository: makeSignUpRepository(),
+            tokenManager: self.tokenManager,
+        )
     }
 }
 

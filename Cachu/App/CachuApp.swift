@@ -20,7 +20,8 @@ struct CachuApp: App {
                     .navigationDestination(for: AppRoute.self) { route in
                         coordinator.build(route: route)
                     }
-            }.environment(coordinator)
+            }
+            .environment(coordinator)
         }
     }
 }
