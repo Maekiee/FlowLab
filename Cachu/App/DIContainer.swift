@@ -47,4 +47,9 @@ extension DIContainer: AppViewFactory {
         let store = makeSignUpStore()
         return AnyView(SignUpView(store: store))
     }
+    
+    @MainActor
+    func makeMainView() -> AnyView {
+        return AnyView(MainView())
+    }
 }

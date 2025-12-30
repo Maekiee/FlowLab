@@ -14,11 +14,11 @@ actor TokenManager: TokenManagerProtocol {
     init(
         keychain: KeychainManagerProtocol = KeychainManager(),
         session: URLSession = .shared,
-        refreshURL: URL = URL(string:"https://api.yourservice.com/v1/auth/refresh")!
+        refreshURL: URL = URL(string:AppConfig.baseURL + "/auth/refresh")!
     ) {
         self.keychain = keychain
         self.session = session
-        self.refreshURL
+        self.refreshURL = refreshURL
     }
     
     // MARK: - Token Access

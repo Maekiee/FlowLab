@@ -6,6 +6,7 @@ import Observation
 enum AppRoute: Hashable {
     case login
     case signup
+    case main
 }
 
 protocol CoordinatorProtocol {
@@ -18,13 +19,15 @@ protocol CoordinatorProtocol {
 protocol AppViewFactory {
     func makeLoginView() -> AnyView
     func makeSignUpView() -> AnyView
+    func makeMainView() -> AnyView
 }
 
 @MainActor
 @Observable
 final class Coordinator: CoordinatorProtocol {
-    var navigationPath = NavigationPath()
     private let factory: AppViewFactory
+    var navigationPath = NavigationPath()
+    var rootRoute: AppRoute = .login
     
     init(factory: AppViewFactory) {
         self.factory = factory
@@ -37,7 +40,8 @@ final class Coordinator: CoordinatorProtocol {
             factory.makeLoginView()
         case .signup:
             factory.makeSignUpView()
-            
+        case .main:
+            factory.makeMainView()
         }
     }
     
@@ -48,5 +52,11 @@ final class Coordinator: CoordinatorProtocol {
     func pop() {
         navigationPath.removeLast()
     }
+    
+    func setRoot(_ route: AppRoute) {
+        navigationPath = NavigationPath()
+        rootRoute = route
+    }
+    
     
 }

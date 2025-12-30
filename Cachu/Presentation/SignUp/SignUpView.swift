@@ -40,6 +40,16 @@ struct SignUpView: View {
         } // VStack
         .padding(20)
         .padding(.horizontal)
+        .onReceive(store.effect) { effect in
+            switch effect {
+            case .navigateToMain:
+                coordinator.setRoot(.main)
+            case .navigateToLogin:
+                print("로그인 화면으로")
+            case .showToast(message: let message):
+                print("토스트 메세지ㅏ")
+            }
+        }
     }
 }
 

@@ -16,7 +16,7 @@ struct CachuApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $coordinator.navigationPath) {
-                coordinator.build(route: .login)
+                coordinator.build(route: coordinator.rootRoute)
                     .navigationDestination(for: AppRoute.self) { route in
                         coordinator.build(route: route)
                     }
