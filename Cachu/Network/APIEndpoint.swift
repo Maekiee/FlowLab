@@ -2,7 +2,7 @@ import Foundation
 
 
 enum APIEndpoint: Endpoint {
-    case login
+    case login(LoginRequestDTO)
     case getProfile
     case join(JoinRequestDTO)
     
@@ -12,7 +12,7 @@ enum APIEndpoint: Endpoint {
     
     var path: String {
         switch self {
-        case .login: return "/login"
+        case .login: return "/users/login"
         case .getProfile: return "/profile"
         case . join: return "/users/join"
         }

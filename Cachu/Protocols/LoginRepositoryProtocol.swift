@@ -1,5 +1,6 @@
 import Foundation
 
 protocol LoginRepositoryProtocol {
-    func login() async throws -> LoginDTO
+    func login(request: LoginRequestDTO) async throws -> LoginResponseDTO
+    
 }

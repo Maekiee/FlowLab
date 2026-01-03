@@ -1,25 +1,29 @@
 import SwiftUI
 
 struct LoginView: View {
+    @State var store: LoginStore
     @Environment(Coordinator.self) var coordinator
-    
-    init() {
-    }
     
     
     var body: some View {
         VStack {
             
+            TextField("이메일", text: Binding(
+                get: { store.state.email },
+                set: { store.action(.inputEmail($0)) }
+            ))
+            
+            SecureField("비밀번호", text: Binding(
+                get: { store.state.password },
+                set: { store.action(.inputPassword($0)) }
+            ))
+            
             Button {
-                print(#function)
+                store.action(.tapLogin)
             } label: {
-                Text("카카오")
+                Text("로그인")
             }
 
-            
-            Button("Go to Sign up") {
-                coordinator.push(.signup)
-            }
         }
     }
 }

@@ -20,6 +20,10 @@ extension DIContainer {
     func makeSignUpRepository() -> SignUpRepositoryProtocol {
         return SignUpRepository(network: networkService)
     }
+    
+    func makeLoginRepository() -> LoginRepositoryProtocol {
+        return LoginRepository(network: networkService)
+    }
 }
 
 
@@ -32,14 +36,27 @@ extension DIContainer {
             tokenManager: self.tokenManager,
         )
     }
+    
+    @MainActor
+    func makeLoginStore() -> LoginStore {
+        return LoginStore(
+            repository: makeLoginRepository(),
+        )
+    }
 }
 
 
 // MARK: - View Factories
 extension DIContainer: AppViewFactory {
     @MainActor
+    func makeStartAuthView() -> AnyView {
+        return AnyView(StartAuthView())
+    }
+    
+    @MainActor
     func makeLoginView() -> AnyView {
-        return AnyView(LoginView())
+        let store = makeLoginStore()
+        return AnyView(LoginView(store: store))
     }
     
     @MainActor
