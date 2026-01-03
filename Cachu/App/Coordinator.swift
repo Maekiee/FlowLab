@@ -5,20 +5,40 @@ import Observation
 
 enum AppRoute: Hashable {
     case startAuth
-    case login
     case signup
     case main
 }
 
-enum SheetRoute: Hashable {
+enum SheetRoute: Identifiable {
+    case someView
+    
+    var id: String {
+        switch self {
+        case .someView: return "someView"
+        }
+    }
+}
+
+enum FullScreenSheetRoute: Identifiable {
     case emailLogin
+    
+    var id: String {
+        switch self {
+        case .emailLogin: return "emailLogin"
+        }
+    }
 }
 
 protocol CoordinatorProtocol {
     func push(_ route: AppRoute)
     func pop()
     func setRoot(_ route: AppRoute)
+    
     func present(sheet: SheetRoute)
+    func dismissSheet()
+    
+    func present(fullScreen: FullScreenSheetRoute)
+    func dismissFullScreen()
 }
 
 
@@ -38,6 +58,8 @@ final class Coordinator: CoordinatorProtocol {
     var navigationPath = NavigationPath()
     var rootRoute: AppRoute = .startAuth
     var sheeRoute: SheetRoute?
+    var fullScreenSheetRoute: FullScreenSheetRoute?
+    
     
     
     init(factory: AppViewFactory) {
@@ -49,8 +71,6 @@ final class Coordinator: CoordinatorProtocol {
         switch route {
         case .startAuth:
             factory.makeStartAuthView()
-        case .login:
-            factory.makeLoginView()
         case .signup:
             factory.makeSignUpView()
         case .main:
@@ -60,6 +80,14 @@ final class Coordinator: CoordinatorProtocol {
     
     @ViewBuilder
     func buildSheet(route: SheetRoute) -> some View {
+        switch route {
+        case .someView:
+            Text("나중에 뷰 여기다가")
+        }
+    }
+    
+    @ViewBuilder
+    func buildFullScreenSheet(route: FullScreenSheetRoute) -> some View {
         switch route {
         case .emailLogin:
             factory.makeLoginView()
@@ -80,7 +108,19 @@ final class Coordinator: CoordinatorProtocol {
     }
     
     func present(sheet: SheetRoute) {
-        
+        self.sheeRoute = sheet
+    }
+    
+    func dismissSheet() {
+        self.sheeRoute = nil
+    }
+    
+    func present(fullScreen: FullScreenSheetRoute) {
+        self.fullScreenSheetRoute = fullScreen
+    }
+    
+    func dismissFullScreen() {
+        self.fullScreenSheetRoute = nil
     }
     
     

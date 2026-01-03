@@ -2,7 +2,6 @@ import SwiftUI
 
 @main
 struct CachuApp: App {
-    let container = DIContainer()
     
     @State private var coordinator: Coordinator
     
@@ -15,11 +14,18 @@ struct CachuApp: App {
         
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $coordinator.navigationPath) {
+            @Bindable var bindableCoordinator = coordinator
+            NavigationStack(path: $bindableCoordinator.navigationPath) {
                 coordinator.build(route: coordinator.rootRoute)
                     .navigationDestination(for: AppRoute.self) { route in
                         coordinator.build(route: route)
                     }
+            }
+            .sheet(item: $bindableCoordinator.sheeRoute) { route in
+                coordinator.buildSheet(route: route)
+            }
+            .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute){ route in
+                coordinator.buildFullScreenSheet(route: route)
             }
             .environment(coordinator)
         }

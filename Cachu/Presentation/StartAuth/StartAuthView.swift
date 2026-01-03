@@ -20,7 +20,7 @@ struct StartAuthView: View {
             }
             
             Button {
-                coordinator.push(.login)
+                coordinator.present(fullScreen: .emailLogin)
 //                coordinator.present(sheet: .emailLogin)
             } label: {
                 Text("이메일 로그인")
