@@ -27,26 +27,14 @@ enum APIEndpoint: Endpoint {
     
     var body: Data? {
         switch self {
-        case .login:
-            // 딕셔너리([String: Any]) 대신 Encodable -> Data 변환
-            return nil
+        case .login(let loginDTO):
+            return try? JSONEncoder().encode(loginDTO)
         case .getProfile:
             return nil
         case .join(let joinDTO):
             return try? JSONEncoder().encode(joinDTO)
         }
     }
-    
-//    var headers: [String : String] {
-//        return
-//    }
-    
-//    var headers: [String: String]? {
-//            return [
-//                "Content-Type": "application/json",
-//                "SesacKey": AppConfig.SeSACKey,
-//            ]
-//        }
     
     // ✅ 작성하신 의도대로 인증 여부 제어
     var requiresAuth: Bool {

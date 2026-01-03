@@ -32,6 +32,7 @@ enum SignUpSideEffect: Equatable {
 }
 
 
+
 @MainActor
 @Observable
 final class SignUpStore {

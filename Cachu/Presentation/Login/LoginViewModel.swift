@@ -45,6 +45,9 @@ final class LoginStore {
         Task {
             do {
                 let response = try await repository.login(request: loginForm)
+                print("로그인 성공: \(response)")
+                
+                // 메인 뷰 변경
             } catch {
                 print("로그인 실패: \(error)")
             }
