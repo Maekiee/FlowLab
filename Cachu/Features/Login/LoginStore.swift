@@ -54,6 +54,8 @@ final class LoginStore: StoreProtocol {
                 print("로그인 성공: \(response)")
                 // 메인 뷰 변경
                 effectSubject.send(.navigateToMain)
+                
+                // 키체인 에 엑세스 리프레시 토큰 저장
             } catch {
                 print("로그인 실패: \(error)")
             }
