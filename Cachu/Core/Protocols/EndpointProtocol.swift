@@ -1,5 +1,7 @@
 import Foundation
 
+
+
 protocol Endpoint: Sendable {
     var baseURL: URL { get }
     var path: String { get }
