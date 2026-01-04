@@ -2,48 +2,46 @@ import Foundation
 import Combine
 
 
-struct SignUpState {
-    var email = ""
-    var password = ""
-    var nickname = ""
-    var phoneNumber = ""
-    var introduce = ""
-    var isLoading = false
-    var errorMessage: String?
-    
-    var isValid: Bool {
-        return email.contains("@") && password.count >= 6
-    }
-}
-
-enum SignUpIntent {
-    case updateEmail(String)
-    case updatePassword(String)
-    case updateNickname(String)
-    case updatePhoneNumber(String)
-    case updateIntroduce(String)
-    case tapSignUpButton
-}
-
-enum SignUpSideEffect: Equatable {
-    case navigateToLogin
-    case navigateToMain
-    case showToast(message: String)
-}
-
-
-
 @MainActor
 @Observable
-final class SignUpStore {
+final class SignUpStore: StoreProtocol {
     private(set) var state = SignUpState()
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     
-    private let effectSubject = PassthroughSubject<SignUpSideEffect, Never>()
+    private let effectSubject = PassthroughSubject<SideEffect, Never>()
     
-    var effect: AnyPublisher<SignUpSideEffect, Never> {
+    var effect: AnyPublisher<SideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
+    }
+    
+    struct SignUpState {
+        var email = ""
+        var password = ""
+        var nickname = ""
+        var phoneNumber = ""
+        var introduce = ""
+        var isLoading = false
+        var errorMessage: String?
+        
+        var isValid: Bool {
+            return email.contains("@") && password.count >= 6
+        }
+    }
+
+    enum SignUpIntent {
+        case updateEmail(String)
+        case updatePassword(String)
+        case updateNickname(String)
+        case updatePhoneNumber(String)
+        case updateIntroduce(String)
+        case tapSignUpButton
+    }
+
+    enum SideEffect: Equatable {
+        case navigateToLogin
+        case navigateToMain
+        case showToast(message: String)
     }
     
     
