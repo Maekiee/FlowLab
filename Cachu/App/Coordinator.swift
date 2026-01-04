@@ -57,7 +57,7 @@ final class Coordinator: CoordinatorProtocol {
     
     var navigationPath = NavigationPath()
     var rootRoute: AppRoute = .startAuth
-    var sheeRoute: SheetRoute?
+    var sheetRoute: SheetRoute?
     var fullScreenSheetRoute: FullScreenSheetRoute?
     
     
@@ -108,11 +108,11 @@ final class Coordinator: CoordinatorProtocol {
     }
     
     func present(sheet: SheetRoute) {
-        self.sheeRoute = sheet
+        self.sheetRoute = sheet
     }
     
     func dismissSheet() {
-        self.sheeRoute = nil
+        self.sheetRoute = nil
     }
     
     func present(fullScreen: FullScreenSheetRoute) {

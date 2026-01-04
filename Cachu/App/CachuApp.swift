@@ -21,7 +21,7 @@ struct CachuApp: App {
                         coordinator.build(route: route)
                     }
             }
-            .sheet(item: $bindableCoordinator.sheeRoute) { route in
+            .sheet(item: $bindableCoordinator.sheetRoute) { route in
                 coordinator.buildSheet(route: route)
             }
             .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute){ route in

@@ -12,6 +12,7 @@ struct LoginView: View {
                 get: { store.state.email },
                 set: { store.action(.inputEmail($0)) }
             ))
+            .textInputAutocapitalization(.never)
             
             SecureField("비밀번호", text: Binding(
                 get: { store.state.password },
@@ -24,6 +25,13 @@ struct LoginView: View {
                 Text("로그인")
             }
 
+        }.onReceive(store.effect) { effect in
+            switch effect {
+            case .navigateToMain:
+                coordinator.dismissFullScreen()
+                
+                coordinator.setRoot(.main)
+            }
         }
     }
 }

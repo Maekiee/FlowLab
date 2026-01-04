@@ -12,7 +12,12 @@ enum LoginIntent {
     case tapLogin
 }
 
+enum SideEffect: Equatable {
+    case navigateToMain
+}
+
 @MainActor
+@Observable
 final class LoginStore {
     private(set) var state = LoginState()
     
@@ -20,8 +25,15 @@ final class LoginStore {
     private let repository: LoginRepositoryProtocol
     
     
+    
     init(repository: LoginRepositoryProtocol) {
         self.repository = repository
+    }
+    
+    private let effectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    var effect: AnyPublisher<SideEffect, Never> {
+        effectSubject.eraseToAnyPublisher()
     }
     
     func action(_ intent: LoginIntent) {
@@ -48,6 +60,7 @@ final class LoginStore {
                 print("로그인 성공: \(response)")
                 
                 // 메인 뷰 변경
+                effectSubject.send(.navigateToMain)
             } catch {
                 print("로그인 실패: \(error)")
             }
