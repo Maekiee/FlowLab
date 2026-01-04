@@ -44,7 +44,7 @@ final class ApiClient: NetworkServiceProtocol, Sendable {
                 return try JSONDecoder().decode(T.self, from: data)
             }
             
-            if let interceptor = interceptor, retryCount < 2 {
+            if endpoint.requiresAuth, let interceptor = interceptor, retryCount < 2 {
                 let retryResult = await interceptor.retry(finalRequest, dueTo: .success(httpResponse))
                 
                 switch retryResult {
@@ -76,7 +76,7 @@ final class ApiClient: NetworkServiceProtocol, Sendable {
             }
             
         } catch {
-            if let interceptor = interceptor, retryCount < 2 {
+            if endpoint.requiresAuth, let interceptor = interceptor, retryCount < 2 {
                 let retryResult = await interceptor.retry(finalRequest, dueTo: .failure(error))
                 
                 if case .retry = retryResult {

@@ -7,16 +7,19 @@ final class LoginStore: StoreProtocol {
     struct LoginState {
         var email = ""
         var password = ""
+        var errorMessage: String?
     }
 
     enum LoginIntent {
         case inputEmail(String)
         case inputPassword(String)
         case tapLogin
+        case dismissError
     }
 
     enum SideEffect: Equatable {
         case navigateToMain
+        case showErrorAlert(String)
     }
     
     private(set) var state = LoginState()
@@ -38,6 +41,8 @@ final class LoginStore: StoreProtocol {
             state.password = password
         case .tapLogin:
             emailLogin()
+        case .dismissError:
+            state.errorMessage = nil
         }
     }
     
@@ -56,8 +61,12 @@ final class LoginStore: StoreProtocol {
                 effectSubject.send(.navigateToMain)
                 
                 // 키체인 에 엑세스 리프레시 토큰 저장
+            } catch let error as NetworkError {
+                effectSubject.send(.showErrorAlert(error.errorDescription))
+                print("실패1 \(error.errorDescription)")
             } catch {
-                print("로그인 실패: \(error)")
+                effectSubject.send(.showErrorAlert(error.localizedDescription))
+                print("실패2 \(error.localizedDescription)")
             }
         }
     }

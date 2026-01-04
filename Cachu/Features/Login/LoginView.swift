@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @State var store: LoginStore
+    @State private var errorMessage: String?
     @Environment(Coordinator.self) var coordinator
     
     
@@ -24,13 +25,16 @@ struct LoginView: View {
             } label: {
                 Text("로그인")
             }
-
-        }.onReceive(store.effect) { effect in
+            
+        }
+        .errorAlert(message: $errorMessage)
+        .onReceive(store.effect) { effect in
             switch effect {
             case .navigateToMain:
                 coordinator.dismissFullScreen()
-                
                 coordinator.setRoot(.main)
+            case .showErrorAlert(let message):
+                errorMessage = message
             }
         }
     }

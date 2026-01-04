@@ -1,6 +1,6 @@
 import Foundation
 
-enum NetworkError: Error, Equatable {
+enum NetworkError: Error, LocalizedError, Equatable {
     case invalidURL
     case requestFailed(description: String)
     case decodingFailed
@@ -31,7 +31,7 @@ enum NetworkError: Error, Equatable {
     /// 그 외 서버 에러 (메시지 포함)
     case commonError(statusCode: Int, message: String)
     
-    var errorDescription: String? {
+    var errorDescription: String {
         switch self {
         case .invalidURL: return "유효하지 않은 URL입니다."
         case .requestFailed(let desc): return "요청 실패: \(desc)"
