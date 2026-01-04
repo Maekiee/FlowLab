@@ -1,39 +1,33 @@
 import Foundation
 import Combine
 
-struct LoginState {
-    var email = ""
-    var password = ""
-}
-
-enum LoginIntent {
-    case inputEmail(String)
-    case inputPassword(String)
-    case tapLogin
-}
-
-enum SideEffect: Equatable {
-    case navigateToMain
-}
-
 @MainActor
 @Observable
-final class LoginStore {
+final class LoginStore: StoreProtocol {
+    struct LoginState {
+        var email = ""
+        var password = ""
+    }
+
+    enum LoginIntent {
+        case inputEmail(String)
+        case inputPassword(String)
+        case tapLogin
+    }
+
+    enum SideEffect: Equatable {
+        case navigateToMain
+    }
+    
     private(set) var state = LoginState()
-    
-    
     private let repository: LoginRepositoryProtocol
-    
-    
+    private let effectSubject = PassthroughSubject<SideEffect, Never>()
+    var effect: AnyPublisher<SideEffect, Never> {
+        effectSubject.eraseToAnyPublisher()
+    }
     
     init(repository: LoginRepositoryProtocol) {
         self.repository = repository
-    }
-    
-    private let effectSubject = PassthroughSubject<SideEffect, Never>()
-    
-    var effect: AnyPublisher<SideEffect, Never> {
-        effectSubject.eraseToAnyPublisher()
     }
     
     func action(_ intent: LoginIntent) {
@@ -58,7 +52,6 @@ final class LoginStore {
             do {
                 let response = try await repository.login(request: loginForm)
                 print("로그인 성공: \(response)")
-                
                 // 메인 뷰 변경
                 effectSubject.send(.navigateToMain)
             } catch {
