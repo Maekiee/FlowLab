@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Network Client Implementation
-final class ApiClient: NetworkServiceProtocol {
+final class ApiClient: NetworkServiceProtocol, Sendable {
     
     private let session: URLSession
     private let interceptor: InterceptorProtocol?
