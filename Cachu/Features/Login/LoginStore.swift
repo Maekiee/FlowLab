@@ -24,13 +24,18 @@ final class LoginStore: StoreProtocol {
     
     private(set) var state = LoginState()
     private let repository: LoginRepositoryProtocol
+    private let keychainManager: KeychainManagerProtocol
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
     var effect: AnyPublisher<SideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
     }
     
-    init(repository: LoginRepositoryProtocol) {
+    init(
+        repository: LoginRepositoryProtocol,
+        keychainManager: KeychainManagerProtocol
+    ) {
         self.repository = repository
+        self.keychainManager = keychainManager
     }
     
     func action(_ intent: LoginIntent) {
@@ -56,8 +61,19 @@ final class LoginStore: StoreProtocol {
         Task {
             do {
                 let response = try await repository.login(request: loginForm)
-                print("로그인 성공: \(response)")
-                // 메인 뷰 변경
+                
+                try await keychainManager.save(
+                    token: response.accessToken,
+                    service: AppConfig.bundleID,
+                    account: "accessToken"
+                )
+                
+                try await keychainManager.save(
+                    token: response.refreshToken,
+                    service: AppConfig.bundleID,
+                    account: "refreshToken"
+                )
+                
                 effectSubject.send(.navigateToMain)
                 
                 // 키체인 에 엑세스 리프레시 토큰 저장

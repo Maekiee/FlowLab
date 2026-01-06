@@ -3,9 +3,10 @@ import SwiftUI
 final class DIContainer: Sendable {
     let tokenManager: TokenManagerProtocol
     let networkService: NetworkServiceProtocol
+    let keychainManager: KeychainManagerProtocol
     
     init() {
-        let keychainManager = KeychainManager()
+        self.keychainManager = KeychainManager()
         let tokenManager = TokenManager(keychain: keychainManager)
         self.tokenManager = tokenManager
         let interceptor = Interceptor(tokenManager: tokenManager)
@@ -41,6 +42,7 @@ extension DIContainer {
     func makeLoginStore() -> LoginStore {
         return LoginStore(
             repository: makeLoginRepository(),
+            keychainManager: keychainManager
         )
     }
 }

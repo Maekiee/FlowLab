@@ -37,18 +37,18 @@ actor TokenManager: TokenManagerProtocol {
     }
     
     // MARK: - Token Management
-    func saveTokens(accessToken: String, refreshToken: String) throws {
+    func saveTokens(accessToken: String, refreshToken: String) async throws {
         if let accessData = accessToken.data(using: .utf8) {
-            try keychain.save(data: accessData, service: TokenKey.service, account: TokenKey.accessToken)
+            try await keychain.save(data: accessData, service: TokenKey.service, account: TokenKey.accessToken)
         }
         if let refreshData = refreshToken.data(using: .utf8) {
-            try keychain.save(data: refreshData, service: TokenKey.service, account: TokenKey.refreshToken)
+            try await keychain.save(data: refreshData, service: TokenKey.service, account: TokenKey.refreshToken)
         }
     }
     
-    func clearTokens() throws {
-        try keychain.delete(service: TokenKey.service, account: TokenKey.accessToken)
-        try keychain.delete(service: TokenKey.service, account: TokenKey.refreshToken)
+    func clearTokens() async throws {
+        try await keychain.delete(service: TokenKey.service, account: TokenKey.accessToken)
+        try await keychain.delete(service: TokenKey.service, account: TokenKey.refreshToken)
     }
     
     // MARK: - Refresh Logic (Task Coalescing Applied)
@@ -84,19 +84,19 @@ actor TokenManager: TokenManagerProtocol {
             
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 print("❌ Refresh Failed: Status Code Error")
-                try? clearTokens()
+                try? await clearTokens()
                 return false
             }
             
             let tokenData = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
-            try saveTokens(accessToken: tokenData.accessToken, refreshToken: tokenData.refreshToken)
+            try await saveTokens(accessToken: tokenData.accessToken, refreshToken: tokenData.refreshToken)
             
             print("✅ Token Refreshed Successfully")
             return true
             
         } catch {
             print("❌ Refresh Failed: \(error)")
-            try? clearTokens()
+            try? await clearTokens()
             throw error // 필요 시 에러 전파
         }
     }
