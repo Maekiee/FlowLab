@@ -35,6 +35,7 @@ extension DIContainer {
         return SignUpStore(
             repository: makeSignUpRepository(),
             tokenManager: self.tokenManager,
+            keychainManager: keychainManager
         )
     }
     

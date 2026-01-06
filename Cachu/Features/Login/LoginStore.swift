@@ -65,13 +65,13 @@ final class LoginStore: StoreProtocol {
                 try await keychainManager.save(
                     token: response.accessToken,
                     service: AppConfig.bundleID,
-                    account: "accessToken"
+                    account: AppConfig.accessTokenKey
                 )
                 
                 try await keychainManager.save(
                     token: response.refreshToken,
                     service: AppConfig.bundleID,
-                    account: "refreshToken"
+                    account: AppConfig.refreshTokenKey
                 )
                 
                 effectSubject.send(.navigateToMain)

@@ -47,13 +47,16 @@ final class SignUpStore: StoreProtocol {
     
     private let repository: SignUpRepositoryProtocol
     private let tokenManager: TokenManagerProtocol
+    private let keychainManager: KeychainManagerProtocol
     
     init(
         repository: SignUpRepositoryProtocol,
-        tokenManager: TokenManagerProtocol
+        tokenManager: TokenManagerProtocol,
+        keychainManager: KeychainManagerProtocol
     ) {
         self.repository = repository
         self.tokenManager = tokenManager
+        self.keychainManager = keychainManager
     }
     
     func action(_ intent: SignUpIntent) {
@@ -92,9 +95,16 @@ final class SignUpStore: StoreProtocol {
                 let response = try await repository.signUp(request: userResterInfo)
                 print("✅ 회원가입 성공: \(response)")
                 
-                try await tokenManager.saveTokens(
-                    accessToken: response.accessToken,
-                    refreshToken: response.refreshToken
+                try await keychainManager.save(
+                    token: response.accessToken,
+                    service: AppConfig.bundleID,
+                    account: AppConfig.accessTokenKey
+                )
+                
+                try await keychainManager.save(
+                    token: response.refreshToken,
+                    service: AppConfig.bundleID,
+                    account: AppConfig.refreshTokenKey
                 )
                 
                 effectSubject.send(.navigateToMain)
