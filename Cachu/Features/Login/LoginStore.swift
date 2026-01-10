@@ -24,7 +24,7 @@ final class LoginStore: StoreProtocol {
     
     private(set) var state = LoginState()
     private let repository: LoginRepositoryProtocol
-    private let keychainManager: KeychainManagerProtocol
+    private let tokenManager: TokenManagerProtocol
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
     var effect: AnyPublisher<SideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
@@ -32,10 +32,10 @@ final class LoginStore: StoreProtocol {
     
     init(
         repository: LoginRepositoryProtocol,
-        keychainManager: KeychainManagerProtocol
+        tokenManager: TokenManagerProtocol
     ) {
         self.repository = repository
-        self.keychainManager = keychainManager
+        self.tokenManager = tokenManager
     }
     
     func action(_ intent: LoginIntent) {
@@ -62,16 +62,10 @@ final class LoginStore: StoreProtocol {
             do {
                 let response = try await repository.login(request: loginForm)
                 
-                try await keychainManager.save(
-                    token: response.accessToken,
-                    service: AppConfig.bundleID,
-                    account: AppConfig.accessTokenKey
-                )
-                
-                try await keychainManager.save(
-                    token: response.refreshToken,
-                    service: AppConfig.bundleID,
-                    account: AppConfig.refreshTokenKey
+                // 엑세스 토큰 저장
+                try await tokenManager.saveTokens(
+                    accessToken: response.accessToken,
+                    refreshToken: response.refreshToken
                 )
                 
                 effectSubject.send(.navigateToMain)

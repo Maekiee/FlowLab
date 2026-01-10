@@ -2,7 +2,7 @@ import Foundation
 
 actor TokenManager: TokenManagerProtocol {
     
-    private let keychain: KeychainManagerProtocol
+    private let keychain: KeychainServiceProtocol
     private let session: URLSession
     private let refreshURL: URL
     
@@ -12,7 +12,7 @@ actor TokenManager: TokenManagerProtocol {
     private var isRefreshing = false
     
     init(
-        keychain: KeychainManagerProtocol = KeychainManager(),
+        keychain: KeychainServiceProtocol = KeychainService(),
         session: URLSession = .shared,
         refreshURL: URL = URL(string:AppConfig.baseURL + "/auth/refresh")!
     ) {
@@ -23,32 +23,49 @@ actor TokenManager: TokenManagerProtocol {
     
     // MARK: - Token Access
     func getAccessToken() -> String? {
-        guard let data = keychain.read(service: TokenKey.service, account: TokenKey.accessToken) else {
+        guard let data = keychain.read(
+            service: AppConfig.bundleID,
+            account: AppConfig.accessTokenKey
+        ) else {
             return nil
         }
+        
         return String(data: data, encoding: .utf8)
     }
     
     func getRefreshToken() -> String? {
-        guard let data = keychain.read(service: TokenKey.service, account: TokenKey.refreshToken) else {
+        guard let data = keychain.read(
+            service: AppConfig.bundleID,
+            account: AppConfig.refreshTokenKey
+        ) else {
             return nil
         }
         return String(data: data, encoding: .utf8)
     }
-    
-    // MARK: - Token Management
+        
+    /// 토큰 저장
     func saveTokens(accessToken: String, refreshToken: String) async throws {
         if let accessData = accessToken.data(using: .utf8) {
-            try await keychain.save(data: accessData, service: TokenKey.service, account: TokenKey.accessToken)
+            try await keychain.save(
+                data: accessData,
+                service: AppConfig.bundleID,
+                account: AppConfig.accessTokenKey
+            )
         }
+        
         if let refreshData = refreshToken.data(using: .utf8) {
-            try await keychain.save(data: refreshData, service: TokenKey.service, account: TokenKey.refreshToken)
+            try await keychain.save(
+                data: refreshData,
+                service: AppConfig.bundleID,
+                account: AppConfig.refreshTokenKey
+            )
         }
     }
     
+    // 토큰 정리
     func clearTokens() async throws {
-        try await keychain.delete(service: TokenKey.service, account: TokenKey.accessToken)
-        try await keychain.delete(service: TokenKey.service, account: TokenKey.refreshToken)
+        try await keychain.delete(service: AppConfig.bundleID, account: AppConfig.accessTokenKey)
+        try await keychain.delete(service: AppConfig.bundleID, account: AppConfig.refreshTokenKey)
     }
     
     // MARK: - Refresh Logic (Task Coalescing Applied)

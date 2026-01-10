@@ -8,8 +8,8 @@ struct MainView: View {
             Button {
                 Task {
                     do {
-                        let toekn = await KeychainManager().readToken(service: AppConfig.bundleID, account: "accessToken")
-                        let refreshToken = await KeychainManager().readToken(service: AppConfig.bundleID, account: "refreshToken")
+                        let toekn = await KeychainService().readToken(service: AppConfig.bundleID, account: AppConfig.accessTokenKey)
+                        let refreshToken = await KeychainService().readToken(service: AppConfig.bundleID, account: AppConfig.refreshTokenKey)
                     } catch {
                         
                     }

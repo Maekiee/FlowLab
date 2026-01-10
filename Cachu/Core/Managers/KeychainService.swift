@@ -9,7 +9,7 @@ enum KeychainError: Error {
 }
 
 
-actor KeychainManager: KeychainManagerProtocol {
+actor KeychainService: KeychainServiceProtocol {
     
     init() {}
     

@@ -1,6 +1,6 @@
 import Foundation
 
-protocol KeychainManagerProtocol: Sendable {
+protocol KeychainServiceProtocol: Sendable {
     func save(data: Data, service: String, account: String) async throws
     func read(service: String, account: String) -> Data?
     func delete(service: String, account: String) async throws
