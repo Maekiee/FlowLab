@@ -1,6 +1,6 @@
 import Foundation
 
-final class ApiClient: NetworkServiceProtocol, Sendable {
+final class ApiClient: ApiClientProtocol, Sendable {
     
     private let session: URLSession
     private let interceptor: InterceptorProtocol?

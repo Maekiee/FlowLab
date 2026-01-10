@@ -6,4 +6,5 @@ protocol TokenManagerProtocol: Sendable {
     func saveTokens(accessToken: String, refreshToken: String) async throws
     func clearTokens() async throws
     func refreshTokens() async throws -> Bool // 성공 시 true 반환
+    func tryAutoLogin() async -> Bool // 자동 로그인 시도, 성공 시 true 반환
 }

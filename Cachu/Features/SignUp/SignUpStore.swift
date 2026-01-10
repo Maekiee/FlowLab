@@ -96,20 +96,7 @@ final class SignUpStore: StoreProtocol {
                     accessToken: response.accessToken,
                     refreshToken: response.refreshToken
                 )
-                // 엑세스 토큰 저장
-//                try await keychainManager.save(
-//                    token: response.accessToken,
-//                    service: AppConfig.bundleID,
-//                    account: AppConfig.accessTokenKey
-//                )
-//                
-//                // 리프레시 토큰 저장
-//                try await keychainManager.save(
-//                    token: response.refreshToken,
-//                    service: AppConfig.bundleID,
-//                    account: AppConfig.refreshTokenKey
-//                )
-                
+            
                 effectSubject.send(.navigateToMain)
             } catch {
                 print("❌ 회원가입 실패: \(error)")

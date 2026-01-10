@@ -4,7 +4,9 @@ import Foundation
 final class Interceptor: InterceptorProtocol {
     private let tokenManager: TokenManagerProtocol
     
-    init(tokenManager: TokenManagerProtocol) {
+    init(
+        tokenManager: TokenManagerProtocol
+    ) {
         self.tokenManager = tokenManager
     }
     

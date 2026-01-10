@@ -1,7 +1,6 @@
 import Foundation
 
 actor TokenManager: TokenManagerProtocol {
-    
     private let keychain: KeychainServiceProtocol
     private let session: URLSession
     private let refreshURL: URL
@@ -116,5 +115,9 @@ actor TokenManager: TokenManagerProtocol {
             try? await clearTokens()
             throw error // 필요 시 에러 전파
         }
+    }
+    
+    func tryAutoLogin() async -> Bool {
+        return false
     }
 }

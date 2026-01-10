@@ -1,15 +1,15 @@
 import Foundation
 
 final class SignUpRepository: SignUpRepositoryProtocol {
-    private let network: NetworkServiceProtocol
+    private let apiClient: ApiClientProtocol
     
-    init(network: NetworkServiceProtocol) {
-        self.network = network
+    init(apiClient: ApiClientProtocol) {
+        self.apiClient = apiClient
     }
     
     /// 이메일 회원가입
     func signUp(request: JoinRequestDTO) async throws -> JoinResponseDTO {
         let endpoint = APIEndpoint.join(request)
-        return try await network.request(endpoint, type: JoinResponseDTO.self)
+        return try await apiClient.request(endpoint, type: JoinResponseDTO.self)
     }
 }

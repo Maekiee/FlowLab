@@ -1,14 +1,14 @@
 import Foundation
 
 final class LoginRepository: LoginRepositoryProtocol {
-    private let network: NetworkServiceProtocol
+    private let apiClient: ApiClientProtocol
     
-    init(network: NetworkServiceProtocol) {
-        self.network = network
+    init(apiClient: ApiClientProtocol) {
+        self.apiClient = apiClient
     }
     
     func login(request: LoginRequestDTO) async throws -> LoginResponseDTO {
         let endpoint = APIEndpoint.login(request)
-        return try await network.request(endpoint, type: LoginResponseDTO.self)
+        return try await apiClient.request(endpoint, type: LoginResponseDTO.self)
     }
 }

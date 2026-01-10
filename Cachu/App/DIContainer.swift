@@ -2,28 +2,30 @@ import SwiftUI
 
 final class DIContainer: Sendable {
     let tokenManager: TokenManagerProtocol
-    let networkService: NetworkServiceProtocol
+    let apiClient: ApiClientProtocol
     let keychainManager: KeychainServiceProtocol
-    
+
     init() {
         self.keychainManager = KeychainService()
+
         let tokenManager = TokenManager(keychain: keychainManager)
         self.tokenManager = tokenManager
+
         let interceptor = Interceptor(tokenManager: tokenManager)
-        self.networkService = ApiClient(interceptor: interceptor)
+        self.apiClient = ApiClient(interceptor: interceptor)
     }
-    
+
 }
 
 
 // MARK: - Repository Factories
 extension DIContainer {
     func makeSignUpRepository() -> SignUpRepositoryProtocol {
-        return SignUpRepository(network: networkService)
+        return SignUpRepository(apiClient: apiClient)
     }
     
     func makeLoginRepository() -> LoginRepositoryProtocol {
-        return LoginRepository(network: networkService)
+        return LoginRepository(apiClient: apiClient)
     }
 }
 
