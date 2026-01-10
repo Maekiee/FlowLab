@@ -2,22 +2,15 @@ import Foundation
 
 actor TokenManager: TokenManagerProtocol {
     private let keychain: KeychainServiceProtocol
-    private let session: URLSession
-    private let refreshURL: URL
-    
+    private let apiClient: ApiClientProtocol
     private var refreshTask: Task<Bool, Error>?
-    
-    // 현재 갱신 중인지 확인하는 플래그 (중복 요청 방지)
-    private var isRefreshing = false
-    
+
     init(
-        keychain: KeychainServiceProtocol = KeychainService(),
-        session: URLSession = .shared,
-        refreshURL: URL = URL(string:AppConfig.baseURL + "/auth/refresh")!
+        keychain: KeychainServiceProtocol,
+        apiClient: ApiClientProtocol
     ) {
         self.keychain = keychain
-        self.session = session
-        self.refreshURL = refreshURL
+        self.apiClient = apiClient
     }
     
     // MARK: - Token Access
@@ -85,39 +78,51 @@ actor TokenManager: TokenManagerProtocol {
         return try await task.value
     }
     
+    // 토큰 갱신
     func performRefreshToken() async throws -> Bool {
-        guard let refreshToken = getRefreshToken() else { return false }
-        
-        var request = URLRequest(url: refreshURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        // Bearer 포맷 등 서버 스펙에 맞게 수정
-        let body = ["refreshToken": refreshToken]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-        
+        guard let accessToken = getAccessToken(),
+              let refreshToken = getRefreshToken() else {
+            return false
+        }
+
         do {
-            let (data, response) = try await session.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                print("❌ Refresh Failed: Status Code Error")
-                try? await clearTokens()
-                return false
-            }
-            
-            let tokenData = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
-            try await saveTokens(accessToken: tokenData.accessToken, refreshToken: tokenData.refreshToken)
-            
+            let response = try await apiClient.request(
+                ApiEndpoint.refresh(accessToken: accessToken, refreshToken: refreshToken),
+                type: RefreshTokenResponseDTO.self
+            )
+
+            try await saveTokens(
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken
+            )
+
             print("✅ Token Refreshed Successfully")
             return true
-            
         } catch {
             print("❌ Refresh Failed: \(error)")
             try? await clearTokens()
-            throw error // 필요 시 에러 전파
+            throw error
         }
     }
-    
+
+    // 자동 로그인
     func tryAutoLogin() async -> Bool {
-        return false
+        // 키체인에 액세스 토큰이 없으면 첫 실행 유저로 판단
+        guard getAccessToken() != nil else {
+            print("🔑 엑세스 토큰이 없음 처음 실행한 유저")
+            return false
+        }
+
+        // 액세스 토큰이 있으면 토큰 갱신 시도
+        do {
+            let success = try await refreshTokens()
+            if success {
+                print("✅ 자동 로그인 성공")
+            }
+            return success
+        } catch {
+            print("❌ 자동 로그인 실패: \(error)")
+            return false
+        }
     }
 }

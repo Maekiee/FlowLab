@@ -8,17 +8,22 @@ final class DIContainer: Sendable {
     init() {
         self.keychainManager = KeychainService()
 
-        let tokenManager = TokenManager(keychain: keychainManager)
+        let authApiClient = ApiClient(interceptor: nil)
+
+        let tokenManager = TokenManager(
+            keychain: keychainManager,
+            apiClient: authApiClient
+        )
         self.tokenManager = tokenManager
 
+        // 일반 API용 ApiClient (Interceptor 포함)
         let interceptor = Interceptor(tokenManager: tokenManager)
         self.apiClient = ApiClient(interceptor: interceptor)
     }
-
 }
 
 
-// MARK: - Repository Factories
+// MARK: - Repository
 extension DIContainer {
     func makeSignUpRepository() -> SignUpRepositoryProtocol {
         return SignUpRepository(apiClient: apiClient)
@@ -30,7 +35,7 @@ extension DIContainer {
 }
 
 
-// MARK: - Store Factories
+// MARK: - Store
 extension DIContainer {
     @MainActor
     func makeSignUpStore() -> SignUpStore {
@@ -50,7 +55,7 @@ extension DIContainer {
 }
 
 
-// MARK: - View Factories
+// MARK: - View
 extension DIContainer: AppViewFactory {
     @MainActor
     func makeStartAuthView() -> AnyView {

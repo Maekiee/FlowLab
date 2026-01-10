@@ -8,7 +8,7 @@ final class LoginRepository: LoginRepositoryProtocol {
     }
     
     func login(request: LoginRequestDTO) async throws -> LoginResponseDTO {
-        let endpoint = APIEndpoint.login(request)
+        let endpoint = ApiEndpoint.login(request)
         return try await apiClient.request(endpoint, type: LoginResponseDTO.self)
     }
 }

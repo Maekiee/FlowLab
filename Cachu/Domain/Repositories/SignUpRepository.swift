@@ -9,7 +9,7 @@ final class SignUpRepository: SignUpRepositoryProtocol {
     
     /// 이메일 회원가입
     func signUp(request: JoinRequestDTO) async throws -> JoinResponseDTO {
-        let endpoint = APIEndpoint.join(request)
+        let endpoint = ApiEndpoint.join(request)
         return try await apiClient.request(endpoint, type: JoinResponseDTO.self)
     }
 }

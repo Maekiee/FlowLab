@@ -54,16 +54,30 @@ protocol AppViewFactory {
 @Observable
 final class Coordinator: CoordinatorProtocol {
     private let factory: AppViewFactory
-    
+    private let tokenManager: TokenManagerProtocol
+
     var navigationPath = NavigationPath()
     var rootRoute: AppRoute = .startAuth
     var sheetRoute: SheetRoute?
     var fullScreenSheetRoute: FullScreenSheetRoute?
-    
-    
-    
-    init(factory: AppViewFactory) {
+    var isCheckingAuth = true
+
+    init(factory: AppViewFactory, tokenManager: TokenManagerProtocol) {
         self.factory = factory
+        self.tokenManager = tokenManager
+    }
+
+    /// 앱 시작 시 자동 로그인 체크
+    func checkAutoLogin() async {
+        let success = await tokenManager.tryAutoLogin()
+
+        if success {
+            setRoot(.main)
+        } else {
+            setRoot(.startAuth)
+        }
+
+        isCheckingAuth = false
     }
     
     @ViewBuilder

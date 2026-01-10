@@ -2,30 +2,44 @@ import SwiftUI
 
 @main
 struct CachuApp: App {
-    
+
     @State private var coordinator: Coordinator
-    
+
     init() {
         let container = DIContainer()
-        _coordinator = State(initialValue: Coordinator(factory: container))
+        _coordinator = State(initialValue: Coordinator(
+            factory: container,
+            tokenManager: container.tokenManager
+        ))
     }
-    
+
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-        
+
     var body: some Scene {
         WindowGroup {
             @Bindable var bindableCoordinator = coordinator
-            NavigationStack(path: $bindableCoordinator.navigationPath) {
-                coordinator.build(route: coordinator.rootRoute)
-                    .navigationDestination(for: AppRoute.self) { route in
-                        coordinator.build(route: route)
+
+            Group {
+                if coordinator.isCheckingAuth {
+                    // 자동 로그인 체크 중 로딩 화면
+                    ProgressView()
+                } else {
+                    NavigationStack(path: $bindableCoordinator.navigationPath) {
+                        coordinator.build(route: coordinator.rootRoute)
+                            .navigationDestination(for: AppRoute.self) { route in
+                                coordinator.build(route: route)
+                            }
                     }
+                    .sheet(item: $bindableCoordinator.sheetRoute) { route in
+                        coordinator.buildSheet(route: route)
+                    }
+                    .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute) { route in
+                        coordinator.buildFullScreenSheet(route: route)
+                    }
+                }
             }
-            .sheet(item: $bindableCoordinator.sheetRoute) { route in
-                coordinator.buildSheet(route: route)
-            }
-            .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute){ route in
-                coordinator.buildFullScreenSheet(route: route)
+            .task {
+                await coordinator.checkAutoLogin()
             }
             .environment(coordinator)
         }
