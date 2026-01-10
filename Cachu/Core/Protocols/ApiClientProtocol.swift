@@ -1,5 +1,5 @@
 import Foundation
 
-protocol NetworkServiceProtocol: Sendable {
+protocol ApiClientProtocol: Sendable {
     func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) async throws -> T
 }
