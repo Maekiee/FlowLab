@@ -5,6 +5,7 @@ enum ApiEndpoint: Endpoint {
     case login(LoginRequestDTO)
     case join(JoinRequestDTO)
     case refresh(accessToken: String, refreshToken: String)
+    case logout
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -15,12 +16,13 @@ enum ApiEndpoint: Endpoint {
         case .login: return "/users/login"
         case .join: return "/users/join"
         case .refresh: return "/auth/refresh"
+        case .logout: return "/users/logout"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .login, .join:
+        case .login, .join, .logout:
             return .post
         case .refresh:
             return .get
@@ -38,6 +40,8 @@ enum ApiEndpoint: Endpoint {
             baseHeaders["RefreshToken"] = refreshToken
         }
         
+        
+        
         return baseHeaders
     }
     
@@ -47,14 +51,17 @@ enum ApiEndpoint: Endpoint {
             return try? JSONEncoder().encode(loginDTO)
         case .join(let joinDTO):
             return try? JSONEncoder().encode(joinDTO)
-        case .refresh:
+        case .refresh, .logout:
             return nil
         }
     }
     
     var requiresAuth: Bool {
         switch self {
-        case .login, .join, .refresh: return false
+        case .login, .join, .refresh:
+            return false
+        case .logout:
+            return true
         }
     }
 }
