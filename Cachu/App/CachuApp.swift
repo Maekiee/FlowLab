@@ -2,7 +2,6 @@ import SwiftUI
 
 @main
 struct CachuApp: App {
-
     @State private var coordinator: AppCoordinator
 
     init() {
@@ -21,22 +20,26 @@ struct CachuApp: App {
 
             Group {
                 if coordinator.isCheckingAuth {
-                    // 자동 로그인 체크 중 로딩 화면
                     ProgressView()
                 } else {
-                    NavigationStack(path: $bindableCoordinator.navigationPath) {
-                        coordinator.build(route: coordinator.rootRoute)
-                            .navigationDestination(for: AppRoute.self) { route in
-                                coordinator.build(route: route)
-                            }
-                    }
-                    .sheet(item: $bindableCoordinator.sheetRoute) { route in
-                        coordinator.buildSheet(route: route)
-                    }
-                    .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute) { route in
-                        coordinator.buildFullScreenSheet(route: route)
+                    switch coordinator.rootRoute {
+                    case .main:
+                        coordinator.build(route: .main)
+                    case .startAuth, .signup:
+                        NavigationStack(path: $bindableCoordinator.navigationPath) {
+                            coordinator.build(route: coordinator.rootRoute)
+                                .navigationDestination(for: AppRoute.self) { route in
+                                    coordinator.build(route: route)
+                                }
+                        }
                     }
                 }
+            }
+            .sheet(item: $bindableCoordinator.sheetRoute) { route in
+                coordinator.buildSheet(route: route)
+            }
+            .fullScreenCover(item: $bindableCoordinator.fullScreenSheetRoute) { route in
+                coordinator.buildFullScreenSheet(route: route)
             }
             .task {
                 await coordinator.checkAutoLogin()

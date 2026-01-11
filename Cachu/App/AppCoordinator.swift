@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import Observation
 import Combine
 
 enum AppRoute: Hashable {
@@ -158,12 +157,16 @@ final class AppCoordinator: CoordinatorProtocol {
     }
     
     func pop() {
+        guard !navigationPath.isEmpty else { return }
         navigationPath.removeLast()
     }
     
     func setRoot(_ route: AppRoute) {
         navigationPath = NavigationPath()
-        rootRoute = route
+        
+        withAnimation {
+            rootRoute = route
+        }
     }
     
     func present(sheet: SheetRoute) {
