@@ -22,9 +22,15 @@ final class Interceptor: InterceptorProtocol {
     func retry(_ request: URLRequest, dueTo result: Result<HTTPURLResponse, Error>) async -> RetryResult {
         switch result {
         case .success(let response):
-            // 401 Unauthorized 발생 시 토큰 갱신 시도
-            if response.statusCode == 401 {
-                print("🔄 [AuthInterceptor] 401 Detected. Refreshing Token...")
+            // 418: 리프레시 토큰 만료 - 재로그인 필요
+            if response.statusCode == 418 {
+                await clearTokensAndNotify()
+                await AuthEventManager.shared.send(.sessionExpired)
+                return .doNotRetryWithError(NetworkError.refreshTokenExpired("리프레시 토큰이 만료되었습니다."))
+            }
+
+            // 401 또는 419: 액세스 토큰 만료 - 토큰 갱신 시도
+            if response.statusCode == 401 || response.statusCode == 419 {
                 do {
                     let isRefreshed = try await tokenManager.refreshTokens()
                     return isRefreshed ? .retry : .doNotRetry
@@ -33,11 +39,13 @@ final class Interceptor: InterceptorProtocol {
                 }
             }
             return .doNotRetry
-            
+
         case .failure(let error):
-            // 네트워크 에러(오프라인 등)는 여기서 처리하거나 Pass
-            // 필요하다면 연결 대기 후 .retry 반환 가능
             return .doNotRetryWithError(error)
         }
+    }
+
+    private func clearTokensAndNotify() async {
+        try? await tokenManager.clearTokens()
     }
 }

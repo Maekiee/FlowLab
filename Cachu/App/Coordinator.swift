@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import Observation
-
+import Combine
 
 enum AppRoute: Hashable {
     case startAuth
@@ -62,9 +62,32 @@ final class Coordinator: CoordinatorProtocol {
     var fullScreenSheetRoute: FullScreenSheetRoute?
     var isCheckingAuth = true
 
+    private var authEventTask: Task<Void, Never>?
+
     init(factory: AppViewFactory, tokenManager: TokenManagerProtocol) {
         self.factory = factory
         self.tokenManager = tokenManager
+
+        subscribeAuthEvents()
+    }
+
+    // MARK: - Auth Event Subscription
+    private func subscribeAuthEvents() {
+        authEventTask = Task {
+            for await event in await AuthEventManager.shared.events {
+                switch event {
+                case .sessionExpired:
+                    handleSessionExpired()
+                }
+            }
+        }
+    }
+
+    /// 세션 만료 시 로그인 화면으로 이동
+    func handleSessionExpired() {
+        dismissSheet()
+        dismissFullScreen()
+        setRoot(.startAuth)
     }
 
     /// 앱 시작 시 자동 로그인 체크

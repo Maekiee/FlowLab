@@ -13,6 +13,9 @@ enum NetworkError: Error, LocalizedError, Equatable {
     /// 403: 권한 없음 (접근 불가)
     case forbidden(String)
     
+    /// 418: 리프레시 토큰 만료 (재로그인 필요)
+    case refreshTokenExpired(String)
+
     /// 419: 액세스 토큰 만료
     case tokenExpired(String)
     
@@ -39,6 +42,7 @@ enum NetworkError: Error, LocalizedError, Equatable {
         case .unknown: return "알 수 없는 에러가 발생했습니다."
         case .unauthorized(let message): return message
         case .forbidden(let message): return message
+        case .refreshTokenExpired(let message): return message
         case .tokenExpired(let message): return message
         case .invalidServerKey(let message): return message
         case .excessiveCall(let message): return message

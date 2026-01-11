@@ -66,6 +66,7 @@ final class ApiClient: ApiClientProtocol, Sendable {
             switch httpResponse.statusCode {
             case 401: throw NetworkError.unauthorized(errorMessage)
             case 403: throw NetworkError.forbidden(errorMessage)
+            case 418: throw NetworkError.refreshTokenExpired(errorMessage)
             case 419: throw NetworkError.tokenExpired(errorMessage)
             case 420: throw NetworkError.invalidServerKey(errorMessage)
             case 429: throw NetworkError.excessiveCall(errorMessage)
@@ -99,6 +100,7 @@ final class ApiClient: ApiClientProtocol, Sendable {
         switch statusCode {
         case 401: return "인증할 수 없는 액세스 토큰입니다."
         case 403: return "Forbidden"
+        case 418: return "리프레시 토큰이 만료되었습니다."
         case 419: return "액세스 토큰이 만료되었습니다."
         case 429: return "과호출입니다."
         case 444: return "비정상적인 URL 요청입니다."
