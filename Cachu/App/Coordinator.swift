@@ -56,11 +56,19 @@ final class Coordinator: CoordinatorProtocol {
     private let factory: AppViewFactory
     private let tokenManager: TokenManagerProtocol
 
+    // MARK: - App Level Navigation
     var navigationPath = NavigationPath()
     var rootRoute: AppRoute = .startAuth
     var sheetRoute: SheetRoute?
     var fullScreenSheetRoute: FullScreenSheetRoute?
     var isCheckingAuth = true
+
+    // MARK: - Tab Navigation
+    var selectedTab: MainTab = .home
+    let homeCoordinator = HomeCoordinator()
+    let mapCoordinator = MapCoordinator()
+    let favoriteCoordinator = FavoriteCoordinator()
+    let profileCoordinator = ProfileCoordinator()
 
     private var authEventTask: Task<Void, Never>?
 
@@ -69,6 +77,19 @@ final class Coordinator: CoordinatorProtocol {
         self.tokenManager = tokenManager
 
         subscribeAuthEvents()
+    }
+
+    // MARK: - Tab Methods
+    func switchTab(to tab: MainTab) {
+        selectedTab = tab
+    }
+
+    func resetAllTabs() {
+        homeCoordinator.popToRoot()
+        mapCoordinator.popToRoot()
+        favoriteCoordinator.popToRoot()
+        profileCoordinator.popToRoot()
+        selectedTab = .home
     }
 
     // MARK: - Auth Event Subscription
@@ -87,6 +108,7 @@ final class Coordinator: CoordinatorProtocol {
     func handleSessionExpired() {
         dismissSheet()
         dismissFullScreen()
+        resetAllTabs()
         setRoot(.startAuth)
     }
 
