@@ -4,9 +4,10 @@ import Combine
 // MARK: - HomeTabView (NavigationStack + Store + UI 통합)
 struct HomeTabView: View {
     @State private var store = HomeStore()
-    @Bindable var coordinator: HomeCoordinator
+    @Environment(HomeCoordinator.self) private var tabCoordinator
 
     var body: some View {
+        @Bindable var coordinator = tabCoordinator
         NavigationStack(path: $coordinator.path) {
             content
                 .navigationDestination(for: HomeRoute.self) { route in
@@ -102,11 +103,11 @@ struct HomeTabView: View {
     private func handleSideEffect(_ effect: HomeStore.SideEffect) {
         switch effect {
         case .navigateToPropertyList:
-            coordinator.push(.propertyList)
+            tabCoordinator.push(.propertyList)
         case .navigateToPropertyDetail(let id):
-            coordinator.push(.propertyDetail(id: id))
+            tabCoordinator.push(.propertyDetail(id: id))
         case .navigateToNotification:
-            coordinator.push(.notification)
+            tabCoordinator.push(.notification)
         }
     }
 }

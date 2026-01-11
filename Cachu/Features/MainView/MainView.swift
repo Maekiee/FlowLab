@@ -1,14 +1,15 @@
 import SwiftUI
 
 struct MainView: View {
-    @Environment(AppCoordinator.self) private var coordinator
+    @Environment(AppCoordinator.self) private var appCoordinator
 
     var body: some View {
-        @Bindable var coordinator = coordinator
+        @Bindable var coordinator = appCoordinator
 
         TabView(selection: $coordinator.selectedTab) {
             // MARK: - Home Tab
-            HomeTabView(coordinator: coordinator.homeCoordinator)
+            HomeTabView()
+                .environment(coordinator.homeCoordinator)
                 .tabItem {
                     Label(MainTab.home.title, systemImage: MainTab.home.icon)
                 }
