@@ -8,7 +8,7 @@ struct MainView: View {
 
         TabView(selection: $coordinator.selectedTab) {
             // MARK: - Home Tab
-            HomeTab(coordinator: coordinator.homeCoordinator)
+            HomeTabView(coordinator: coordinator.homeCoordinator)
                 .tabItem {
                     Label(MainTab.home.title, systemImage: MainTab.home.icon)
                 }
@@ -38,27 +38,6 @@ struct MainView: View {
     }
 }
 
-// MARK: - Home Tab
-struct HomeTab: View {
-    @Bindable var coordinator: HomeCoordinator
-
-    var body: some View {
-        NavigationStack(path: $coordinator.path) {
-            HomeTabView(coordinator: coordinator)
-                .navigationDestination(for: HomeRoute.self) { route in
-                    switch route {
-                    case .propertyDetail(let id):
-                        PropertyDetailView(propertyId: id)
-                    case .propertyList:
-                        PropertyListView()
-                    case .notification:
-                        NotificationView()
-                    }
-                }
-        }
-    }
-}
-
 // MARK: - Map Tab
 struct MapTab: View {
     @Bindable var coordinator: MapCoordinator
@@ -69,11 +48,11 @@ struct MapTab: View {
                 .navigationDestination(for: MapRoute.self) { route in
                     switch route {
                     case .propertyDetail(let id):
-                        PropertyDetailView(propertyId: id)
+                        Text("매물 상세: \(id)")
                     case .filter:
-                        FilterView()
+                        Text("필터")
                     case .search:
-                        SearchView()
+                        Text("검색")
                     }
                 }
         }
@@ -90,7 +69,7 @@ struct FavoriteTab: View {
                 .navigationDestination(for: FavoriteRoute.self) { route in
                     switch route {
                     case .propertyDetail(let id):
-                        PropertyDetailView(propertyId: id)
+                        Text("매물 상세: \(id)")
                     }
                 }
         }
@@ -107,11 +86,11 @@ struct ProfileTab: View {
                 .navigationDestination(for: ProfileRoute.self) { route in
                     switch route {
                     case .settings:
-                        SettingsView()
+                        Text("설정")
                     case .editProfile:
-                        EditProfileView()
+                        Text("프로필 수정")
                     case .myProperties:
-                        MyPropertiesView()
+                        Text("내 매물 관리")
                     }
                 }
         }
