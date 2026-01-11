@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @Environment(Coordinator.self) private var coordinator
+    @Environment(AppCoordinator.self) private var coordinator
 
     var body: some View {
         @Bindable var coordinator = coordinator

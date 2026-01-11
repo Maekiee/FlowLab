@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct StartAuthView: View {
-    @Environment(Coordinator.self) var coordinator
+    @Environment(AppCoordinator.self) var coordinator
     
     var body: some View {
         VStack {

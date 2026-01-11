@@ -3,7 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @State var store: LoginStore
     @State private var errorMessage: String?
-    @Environment(Coordinator.self) var coordinator
+    @Environment(AppCoordinator.self) var coordinator
     
     
     var body: some View {

@@ -3,7 +3,7 @@ import SwiftUI
 
 struct SignUpView: View {
     @State var store: SignUpStore
-    @Environment(Coordinator.self) var coordinator
+    @Environment(AppCoordinator.self) var coordinator
     
     var body: some View {
         VStack {

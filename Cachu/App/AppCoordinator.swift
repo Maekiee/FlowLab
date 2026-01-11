@@ -52,7 +52,7 @@ protocol AppViewFactory {
 
 @MainActor
 @Observable
-final class Coordinator: CoordinatorProtocol {
+final class AppCoordinator: CoordinatorProtocol {
     private let factory: AppViewFactory
     private let tokenManager: TokenManagerProtocol
 

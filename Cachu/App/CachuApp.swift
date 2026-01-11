@@ -3,11 +3,11 @@ import SwiftUI
 @main
 struct CachuApp: App {
 
-    @State private var coordinator: Coordinator
+    @State private var coordinator: AppCoordinator
 
     init() {
         let container = DIContainer()
-        _coordinator = State(initialValue: Coordinator(
+        _coordinator = State(initialValue: AppCoordinator(
             factory: container,
             tokenManager: container.tokenManager
         ))

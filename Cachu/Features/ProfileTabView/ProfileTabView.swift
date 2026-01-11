@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileTabView: View {
-    @Environment(Coordinator.self) private var appCoordinator
+    @Environment(AppCoordinator.self) private var appCoordinator
     let coordinator: ProfileCoordinator
 
     var body: some View {
