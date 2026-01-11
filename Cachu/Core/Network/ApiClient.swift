@@ -1,7 +1,6 @@
 import Foundation
 
 final class ApiClient: ApiClientProtocol, Sendable {
-    
     private let session: URLSession
     private let interceptor: InterceptorProtocol?
     

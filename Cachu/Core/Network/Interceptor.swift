@@ -4,20 +4,18 @@ import Foundation
 final class Interceptor: InterceptorProtocol {
     private let tokenManager: TokenManagerProtocol
     
-    init(
-        tokenManager: TokenManagerProtocol
-    ) {
+    init(tokenManager: TokenManagerProtocol) {
         self.tokenManager = tokenManager
     }
     
     func adapt(_ request: URLRequest, for endpoint: Endpoint) async -> URLRequest {
-        // ✅ 성능 최적화: 인증이 불필요한 엔드포인트는 로직 수행 없이 즉시 리턴
         guard endpoint.requiresAuth else { return request }
         
         var adaptedRequest = request
         if let token = await tokenManager.getAccessToken() {
             adaptedRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
+        
         return adaptedRequest
     }
     

@@ -42,8 +42,6 @@ enum ApiEndpoint: Endpoint {
             baseHeaders["RefreshToken"] = refreshToken
         }
         
-        
-        
         return baseHeaders
     }
     
