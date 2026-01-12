@@ -5,6 +5,7 @@ import SwiftUI
 /// 각 탭은 독립적인 NavigationStack과 Router를 가짐
 struct MainTabView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(DIContainer.self) private var container
 
     var body: some View {
         @Bindable var appRouter = router
@@ -27,7 +28,7 @@ struct MainTabView: View {
                 .tag(MainTab.some)
 
             // MARK: - Profile Tab
-            ProfileTabView()
+            container.makeProfileTabView()
                 .environment(router)
                 .environment(router.profileRouter)
                 .tabItem {

@@ -36,12 +36,16 @@ extension DIContainer {
 
 // MARK: - Repository
 extension DIContainer {
-    nonisolated func makeSignUpRepository() -> SignUpRepositoryProtocol {
+    func makeSignUpRepository() -> SignUpRepositoryProtocol {
         return SignUpRepository(apiClient: apiClient)
     }
 
-    nonisolated func makeLoginRepository() -> LoginRepositoryProtocol {
+    func makeLoginRepository() -> LoginRepositoryProtocol {
         return LoginRepository(apiClient: apiClient)
+    }
+    
+    func makeProfileTabRepository() -> ProfileTabRepositoryProtocol {
+        return ProfileTabRepository(apiClient: apiClient)
     }
 }
 
@@ -65,6 +69,15 @@ extension DIContainer {
             router: router
         )
     }
+    
+    @MainActor
+    func makeProfileTabStore() -> ProfileTabStore {
+        return ProfileTabStore(
+            repository: makeProfileTabRepository(),
+            tokenManager: tokenManager
+//            router: router
+        )
+    }
 }
 
 
@@ -85,6 +98,12 @@ extension DIContainer {
     func makeSignUpView(router: AppRouter) -> SignUpView {
         let store = makeSignUpStore(router: router)
         return SignUpView(store: store)
+    }
+    
+    @MainActor
+    func makeProfileTabView() -> ProfileTabView {
+        let store = makeProfileTabStore()
+        return ProfileTabView(store: store)
     }
 }
 

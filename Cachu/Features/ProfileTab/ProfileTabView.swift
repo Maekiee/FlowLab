@@ -9,7 +9,11 @@ struct ProfileTabView: View {
     
     // Store 초기화
     // ProfileTabStore가 init()을 가지고 있다고 가정합니다.
-    @State private var store = ProfileTabStore()
+    @State var store: ProfileTabStore
+    
+    init(store: ProfileTabStore) {
+        self._store = State(initialValue: store)
+    }
 
     var body: some View {
         @Bindable var profileRouter = router
