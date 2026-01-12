@@ -1,0 +1,29 @@
+import SwiftUI
+
+// MARK: - SomeRouter
+/// Some 탭의 독립적인 네비게이션을 관리하는 Router
+/// 추후 기능 확장 시 구체화
+@MainActor
+@Observable
+final class SomeRouter: TabRouterProtocol {
+    typealias Route = SomeRoute
+
+    // MARK: - Properties
+    var path = NavigationPath()
+    let container: DIContainer
+
+    // MARK: - Initialization
+    init(container: DIContainer) {
+        self.container = container
+    }
+
+    // MARK: - View Building
+    @ViewBuilder
+    func buildView(for route: SomeRoute) -> some View {
+        switch route {
+        case .detail(let id):
+            // TODO: 상세 화면 구현 후 연결
+            Text("Detail: \(id)")
+        }
+    }
+}

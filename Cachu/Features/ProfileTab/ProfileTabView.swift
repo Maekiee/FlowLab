@@ -1,8 +1,11 @@
 import SwiftUI
 
+// MARK: - ProfileTabView
+/// 프로필 탭의 메인 콘텐츠 뷰
+/// NavigationStack은 MainTabView의 ProfileTab에서 관리
 struct ProfileTabView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
-    let coordinator: ProfileCoordinator
+    @Environment(AppRouter.self) private var appRouter
+    @Environment(ProfileRouter.self) private var router
 
     var body: some View {
         List {
@@ -29,7 +32,7 @@ struct ProfileTabView: View {
                     Spacer()
 
                     Button {
-                        coordinator.push(.editProfile)
+                        router.push(.editProfile)
                     } label: {
                         Text("편집")
                             .font(.subheadline)
@@ -38,19 +41,10 @@ struct ProfileTabView: View {
                 .padding(.vertical, 8)
             }
 
-            // 메뉴 섹션
-            Section("내 활동") {
-                Button {
-                    coordinator.push(.myProperties)
-                } label: {
-                    Label("내 매물 관리", systemImage: "building.2")
-                }
-                .foregroundStyle(.primary)
-            }
-
+            // 앱 설정 섹션
             Section("앱 설정") {
                 Button {
-                    coordinator.push(.settings)
+                    router.push(.settings)
                 } label: {
                     Label("설정", systemImage: "gearshape")
                 }
@@ -60,7 +54,7 @@ struct ProfileTabView: View {
             // 로그아웃 섹션
             Section {
                 Button(role: .destructive) {
-                    appCoordinator.handleSessionExpired()
+                    appRouter.handleSessionExpired()
                 } label: {
                     Label("로그아웃", systemImage: "rectangle.portrait.and.arrow.right")
                 }

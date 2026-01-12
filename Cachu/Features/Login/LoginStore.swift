@@ -4,12 +4,15 @@ import Combine
 @MainActor
 @Observable
 final class LoginStore: StoreProtocol {
+    // MARK: - State
     struct LoginState {
         var email = ""
         var password = ""
+        var isLoading = false
         var errorMessage: String?
     }
 
+    // MARK: - Intent
     enum LoginIntent {
         case inputEmail(String)
         case inputPassword(String)
@@ -17,25 +20,31 @@ final class LoginStore: StoreProtocol {
         case dismissError
     }
 
+    // MARK: - SideEffect (UI 피드백만)
     enum SideEffect: Equatable {
-        case navigateToMain
         case showErrorAlert(String)
     }
-    
+
+    // MARK: - Properties
     private(set) var state = LoginState()
     private let repository: LoginRepositoryProtocol
     private let tokenManager: TokenManagerProtocol
+    private let router: AppRouter
+
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
     var effect: AnyPublisher<SideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
     }
-    
+
+    // MARK: - Initialization
     init(
         repository: LoginRepositoryProtocol,
-        tokenManager: TokenManagerProtocol
+        tokenManager: TokenManagerProtocol,
+        router: AppRouter
     ) {
         self.repository = repository
         self.tokenManager = tokenManager
+        self.router = router
     }
     
     func action(_ intent: LoginIntent) {
@@ -51,32 +60,33 @@ final class LoginStore: StoreProtocol {
         }
     }
     
+    // MARK: - Private Methods
     private func emailLogin() {
         let loginForm = LoginRequestDTO(
             email: state.email,
             password: state.password,
             deviceToken: ""
         )
-        
+
         Task {
+            state.isLoading = true
+            defer { state.isLoading = false }
+
             do {
                 let response = try await repository.login(request: loginForm)
-                
-                // 엑세스 토큰 저장
+
                 try await tokenManager.saveTokens(
                     accessToken: response.accessToken,
                     refreshToken: response.refreshToken
                 )
-                
-                effectSubject.send(.navigateToMain)
-                
-                // 키체인 에 엑세스 리프레시 토큰 저장
+
+                // Router를 통해 직접 네비게이션
+                router.switchToMain()
+
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
-                print("실패1 \(error.errorDescription)")
             } catch {
                 effectSubject.send(.showErrorAlert(error.localizedDescription))
-                print("실패2 \(error.localizedDescription)")
             }
         }
     }

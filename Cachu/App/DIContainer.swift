@@ -1,6 +1,8 @@
 import SwiftUI
 
-final class DIContainer: Sendable {
+@MainActor
+@Observable
+final class DIContainer {
     let tokenManager: TokenManagerProtocol
     let apiClient: ApiClientProtocol
     let keychainManager: KeychainServiceProtocol
@@ -23,13 +25,22 @@ final class DIContainer: Sendable {
 }
 
 
+// MARK: - Router Factory
+extension DIContainer {
+    @MainActor
+    func makeAppRouter() -> AppRouter {
+        return AppRouter(container: self, tokenManager: tokenManager)
+    }
+}
+
+
 // MARK: - Repository
 extension DIContainer {
-    func makeSignUpRepository() -> SignUpRepositoryProtocol {
+    nonisolated func makeSignUpRepository() -> SignUpRepositoryProtocol {
         return SignUpRepository(apiClient: apiClient)
     }
-    
-    func makeLoginRepository() -> LoginRepositoryProtocol {
+
+    nonisolated func makeLoginRepository() -> LoginRepositoryProtocol {
         return LoginRepository(apiClient: apiClient)
     }
 }
@@ -38,44 +49,50 @@ extension DIContainer {
 // MARK: - Store
 extension DIContainer {
     @MainActor
-    func makeSignUpStore() -> SignUpStore {
+    func makeSignUpStore(router: AppRouter) -> SignUpStore {
         return SignUpStore(
             repository: makeSignUpRepository(),
-            tokenManager: self.tokenManager,
+            tokenManager: tokenManager,
+            router: router
         )
     }
-    
+
     @MainActor
-    func makeLoginStore() -> LoginStore {
+    func makeLoginStore(router: AppRouter) -> LoginStore {
         return LoginStore(
             repository: makeLoginRepository(),
-            tokenManager: self.tokenManager,
+            tokenManager: tokenManager,
+            router: router
         )
     }
 }
 
 
-// MARK: - View
-extension DIContainer: AppViewFactory {
+// MARK: - Auth View Factory
+extension DIContainer {
     @MainActor
-    func makeStartAuthView() -> AnyView {
-        return AnyView(StartAuthView())
+    func makeStartAuthView() -> StartAuthView {
+        return StartAuthView()
     }
-    
+
     @MainActor
-    func makeLoginView() -> AnyView {
-        let store = makeLoginStore()
-        return AnyView(LoginView(store: store))
+    func makeLoginView(router: AppRouter) -> LoginView {
+        let store = makeLoginStore(router: router)
+        return LoginView(store: store)
     }
-    
+
     @MainActor
-    func makeSignUpView() -> AnyView {
-        let store = makeSignUpStore()
-        return AnyView(SignUpView(store: store))
+    func makeSignUpView(router: AppRouter) -> SignUpView {
+        let store = makeSignUpStore(router: router)
+        return SignUpView(store: store)
     }
-    
+}
+
+
+// MARK: - Main View Factory
+extension DIContainer {
     @MainActor
-    func makeMainView() -> AnyView {
-        return AnyView(MainView())
+    func makeMainTabView() -> MainTabView {
+        return MainTabView()
     }
 }

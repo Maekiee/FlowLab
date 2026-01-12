@@ -1,30 +1,18 @@
 import SwiftUI
 import Combine
 
-// MARK: - HomeTabView (NavigationStack + Store + UI 통합)
+// MARK: - HomeTabView
+/// 홈 탭의 메인 콘텐츠 뷰
+/// NavigationStack은 MainTabView의 HomeTab에서 관리
 struct HomeTabView: View {
     @State private var store = HomeStore()
-    @Environment(HomeCoordinator.self) private var tabCoordinator
+    @Environment(HomeRouter.self) private var router
 
     var body: some View {
-        @Bindable var coordinator = tabCoordinator
-        NavigationStack(path: $coordinator.path) {
-            content
-                .navigationDestination(for: HomeRoute.self) { route in
-                    switch route {
-                    case .propertyDetail(let id):
-                        Text("매물 상세: \(id)")
-                    case .propertyList:
-                        Text("매물 목록")
-                    case .notification:
-                        Text("알림")
-                    }
-                }
-        }
-        .environment(coordinator)  // 하위 View들에 주입
-        .onReceive(store.effect) { sideEffect in
-            handleSideEffect(sideEffect)
-        }
+        content
+            .onReceive(store.effect) { sideEffect in
+                handleSideEffect(sideEffect)
+            }
     }
 
     // MARK: - Content
@@ -103,11 +91,11 @@ struct HomeTabView: View {
     private func handleSideEffect(_ effect: HomeStore.SideEffect) {
         switch effect {
         case .navigateToPropertyList:
-            tabCoordinator.push(.propertyList)
+            router.push(.propertyList)
         case .navigateToPropertyDetail(let id):
-            tabCoordinator.push(.propertyDetail(id: id))
+            router.push(.propertyDetail(id: id))
         case .navigateToNotification:
-            tabCoordinator.push(.notification)
+            router.push(.notification)
         }
     }
 }
