@@ -27,7 +27,7 @@ struct MainTabView: View {
                 .tag(MainTab.some)
 
             // MARK: - Profile Tab
-            ProfileTab()
+            ProfileTabView()
                 .environment(router)
                 .environment(router.profileRouter)
                 .tabItem {
@@ -74,22 +74,3 @@ struct SomeTab: View {
     }
 }
 
-// MARK: - Profile Tab Container
-/// 프로필 탭의 NavigationStack 컨테이너
-struct ProfileTab: View {
-    @Environment(AppRouter.self) private var appRouter
-    @Environment(ProfileRouter.self) private var router
-
-    var body: some View {
-        @Bindable var profileRouter = router
-
-        NavigationStack(path: $profileRouter.path) {
-            ProfileTabView()
-                .environment(appRouter)
-                .environment(router)
-                .navigationDestination(for: ProfileRoute.self) { route in
-                    router.buildView(for: route)
-                }
-        }
-    }
-}
