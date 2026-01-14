@@ -62,15 +62,19 @@ final class LoginStore: StoreProtocol {
     
     // MARK: - Private Methods
     private func emailLogin() {
-        let loginForm = LoginRequestDTO(
-            email: state.email,
-            password: state.password,
-            deviceToken: ""
-        )
+      
 
         Task {
             state.isLoading = true
             defer { state.isLoading = false }
+            
+            let fcmToken = await tokenManager.getFCMToken() ?? ""
+            
+            let loginForm = LoginRequestDTO(
+                email: state.email,
+                password: state.password,
+                deviceToken: fcmToken
+            )
 
             do {
                 let response = try await repository.login(request: loginForm)
