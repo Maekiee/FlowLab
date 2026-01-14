@@ -34,7 +34,18 @@ actor TokenManager: TokenManagerProtocol {
         }
         return String(data: data, encoding: .utf8)
     }
-        
+
+    // MARK: - FCM Token
+    func getFCMToken() -> String? {
+        guard let data = keychain.read(
+            service: AppConfig.bundleID,
+            account: AppConfig.fcmTokenKey
+        ) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
     /// 토큰 저장
     func saveTokens(accessToken: String, refreshToken: String) async throws {
         if let accessData = accessToken.data(using: .utf8) {
@@ -67,9 +78,8 @@ actor TokenManager: TokenManagerProtocol {
             return try await existingTask.value
         }
         
-        // 2. 새로운 Task 생성
         let task = Task<Bool, Error> {
-            defer { self.refreshTask = nil } // 작업 종료 시 Task 초기화
+            defer { self.refreshTask = nil }
             
             return try await performRefreshToken()
         }
@@ -96,7 +106,7 @@ actor TokenManager: TokenManagerProtocol {
                 refreshToken: response.refreshToken
             )
 
-            print("✅ Token Refreshed Successfully")
+            print("✅ 토큰 갱신 성공")
             return true
         } catch {
             print("❌ Refresh Failed: \(error)")
@@ -107,7 +117,6 @@ actor TokenManager: TokenManagerProtocol {
 
     // 자동 로그인
     func tryAutoLogin() async -> Bool {
-        // 키체인에 액세스 토큰이 없으면 첫 실행 유저로 판단
         guard getAccessToken() != nil else {
             print("🔑 엑세스 토큰이 없음 처음 실행한 유저")
             return false

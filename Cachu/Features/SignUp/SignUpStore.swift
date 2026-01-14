@@ -78,19 +78,21 @@ final class SignUpStore: StoreProtocol {
     
     // MARK: - Private Methods
     private func requestSignUp() {
-        let userRegisterInfo = JoinRequestDTO(
-            email: state.email,
-            password: state.password,
-            nick: state.nickname,
-            phoneNum: state.phoneNumber,
-            introduction: state.introduce,
-            deviceToken: ""
-        )
-
         Task {
             state.isLoading = true
             defer { state.isLoading = false }
-
+            
+            let fcmToken = await tokenManager.getFCMToken() ?? ""
+            
+            let userRegisterInfo = JoinRequestDTO(
+                email: state.email,
+                password: state.password,
+                nick: state.nickname,
+                phoneNum: state.phoneNumber,
+                introduction: state.introduce,
+                deviceToken: fcmToken
+            )
+            
             do {
                 let response = try await repository.signUp(request: userRegisterInfo)
 
@@ -101,7 +103,6 @@ final class SignUpStore: StoreProtocol {
 
                 // Router를 통해 직접 네비게이션
                 router.switchToMain()
-
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {

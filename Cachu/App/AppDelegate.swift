@@ -37,9 +37,18 @@ extension AppDelegate: MessagingDelegate {
     
     // FCM 토큰이 갱신될 때 호출됨 (테스트 할 때 이 토큰이 필요합니다!)
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
         print("FCM Token: \(fcmToken ?? "")")
         
-        // 필요한 경우 서버로 이 토큰을 전송하는 로직을 여기에 추가합니다.
+        // FCM 토큰 키체인 저장
+        Task {
+            let keychain = KeychainService()
+            try await keychain.save(
+                token: token,
+                service: AppConfig.bundleID,
+                account: AppConfig.fcmTokenKey
+            )
+        }
     }
 }
 

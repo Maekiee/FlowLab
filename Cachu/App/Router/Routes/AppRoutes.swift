@@ -1,13 +1,9 @@
 import Foundation
 
 // MARK: - App Root View
-/// 앱의 루트 뷰 상태
-/// 자동 로그인 결과에 따라 결정
 enum AppRootView: Equatable {
-    /// 미인증 상태 - StartAuthView가 루트
-    case auth
-    /// 인증 완료 상태 - MainTabView가 루트
-    case main
+    case auth // 로그인 전
+    case main // 로그인 후
 }
 
 // MARK: - Auth Routes

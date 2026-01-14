@@ -1,7 +1,5 @@
 import SwiftUI
 
-// MARK: - StartAuthView
-/// 인증 시작 화면 (소셜 로그인, 이메일 로그인, 회원가입 선택)
 struct StartAuthView: View {
     @Environment(AppRouter.self) private var router
 
