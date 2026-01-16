@@ -79,6 +79,12 @@ final class AppRouter {
         withAnimation {
             rootView = .main
         }
+
+        Task {
+            if let accessToken = await tokenManager.getAccessToken() {
+                print("🔐 메인 화면 진입 - AccessToken: \(accessToken)")
+            }
+        }
     }
 
     /// 인증 화면으로 전환 (로그아웃/세션 만료 시)

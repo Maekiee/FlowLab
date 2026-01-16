@@ -92,8 +92,11 @@ actor TokenManager: TokenManagerProtocol {
     func performRefreshToken() async throws -> Bool {
         guard let accessToken = getAccessToken(),
               let refreshToken = getRefreshToken() else {
+            print("⚠️ 토큰 갱신 실패: 기존 토큰이 없음")
             return false
         }
+
+        print("🔄 토큰 갱신 시도 - 이전 토큰: \(accessToken.suffix(20))")
 
         do {
             let response = try await apiClient.request(
@@ -101,10 +104,19 @@ actor TokenManager: TokenManagerProtocol {
                 type: RefreshTokenResponseDTO.self
             )
 
+            print("🆕 새 토큰 수신: \(response.accessToken.suffix(20))")
+
             try await saveTokens(
                 accessToken: response.accessToken,
                 refreshToken: response.refreshToken
             )
+
+            // 저장 후 확인
+            if let savedToken = getAccessToken() {
+                print("💾 저장된 토큰: \(savedToken.suffix(20))")
+            } else {
+                print("❌ 토큰 저장 실패!")
+            }
 
             print("✅ 토큰 갱신 성공")
             return true

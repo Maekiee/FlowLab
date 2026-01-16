@@ -9,7 +9,7 @@ final class HomeTabStore: StoreProtocol {
     }
     
     enum Intent {
-        
+        case onApper
     }
     
     enum SideEffect {
@@ -35,7 +35,38 @@ final class HomeTabStore: StoreProtocol {
     
     func action(_ intent: Intent) {
         switch intent {
-            
+        case .onApper:
+            fetchBanner()
+        }
+    }
+}
+
+extension HomeTabStore {
+    private func fetchBanner() {
+        Task {
+            do {
+                let res = try await repository.getBanner()
+                print("홈 상단 베너 가져오기: \(res.data)")
+            } catch {
+                print("❌ 통신 에러: \(error)")
+                if let decodingError = error as? DecodingError {
+                    switch decodingError {
+                    case .keyNotFound(let key, let context):
+                        print("🔑 키를 찾을 수 없음: '\(key.stringValue)'")
+                        print("경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
+                    case .typeMismatch(let type, let context):
+                        print("🔀 타입 불일치: \(type)")
+                        print("   경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
+                    case .valueNotFound(let type, let context):
+                        print("📭 값이 없음: \(type)")
+                        print("   경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
+                    case .dataCorrupted(let context):
+                        print("💥 데이터 손상: \(context.debugDescription)")
+                    @unknown default:
+                        print("🤷 알 수 없는 디코딩 에러")
+                    }
+                }
+            }
         }
     }
 }

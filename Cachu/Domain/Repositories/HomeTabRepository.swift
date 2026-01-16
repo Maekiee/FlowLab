@@ -8,8 +8,11 @@ final class HomeTabRepository: HomeTabRepositoryProtocol {
     init(apiClient: ApiClientProtocol) {
         self.apiClient = apiClient
     }
-    
-    func getBanner() {
-        print("베너 가져오기")
+}
+
+extension HomeTabRepository {
+    func getBanner() async throws -> EstateGeoListResponseDTO {
+        let endPoint = ApiEndpoint.homeBanner
+        return try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
     }
 }

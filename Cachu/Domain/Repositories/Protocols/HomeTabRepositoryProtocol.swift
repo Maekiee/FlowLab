@@ -2,5 +2,5 @@ import Foundation
 
 
 protocol HomeTabRepositoryProtocol {
-    func getBanner()
+    func getBanner() async throws -> EstateGeoListResponseDTO
 }
