@@ -72,7 +72,6 @@ struct ProfileTabView: View {
                 }
             }
             .navigationTitle("내 정보")
-            // Router를 통한 화면 전환 처리
             .navigationDestination(for: ProfileRoute.self) { route in
                 router.buildView(for: route)
             }

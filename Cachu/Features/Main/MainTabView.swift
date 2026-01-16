@@ -12,7 +12,7 @@ struct MainTabView: View {
 
         TabView(selection: $appRouter.selectedTab) {
             // MARK: - Home Tab
-            HomeTab()
+            container.makeHomeTabView()
                 .environment(router.homeRouter)
                 .tabItem {
                     Label(MainTab.home.title, systemImage: MainTab.home.icon)
@@ -35,24 +35,6 @@ struct MainTabView: View {
                     Label(MainTab.profile.title, systemImage: MainTab.profile.icon)
                 }
                 .tag(MainTab.profile)
-        }
-    }
-}
-
-// MARK: - Home Tab Container
-/// 홈 탭의 NavigationStack 컨테이너
-struct HomeTab: View {
-    @Environment(HomeRouter.self) private var router
-
-    var body: some View {
-        @Bindable var homeRouter = router
-
-        NavigationStack(path: $homeRouter.path) {
-            HomeTabView()
-                .environment(router)
-                .navigationDestination(for: HomeRoute.self) { route in
-                    router.buildView(for: route)
-                }
         }
     }
 }

@@ -47,6 +47,10 @@ extension DIContainer {
     func makeProfileTabRepository() -> ProfileTabRepositoryProtocol {
         return ProfileTabRepository(apiClient: apiClient)
     }
+    
+    func makeHomeTabRepository() -> HomeTabRepositoryProtocol {
+        return HomeTabRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -78,6 +82,15 @@ extension DIContainer {
 //            router: router
         )
     }
+    
+    
+    @MainActor
+    func makeHomeTabStore() -> HomeTabStore {
+        return HomeTabStore(
+            repository: makeHomeTabRepository(),
+            tokenManager: tokenManager
+        )
+    }
 }
 
 
@@ -104,6 +117,12 @@ extension DIContainer {
     func makeProfileTabView() -> ProfileTabView {
         let store = makeProfileTabStore()
         return ProfileTabView(store: store)
+    }
+    
+    @MainActor
+    func makeHomeTabView() -> HomeTabView {
+        let store = makeHomeTabStore()
+        return HomeTabView(store: store)
     }
 }
 
