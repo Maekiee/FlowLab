@@ -37,6 +37,8 @@ final class HomeTabStore: StoreProtocol {
         switch intent {
         case .onApper:
             fetchBanner()
+            fetchHotProperties()
+            fetchDailyRealEstateTopics()
         }
     }
 }
@@ -46,7 +48,6 @@ extension HomeTabStore {
         Task {
             do {
                 let res = try await repository.getBanner()
-                print("홈 상단 베너 가져오기: \(res.data)")
             } catch {
                 print("❌ 통신 에러: \(error)")
                 if let decodingError = error as? DecodingError {
@@ -66,6 +67,28 @@ extension HomeTabStore {
                         print("🤷 알 수 없는 디코딩 에러")
                     }
                 }
+            }
+        }
+    }
+    
+    private func fetchHotProperties() {
+        Task {
+            do {
+                let res = try await repository.getHotProperties()
+            } catch {
+                // 네트웤 에러 추가
+                print("‼️‼️핫 매물 네트워크 호출 실패")
+            }
+        }
+    }
+    
+    private func fetchDailyRealEstateTopics() {
+        Task {
+            do {
+                let res = try await repository.getDailyRealEstateTopics()
+            } catch {
+                // 네트워크 에러 추가
+                print("‼️‼️오늘의 부동산 토픽 네트워크 호출 실패")
             }
         }
     }

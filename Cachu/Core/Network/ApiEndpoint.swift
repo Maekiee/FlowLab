@@ -8,6 +8,8 @@ enum ApiEndpoint: Endpoint {
     case refresh(accessToken: String, refreshToken: String)
     case logout
     case homeBanner
+    case hotProperties
+    case dailyRealEstateTopics
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -21,6 +23,9 @@ enum ApiEndpoint: Endpoint {
         case .refresh: return "/auth/refresh"
         case .logout: return "/users/logout"
         case .homeBanner: return "/estates/today-estates"
+        case .hotProperties: return "/estates/hot-estates"
+        case .dailyRealEstateTopics: return "/estates/today-topic"
+    
         }
     }
     
@@ -28,7 +33,7 @@ enum ApiEndpoint: Endpoint {
         switch self {
         case .login, .join, .validEmail, .logout:
             return .post
-        case .refresh, .homeBanner:
+        case .refresh, .homeBanner, .hotProperties, .dailyRealEstateTopics:
             return .get
         }
     }
@@ -55,7 +60,12 @@ enum ApiEndpoint: Endpoint {
             return try? JSONEncoder().encode(joinDTO)
         case .validEmail(let emailDTO):
             return try? JSONEncoder().encode(emailDTO)
-        case .refresh, .logout, .homeBanner:
+        case
+                .refresh,
+                .logout,
+                .homeBanner,
+                .hotProperties,
+                .dailyRealEstateTopics:
             return nil
         }
     }
@@ -64,7 +74,7 @@ enum ApiEndpoint: Endpoint {
         switch self {
         case .login, .join, .refresh, .validEmail:
             return false
-        case .logout, .homeBanner:
+        case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics:
             return true
         }
     }

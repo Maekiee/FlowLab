@@ -13,11 +13,8 @@ final class Interceptor: InterceptorProtocol {
 
         var adaptedRequest = request
         if let token = await tokenManager.getAccessToken() {
-            print("🔑 API 요청 토큰 (끝 20자): \(token.suffix(20))")
             adaptedRequest.setValue(token, forHTTPHeaderField: "Authorization")
-        } else {
-            print("⚠️ API 요청 시 토큰이 없음!")
-        }
+        } 
 
         return adaptedRequest
     }
