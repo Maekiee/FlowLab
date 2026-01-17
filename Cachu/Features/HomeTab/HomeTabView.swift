@@ -23,6 +23,10 @@ struct HomeTabView: View {
                     Text("홈 화면")
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                    
+                    Circle()
+                        .frame(width: 100, height: 100)
+                        .background(.deepCream)
                 }
                 .navigationTitle("홈")
                 .onAppear() {
