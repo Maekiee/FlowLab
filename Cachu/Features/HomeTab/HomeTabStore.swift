@@ -5,15 +5,19 @@ import Combine
 @Observable
 final class HomeTabStore: StoreProtocol {
     struct State {
-        
+        var isLoading = false
+        var errorMessage: String?
+        var bannerItems: [EstateSummaryResponseDTO] = []
+        var hotItems: [EstateSummaryResponseDTO] = []
+        var dailyTopics: [DailyRealEstateDTO] = []
     }
     
     enum Intent {
-        case onApper
+        case onAppear
     }
     
     enum SideEffect {
-        
+        case showErrorAlert(String)
     }
     
     private(set) var state = State()
@@ -35,60 +39,33 @@ final class HomeTabStore: StoreProtocol {
     
     func action(_ intent: Intent) {
         switch intent {
-        case .onApper:
-            fetchBanner()
-            fetchHotProperties()
-            fetchDailyRealEstateTopics()
+        case .onAppear:
+            fetchHomeTabData()
         }
     }
 }
 
 extension HomeTabStore {
-    private func fetchBanner() {
+    private func fetchHomeTabData() {
         Task {
-            do {
-                let res = try await repository.getBanner()
-            } catch {
-                print("❌ 통신 에러: \(error)")
-                if let decodingError = error as? DecodingError {
-                    switch decodingError {
-                    case .keyNotFound(let key, let context):
-                        print("🔑 키를 찾을 수 없음: '\(key.stringValue)'")
-                        print("경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
-                    case .typeMismatch(let type, let context):
-                        print("🔀 타입 불일치: \(type)")
-                        print("   경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
-                    case .valueNotFound(let type, let context):
-                        print("📭 값이 없음: \(type)")
-                        print("   경로: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))")
-                    case .dataCorrupted(let context):
-                        print("💥 데이터 손상: \(context.debugDescription)")
-                    @unknown default:
-                        print("🤷 알 수 없는 디코딩 에러")
-                    }
-                }
-            }
-        }
-    }
+            state.isLoading = true
     
-    private func fetchHotProperties() {
-        Task {
+            defer { state.isLoading = false }
+            
             do {
-                let res = try await repository.getHotProperties()
-            } catch {
-                // 네트웤 에러 추가
-                print("‼️‼️핫 매물 네트워크 호출 실패")
-            }
-        }
-    }
-    
-    private func fetchDailyRealEstateTopics() {
-        Task {
-            do {
-                let res = try await repository.getDailyRealEstateTopics()
-            } catch {
-                // 네트워크 에러 추가
-                print("‼️‼️오늘의 부동산 토픽 네트워크 호출 실패")
+                async let responseBanner = try await repository.getBanner()
+                async let responseHotProperties = try await repository.getHotProperties()
+                async let responseDailyEstateTopics = try await repository.getDailyRealEstateTopics()
+                
+                let (banner, hotItem, dailyTopic) = try await (responseBanner, responseHotProperties, responseDailyEstateTopics)
+                
+                state.bannerItems = banner.data
+                state.hotItems = hotItem.data
+                state.dailyTopics = dailyTopic.data
+            } catch let error as NetworkError {
+                effectSubject.send(.showErrorAlert(error.errorDescription))
+            } catch  {
+                effectSubject.send(.showErrorAlert(error.localizedDescription))
             }
         }
     }
