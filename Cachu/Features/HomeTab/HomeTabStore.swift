@@ -10,10 +10,12 @@ final class HomeTabStore: StoreProtocol {
         var bannerItems: [EstateSummaryResponseDTO] = []
         var hotItems: [EstateSummaryResponseDTO] = []
         var dailyTopics: [DailyRealEstateDTO] = []
+        var searchInput = ""
     }
     
     enum Intent {
         case onAppear
+        case searchInput(String)
     }
     
     enum SideEffect {
@@ -41,6 +43,8 @@ final class HomeTabStore: StoreProtocol {
         switch intent {
         case .onAppear:
             fetchHomeTabData()
+        case .searchInput(let input):
+            state.searchInput = input
         }
     }
 }

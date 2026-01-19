@@ -19,14 +19,10 @@ struct HomeTabView: View {
         
         NavigationStack(path: $homeRouter.path) {
             ScrollView {
-                VStack(spacing: 20) {
-                    Text("홈 화면")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Circle()
-                        .frame(width: 100, height: 100)
-                        .background(.deepCream)
+                VStack() {
+                    ZStack {
+                        searchBar
+                    }.border(.deepCoast, width: 1)
                 }
                 .onAppear() {
                     store.action(.onAppear)
@@ -40,5 +36,28 @@ struct HomeTabView: View {
             }
         }
     }
+    
+    var searchBar: some View {
+        HStack {
+            Image("search")
+                .foregroundColor(.gray60)
+            
+            TextField("검색어를 입력해 주세요", text: Binding(
+                get: { store.state.searchInput },
+                set: { store.action(.searchInput($0)) }
+            ))
+        }
+        .frame(height: 40)
+        .padding(.horizontal, 15)
+        .padding(.vertical, 10)
+    }
 }
+
+#if DEBUG
+#Preview {
+    PreviewWrapper { preview in
+        HomeTabView(store: preview.makeHomeTabStore())
+    }
+}
+#endif
 
