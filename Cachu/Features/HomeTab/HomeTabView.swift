@@ -19,10 +19,18 @@ struct HomeTabView: View {
         
         NavigationStack(path: $homeRouter.path) {
             ScrollView {
-                VStack() {
+                VStack(spacing: 0) {
                     ZStack {
+                        VStack {
+                            Text("배경 사진")
+                        }
+                        .frame(width: 400, height: 300)
+                        .background(.deepCream)
+                        
                         searchBar
-                    }.border(.deepCoast, width: 1)
+                            .padding(.vertical, 12)
+                         
+                    }
                 }
                 .onAppear() {
                     store.action(.onAppear)
@@ -38,18 +46,23 @@ struct HomeTabView: View {
     }
     
     var searchBar: some View {
-        HStack {
-            Image("search")
-                .foregroundColor(.gray60)
-            
-            TextField("검색어를 입력해 주세요", text: Binding(
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+                .font(.system(size: 18, weight: .medium))
+
+            TextField("검색어를 입력해주세요.", text: Binding(
                 get: { store.state.searchInput },
                 set: { store.action(.searchInput($0)) }
             ))
+            .font(.system(size: 16))
+            .foregroundColor(.primary)
         }
+        .padding(.horizontal, 16)
         .frame(height: 40)
-        .padding(.horizontal, 15)
-        .padding(.vertical, 10)
+        .background(.white)
+        .clipShape(Capsule())
+        .padding(.horizontal, 16)
     }
 }
 
