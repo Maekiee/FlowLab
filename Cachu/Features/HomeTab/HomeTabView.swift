@@ -1,6 +1,6 @@
 import SwiftUI
 import Combine
-
+import Kingfisher
 
 // MARK: - Home Tab Container
 struct HomeTabView: View {
@@ -21,11 +21,11 @@ struct HomeTabView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ZStack {
-                        VStack {
-                            Text("배경 사진")
+                        TabView {
+                            ForEach(store.state.bannerItems, id: \.self) { banner in
+                                Text(banner.title)
+                            }
                         }
-                        .frame(width: 400, height: 300)
-                        .background(.deepCream)
                         
                         searchBar
                             .padding(.vertical, 12)
@@ -66,11 +66,9 @@ struct HomeTabView: View {
     }
 }
 
-#if DEBUG
 #Preview {
     PreviewWrapper { preview in
         HomeTabView(store: preview.makeHomeTabStore())
     }
 }
-#endif
 

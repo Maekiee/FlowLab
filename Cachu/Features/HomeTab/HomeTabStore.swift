@@ -7,7 +7,7 @@ final class HomeTabStore: StoreProtocol {
     struct State {
         var isLoading = false
         var errorMessage: String?
-        var bannerItems: [EstateSummaryResponseDTO] = []
+        var bannerItems: [Banner] = []
         var hotItems: [EstateSummaryResponseDTO] = []
         var dailyTopics: [DailyRealEstateDTO] = []
         var searchInput = ""
@@ -57,9 +57,9 @@ extension HomeTabStore {
             defer { state.isLoading = false }
             
             do {
-                async let responseBanner = try await repository.getBanner()
-                async let responseHotProperties = try await repository.getHotProperties()
-                async let responseDailyEstateTopics = try await repository.getDailyRealEstateTopics()
+                async let responseBanner = try await repository.fetchBanners()
+                async let responseHotProperties = try await repository.fetchHotProperties()
+                async let responseDailyEstateTopics = try await repository.fetchDailyRealEstateTopics()
                 
                 let (banner, hotItem, dailyTopic) = try await (responseBanner, responseHotProperties, responseDailyEstateTopics)
                 

@@ -15,15 +15,15 @@ struct MockTokenManager: TokenManagerProtocol {
 }
 
 struct MockHomeTabRepository: HomeTabRepositoryProtocol {
-    func getBanner() async throws -> EstateGeoListResponseDTO {
+    func fetchBanners() async throws -> Banners {
+        return Banners(from: EstateGeoListResponseDTO(data: []))
+    }
+    
+    func fetchHotProperties() async throws -> EstateGeoListResponseDTO {
         return EstateGeoListResponseDTO(data: [])
     }
     
-    func getHotProperties() async throws -> EstateGeoListResponseDTO {
-        return EstateGeoListResponseDTO(data: [])
-    }
-    
-    func getDailyRealEstateTopics() async throws -> DailyRealEstateTopicsDTO {
+    func fetchDailyRealEstateTopics() async throws -> DailyRealEstateTopicsDTO {
         return DailyRealEstateTopicsDTO(data: [])
     }
 }

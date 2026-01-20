@@ -13,17 +13,18 @@ final class HomeTabRepository: HomeTabRepositoryProtocol {
 }
 
 extension HomeTabRepository {
-    func getBanner() async throws -> EstateGeoListResponseDTO {
+    func fetchBanners() async throws -> Banners {
         let endPoint = ApiEndpoint.homeBanner
-        return try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
+        let item = try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
+        return Banners(from: item)
     }
     
-    func getHotProperties() async throws -> EstateGeoListResponseDTO {
+    func fetchHotProperties() async throws -> EstateGeoListResponseDTO {
         let endPoint = ApiEndpoint.hotProperties
         return try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
     }
     
-    func getDailyRealEstateTopics() async throws -> DailyRealEstateTopicsDTO {
+    func fetchDailyRealEstateTopics() async throws -> DailyRealEstateTopicsDTO {
         let endPoint = ApiEndpoint.dailyRealEstateTopics
         return try await apiClient.request(endPoint, type: DailyRealEstateTopicsDTO.self)
     }
