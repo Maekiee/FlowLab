@@ -6,6 +6,7 @@ import Combine
 final class HomeTabStore: StoreProtocol {
     struct State {
         var isLoading = false
+        var accessToken: String?  
         var errorMessage: String?
         var bannerItems: [Banner] = []
         var hotItems: [EstateSummaryResponseDTO] = []
@@ -53,16 +54,17 @@ extension HomeTabStore {
     private func fetchHomeTabData() {
         Task {
             state.isLoading = true
-    
+            state.accessToken = await tokenManager.getAccessToken()
+
             defer { state.isLoading = false }
-            
+
             do {
                 async let responseBanner = try await repository.fetchBanners()
                 async let responseHotProperties = try await repository.fetchHotProperties()
                 async let responseDailyEstateTopics = try await repository.fetchDailyRealEstateTopics()
-                
+
                 let (banner, hotItem, dailyTopic) = try await (responseBanner, responseHotProperties, responseDailyEstateTopics)
-                
+
                 state.bannerItems = banner.data
                 state.hotItems = hotItem.data
                 state.dailyTopics = dailyTopic.data

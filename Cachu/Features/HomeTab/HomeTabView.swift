@@ -2,6 +2,19 @@ import SwiftUI
 import Combine
 import Kingfisher
 
+
+struct MyImageDownloadRequestModifier: ImageDownloadRequestModifier {
+    let accessToken: String
+
+    func modified(for request: URLRequest) -> URLRequest? {
+        var modifiedRequest = request
+        modifiedRequest.setValue(accessToken, forHTTPHeaderField: "Authorization")
+        modifiedRequest.setValue(AppConfig.SeSACKey, forHTTPHeaderField: "SeSACKey")
+        return modifiedRequest
+    }
+}
+
+
 // MARK: - Home Tab Container
 struct HomeTabView: View {
     @Environment(AppRouter.self) private var appRouter
@@ -23,7 +36,14 @@ struct HomeTabView: View {
                     ZStack {
                         TabView {
                             ForEach(store.state.bannerItems, id: \.self) { banner in
-                                Text(banner.title)
+                                ZStack {
+                                    KFImage(banner.thumbnail)
+                                        .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(height: 300)
+                                    Text(banner.title)
+                                }
                             }
                         }
                         
