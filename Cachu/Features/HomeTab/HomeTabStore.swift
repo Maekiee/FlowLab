@@ -90,7 +90,7 @@ extension HomeTabStore {
         let payload = banner.payload
         
         guard payload.type == "WEBVIEW" else { return }
-        let fullPath = AppConfig.baseURL + payload.value
+        let fullPath = AppConfig.baseURLWeb + payload.value
         
         if let url = URL(string: fullPath) {
             effectSubject.send(.routeTo(.webView(url: url)))

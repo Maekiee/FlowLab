@@ -47,17 +47,22 @@ struct HomeTabView: View {
 //                            }
                             
                             ForEach(store.state.mainBanners, id: \.self) { banner in
-//                                KFImage(banner.imageUrl)
-//                                    .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
-//                                    .resizable()
-//                                    .scaledToFill()
-//                                    .frame(height: 300)
-                                Text(banner.name)
+                                KFImage(URL(string: AppConfig.baseURL + banner.imageUrl))
+                                    .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 300)
+                                    .onTapGesture {
+                                        store.action(.didTapBanner(banner))
+                                    }
                             }
                         }
+                        .tabViewStyle(.page(indexDisplayMode: .automatic))
+                        .frame(height: 300)
                         
-                        searchBar
-                            .padding(.vertical, 12)
+//                        searchBar
+//                            .padding(.vertical, 12)
                          
                     }
                 }

@@ -6,9 +6,9 @@ struct CommonWebView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         let preferences = WKWebpagePreferences()
-        preferences.allowsContentJavaScript = true
+        let config = WKWebViewConfiguration() // 웹뷰 기본 설정
         
-        let config = WKWebViewConfiguration()
+        preferences.allowsContentJavaScript = true // 자바스크립트 싱행 허용
         config.defaultWebpagePreferences = preferences
         
         let webView = WKWebView(frame: .zero, configuration: config)
@@ -16,9 +16,9 @@ struct CommonWebView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        // 중복 로드 방지 로직 등을 추가할 수 있음
         if uiView.url != url {
-            let request = URLRequest(url: url)
+            var request = URLRequest(url: url)
+            request.setValue(AppConfig.SeSACKey, forHTTPHeaderField: "SeSACKey")
             uiView.load(request)
         }
     }
