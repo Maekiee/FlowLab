@@ -81,8 +81,13 @@ struct HomeTabView: View {
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .webView(let url):
-                    CommonWebView(url: url)
-                        .navigationBarTitleDisplayMode(.inline)
+                    CommonWebView(
+                        url: url,
+                        accessToken: store.state.accessToken ?? ""
+                    ) { count in
+                        print("출석 완료: \(count)회")
+                    }
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
