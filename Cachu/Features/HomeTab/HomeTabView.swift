@@ -35,15 +35,24 @@ struct HomeTabView: View {
                 VStack(spacing: 0) {
                     ZStack {
                         TabView {
-                            ForEach(store.state.bannerItems, id: \.self) { banner in
-                                ZStack {
-                                    KFImage(banner.thumbnail)
-                                        .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(height: 300)
-                                    Text(banner.title)
-                                }
+//                            ForEach(store.state.homeTabTopItems, id: \.self) { homeTopItem in
+//                                ZStack {
+//                                    KFImage(homeTopItem.thumbnail)
+//                                        .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
+//                                        .resizable()
+//                                        .scaledToFill()
+//                                        .frame(height: 300)
+//                                    Text(homeTopItem.title)
+//                                }
+//                            }
+                            
+                            ForEach(store.state.mainBanners, id: \.self) { banner in
+//                                KFImage(banner.imageUrl)
+//                                    .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(height: 300)
+                                Text(banner.name)
                             }
                         }
                         
@@ -59,7 +68,16 @@ struct HomeTabView: View {
                     switch effect {
                     case .showErrorAlert(let mesasge):
                         errorMessage = mesasge
+                    case .routeTo(let route):
+                        router.push(route)
                     }
+                }
+            }
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .webView(let url):
+                    CommonWebView(url: url)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }

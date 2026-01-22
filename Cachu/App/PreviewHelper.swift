@@ -15,8 +15,12 @@ struct MockTokenManager: TokenManagerProtocol {
 }
 
 struct MockHomeTabRepository: HomeTabRepositoryProtocol {
-    func fetchBanners() async throws -> Banners {
-        return Banners(from: EstateGeoListResponseDTO(data: []))
+    func fetchBannerMain() async throws -> BannersDTO {
+        return BannersDTO(data: [])
+    }
+    
+    func fetchHomeTabTopItems() async throws -> HomeTabTopItems {
+        return HomeTabTopItems(from: EstateGeoListResponseDTO(data: []))
     }
     
     func fetchHotProperties() async throws -> EstateGeoListResponseDTO {

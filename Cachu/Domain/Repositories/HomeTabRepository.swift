@@ -13,10 +13,10 @@ final class HomeTabRepository: HomeTabRepositoryProtocol {
 }
 
 extension HomeTabRepository {
-    func fetchBanners() async throws -> Banners {
+    func fetchHomeTabTopItems() async throws -> HomeTabTopItems {
         let endPoint = ApiEndpoint.homeBanner
         let item = try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
-        return Banners(from: item)
+        return HomeTabTopItems(from: item)
     }
     
     func fetchHotProperties() async throws -> EstateGeoListResponseDTO {
@@ -27,5 +27,10 @@ extension HomeTabRepository {
     func fetchDailyRealEstateTopics() async throws -> DailyRealEstateTopicsDTO {
         let endPoint = ApiEndpoint.dailyRealEstateTopics
         return try await apiClient.request(endPoint, type: DailyRealEstateTopicsDTO.self)
+    }
+    
+    func fetchBannerMain() async throws -> BannersDTO {
+        let endPoint = ApiEndpoint.bannerMain
+        return try await apiClient.request(endPoint, type: BannersDTO.self)
     }
 }

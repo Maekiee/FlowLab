@@ -73,9 +73,7 @@ enum MainTab: Int, Hashable, CaseIterable {
 // MARK: - Home Tab Routes
 /// 홈 탭 내 네비게이션
 enum HomeRoute: Hashable {
-    case propertyDetail(id: String)
-    case propertyList
-    case notification
+    case webView(url: URL)
 }
 
 // MARK: - Some Tab Routes

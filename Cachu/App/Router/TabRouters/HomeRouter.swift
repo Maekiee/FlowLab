@@ -20,15 +20,8 @@ final class HomeRouter: TabRouterProtocol {
     @ViewBuilder
     func buildView(for route: HomeRoute) -> some View {
         switch route {
-        case .propertyDetail(let id):
-            // TODO: PropertyDetailView 구현 후 연결
-            Text("Property Detail: \(id)")
-        case .propertyList:
-            // TODO: PropertyListView 구현 후 연결
-            Text("Property List")
-        case .notification:
-            // TODO: NotificationView 구현 후 연결
-            Text("Notification")
+        default:
+            Text("")
         }
     }
 }

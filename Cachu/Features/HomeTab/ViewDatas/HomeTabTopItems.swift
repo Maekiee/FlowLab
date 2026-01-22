@@ -1,15 +1,15 @@
 import Foundation
 
 
-struct Banners {
-    let data: [Banner]
+struct HomeTabTopItems {
+    let data: [HomeTabTopItem]
     
     init(from dto: EstateGeoListResponseDTO) {
-        self.data = dto.data.map{ Banner(from: $0) }
+        self.data = dto.data.map{ HomeTabTopItem(from: $0) }
     }
 }
 
-struct Banner: Hashable, Identifiable {
+struct HomeTabTopItem: Hashable, Identifiable {
     let id: String
     let title: String
     let introduction: String
