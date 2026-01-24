@@ -5,7 +5,7 @@ import SwiftUI
 /// 추후 기능 확장 시 구체화
 @MainActor
 @Observable
-final class SomeRouter: TabRouterProtocol {
+final class VideoTabRouter: TabRouterProtocol {
     typealias Route = SomeRoute
 
     // MARK: - Properties
