@@ -58,6 +58,7 @@ final class AppRouter {
     }
 
     // MARK: - Auto Login
+    
     /// 앱 시작 시 자동 로그인 체크
     func checkAutoLogin() async {
         isCheckingAuth = true
@@ -73,6 +74,7 @@ final class AppRouter {
     }
 
     // MARK: - Root View Transition
+    
     /// 메인 화면으로 전환 (로그인/회원가입 성공 시)
     func switchToMain() {
         authPath = NavigationPath()
@@ -96,6 +98,7 @@ final class AppRouter {
     }
 
     // MARK: - Auth Flow Navigation
+    
     /// Auth 플로우 내 화면 push (Login/SignUp)
     func pushAuth(_ route: AuthRoute) {
         authPath.append(route)
