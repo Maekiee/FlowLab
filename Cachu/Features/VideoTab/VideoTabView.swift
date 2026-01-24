@@ -32,6 +32,10 @@ struct VideoTabView: View {
         .navigationDestination(for: VideoTabRoute.self) { route in
             tabRouter.buildView(for: route)
         }
+        .onAppear {
+            print("호출 호출")
+            store.action(.onAppear)
+        }
     }
 }
 

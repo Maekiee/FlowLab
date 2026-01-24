@@ -10,5 +10,8 @@ final class VideoTabRepository: VideoTabRepositoryProtocol {
 }
 
 extension VideoTabRepository {
-    
+    func fetchVideoList() async throws -> VideoListDTO {
+        let endPoint = ApiEndpoint.getVideos
+        return try await apiClient.request(endPoint, type: VideoListDTO.self)
+    }
 }

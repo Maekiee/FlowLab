@@ -11,6 +11,7 @@ enum ApiEndpoint: Endpoint {
     case hotProperties
     case dailyRealEstateTopics
     case bannerMain
+    case getVideos
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -27,7 +28,7 @@ enum ApiEndpoint: Endpoint {
         case .hotProperties: return "/estates/hot-estates"
         case .dailyRealEstateTopics: return "/estates/today-topic"
         case .bannerMain: return "/banners/main"
-    
+        case .getVideos: return "/videos"
         }
     }
     
@@ -35,7 +36,13 @@ enum ApiEndpoint: Endpoint {
         switch self {
         case .login, .join, .validEmail, .logout:
             return .post
-        case .refresh, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain:
+        case
+                .refresh,
+                .homeBanner,
+                .hotProperties,
+                .dailyRealEstateTopics,
+                .bannerMain,
+                .getVideos:
             return .get
         }
     }
@@ -68,7 +75,8 @@ enum ApiEndpoint: Endpoint {
                 .homeBanner,
                 .hotProperties,
                 .dailyRealEstateTopics,
-                .bannerMain:
+                .bannerMain,
+                .getVideos:
             return nil
         }
     }
@@ -77,7 +85,7 @@ enum ApiEndpoint: Endpoint {
         switch self {
         case .login, .join, .refresh, .validEmail:
             return false
-        case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain:
+        case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain, .getVideos:
             return true
         }
     }
