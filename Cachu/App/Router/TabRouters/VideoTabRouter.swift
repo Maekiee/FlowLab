@@ -6,7 +6,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class VideoTabRouter: TabRouterProtocol {
-    typealias Route = SomeRoute
+    typealias Route = VideoTabRoute
 
     // MARK: - Properties
     var path = NavigationPath()
@@ -19,7 +19,7 @@ final class VideoTabRouter: TabRouterProtocol {
 
     // MARK: - View Building
     @ViewBuilder
-    func buildView(for route: SomeRoute) -> some View {
+    func buildView(for route: VideoTabRoute) -> some View {
         switch route {
         case .detail(let id):
             // TODO: 상세 화면 구현 후 연결

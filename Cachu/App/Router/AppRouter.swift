@@ -34,7 +34,7 @@ final class AppRouter {
 
     // MARK: - Tab Routers
     let homeRouter: HomeRouter
-    let someRouter: SomeRouter
+    let videoRouter: VideoTabRouter
     let profileRouter: ProfileRouter
 
     // MARK: - Auth Event Task
@@ -47,7 +47,7 @@ final class AppRouter {
 
         // Tab Routers 초기화
         self.homeRouter = HomeRouter(container: container)
-        self.someRouter = SomeRouter(container: container)
+        self.videoRouter = VideoTabRouter(container: container)
         self.profileRouter = ProfileRouter(container: container)
 
         subscribeAuthEvents()
@@ -161,7 +161,7 @@ final class AppRouter {
     // MARK: - Reset Tab Routers
     private func resetAllTabRouters() {
         homeRouter.popToRoot()
-        someRouter.popToRoot()
+        videoRouter.popToRoot()
         profileRouter.popToRoot()
         selectedTab = .home
     }

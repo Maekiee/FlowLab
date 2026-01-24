@@ -4,7 +4,7 @@ import SwiftUI
 /// Some 탭의 메인 콘텐츠 뷰
 /// 추후 기능 확장 시 구체화
 struct SomeTabView: View {
-    @Environment(SomeRouter.self) private var router
+    @Environment(VideoTabRouter.self) private var router
 
     var body: some View {
         VStack(spacing: 20) {

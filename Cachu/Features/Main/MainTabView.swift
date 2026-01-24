@@ -20,12 +20,12 @@ struct MainTabView: View {
                 .tag(MainTab.home)
 
             // MARK: - Some Tab
-            SomeTab()
-                .environment(router.someRouter)
+            container.makeVideoTabView()
+                .environment(router.videoRouter)
                 .tabItem {
-                    Label(MainTab.some.title, systemImage: MainTab.some.icon)
+                    Label(MainTab.video.title, systemImage: MainTab.video.icon)
                 }
-                .tag(MainTab.some)
+                .tag(MainTab.video)
 
             // MARK: - Profile Tab
             container.makeProfileTabView()
@@ -41,19 +41,19 @@ struct MainTabView: View {
 
 // MARK: - Some Tab Container
 /// Some 탭의 NavigationStack 컨테이너
-struct SomeTab: View {
-    @Environment(SomeRouter.self) private var router
-
-    var body: some View {
-        @Bindable var someRouter = router
-
-        NavigationStack(path: $someRouter.path) {
-            SomeTabView()
-                .environment(router)
-                .navigationDestination(for: SomeRoute.self) { route in
-                    router.buildView(for: route)
-                }
-        }
-    }
-}
+//struct SomeTab: View {
+//    @Environment(VideoTabRouter.self) private var router
+//
+//    var body: some View {
+//        @Bindable var someRouter = router
+//
+//        NavigationStack(path: $someRouter.path) {
+//            SomeTabView()
+//                .environment(router)
+//                .navigationDestination(for: .self) { route in
+//                    router.buildView(for: route)
+//                }
+//        }
+//    }
+//}
 

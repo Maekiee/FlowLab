@@ -72,7 +72,7 @@ struct PreviewWrapper<Content: View>: View {
             .environment(preview.appRouter)
             .environment(preview.appRouter.homeRouter)
             .environment(preview.appRouter.profileRouter)
-            .environment(preview.appRouter.someRouter)
+            .environment(preview.appRouter.videoRouter)
     }
 }
 

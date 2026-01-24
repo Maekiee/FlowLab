@@ -51,6 +51,10 @@ extension DIContainer {
     func makeHomeTabRepository() -> HomeTabRepositoryProtocol {
         return HomeTabRepository(apiClient: apiClient)
     }
+    
+    func makeVideoTabRepository() -> VideoTabRepositoryProtocol {
+        return VideoTabRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -91,6 +95,14 @@ extension DIContainer {
             tokenManager: tokenManager
         )
     }
+    
+    @MainActor
+    func makeVideoTabStore() -> VideoTabStroe {
+        return VideoTabStroe(
+            repository: makeVideoTabRepository(),
+            tokenManager: tokenManager,
+        )
+    }
 }
 
 
@@ -123,6 +135,11 @@ extension DIContainer {
     func makeHomeTabView() -> HomeTabView {
         let store = makeHomeTabStore()
         return HomeTabView(store: store)
+    }
+    
+    func makeVideoTabView() -> VideoTabView {
+        let store = makeVideoTabStore()
+        return VideoTabView(store: store)
     }
 }
 

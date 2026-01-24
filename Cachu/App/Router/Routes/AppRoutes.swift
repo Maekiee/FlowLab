@@ -44,14 +44,14 @@ enum FullScreenRoute: Identifiable, Hashable {
 /// 메인 탭 정의 (3개 탭)
 enum MainTab: Int, Hashable, CaseIterable {
     case home = 0
-    case some = 1
+    case video = 1
     case profile = 2
 
     var title: String {
         switch self {
         case .home:
             return "홈"
-        case .some:
+        case .video:
             return "탭2"
         case .profile:
             return "내 정보"
@@ -62,7 +62,7 @@ enum MainTab: Int, Hashable, CaseIterable {
         switch self {
         case .home:
             return "house"
-        case .some:
+        case .video:
             return "square.grid.2x2"
         case .profile:
             return "person"
@@ -76,7 +76,7 @@ enum HomeRoute: Hashable {
 }
 
 // MARK: - Some Tab Routes
-enum SomeRoute: Hashable {
+enum VideoTabRoute: Hashable {
     case detail(id: String)
 }
 

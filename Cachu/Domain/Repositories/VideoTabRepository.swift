@@ -1,8 +1,14 @@
-//
-//  VideoTabRepository.swift
-//  Cachu
-//
-//  Created by 박도원 on 1/24/26.
-//
-
 import Foundation
+
+
+final class VideoTabRepository: VideoTabRepositoryProtocol {
+    private let apiClient: ApiClientProtocol
+    
+    init(apiClient: ApiClientProtocol) {
+        self.apiClient = apiClient
+    }
+}
+
+extension VideoTabRepository {
+    
+}
