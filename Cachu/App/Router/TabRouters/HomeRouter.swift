@@ -11,9 +11,21 @@ final class HomeRouter: TabRouterProtocol {
     var path = NavigationPath()
     let container: DIContainer
 
+    // MARK: - FullScreen WebView
+    var fullScreenWebViewURL: URL?
+
     // MARK: - Initialization
     init(container: DIContainer) {
         self.container = container
+    }
+
+    // MARK: - FullScreen Presentation
+    func presentFullScreenWebView(url: URL) {
+        fullScreenWebViewURL = url
+    }
+
+    func dismissFullScreenWebView() {
+        fullScreenWebViewURL = nil
     }
 
     // MARK: - View Building

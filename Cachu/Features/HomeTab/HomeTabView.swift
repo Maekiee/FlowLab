@@ -22,6 +22,7 @@ struct HomeTabView: View {
     
     @State var store: HomeTabStore
     @State private var errorMessage: String?
+    @State private var webAlertMessage: String?
     
     init(store: HomeTabStore) {
         self._store = State(initialValue: store)
@@ -74,20 +75,37 @@ struct HomeTabView: View {
                     case .showErrorAlert(let mesasge):
                         errorMessage = mesasge
                     case .routeTo(let route):
-                        router.push(route)
+                        switch route {
+                        case .webView(let url):
+                            router.presentFullScreenWebView(url: url)
+                        }
                     }
                 }
             }
-            .navigationDestination(for: HomeRoute.self) { route in
-                switch route {
-                case .webView(let url):
+            .fullScreenCover(isPresented: Binding(
+                get: { router.fullScreenWebViewURL != nil },
+                set: { if !$0 { router.dismissFullScreenWebView() } }
+            )) {
+                if let url = router.fullScreenWebViewURL {
                     CommonWebView(
                         url: url,
                         accessToken: store.state.accessToken ?? ""
                     ) { count in
-                        print("출석 완료: \(count)회")
+                        webAlertMessage = "출석 완료: \(count)회"
                     }
-                    .navigationBarTitleDisplayMode(.inline)
+                    .alert("출석", isPresented: Binding(
+                        get: { webAlertMessage != nil },
+                        set: { if !$0 { webAlertMessage = nil } }
+                    )) {
+                        Button("확인") {
+                            webAlertMessage = nil
+                            router.dismissFullScreenWebView()
+                        }
+                    } message: {
+                        if let message = webAlertMessage {
+                            Text(message)
+                        }
+                    }
                 }
             }
         }
