@@ -53,7 +53,7 @@ extension VideoDetailStore {
             do {
                 let res = try await repository.fetchVideo(videoId: state.videoId)
                 
-                if let fullPath = URL(string: AppConfig.baseURLWeb + res.stream_url) {
+                if let fullPath = URL(string: AppConfig.baseURL + res.stream_url) {
                     state.streamURL = fullPath
                     print("재생")
                 }
