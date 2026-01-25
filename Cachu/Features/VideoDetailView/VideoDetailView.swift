@@ -41,16 +41,7 @@ struct VideoDetailView: View {
         }
         // Store의 URL 상태가 변경되면 플레이어를 초기화하고 재생
         .onChange(of: store.state.streamURL) { oldValue, newURL in
-            if let url = newURL {
-                // URL이 바뀌면 플레이어 아이템을 교체하여 재생 (끊김 최소화)
-                if player == nil {
-                    player = AVPlayer(url: url)
-                } else {
-                    let item = AVPlayerItem(url: url)
-                    player?.replaceCurrentItem(with: item)
-                }
-                player?.play()
-            }
+            updatePlayerURL(newURL)
         }
         // 뷰가 사라질 때 재생 정지 (선택 사항)
         .onDisappear {
@@ -112,5 +103,31 @@ struct VideoDetailView: View {
         }
         // 영상이 로드되었을 때만 버튼 표시
         .opacity(store.state.streamURL != nil ? 1 : 0)
+    }
+    
+    
+    private func updatePlayerURL(_ url: URL?) {
+        guard let url = url else { return }
+        
+        // 1️⃣ 현재 재생 시간 저장
+        let currentTime: CMTime = player?.currentTime() ?? .zero
+        let isPlaying = player?.rate != 0
+        
+        let newItem = AVPlayerItem(url: url)
+        
+        if player == nil {
+            player = AVPlayer(playerItem: newItem)
+            player?.play()
+        } else {
+            // 2️⃣ 아이템 교체
+            player?.replaceCurrentItem(with: newItem)
+            
+            // 3️⃣ 저장해둔 시간으로 이동
+            player?.seek(to: currentTime, toleranceBefore: .zero, toleranceAfter: .zero) { _ in
+                if isPlaying {
+                    player?.play()
+                }
+            }
+        }
     }
 }
