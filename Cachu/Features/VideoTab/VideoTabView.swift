@@ -28,14 +28,15 @@ struct VideoTabView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle("비디오")
-        .navigationDestination(for: VideoTabRoute.self) { route in
-            tabRouter.buildView(for: route)
-        }
         .onAppear {
             print("호출 호출")
             store.action(.onAppear)
         }
+        .navigationTitle("비디오")
+        .navigationDestination(for: VideoTabRoute.self) { route in
+            tabRouter.buildView(for: route)
+        }
+        
     }
 }
 

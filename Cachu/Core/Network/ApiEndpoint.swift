@@ -11,7 +11,7 @@ enum ApiEndpoint: Endpoint {
     case hotProperties
     case dailyRealEstateTopics
     case bannerMain
-    case getVideos
+    case getVideos(next: String?, limit: String)
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -78,6 +78,22 @@ enum ApiEndpoint: Endpoint {
                 .bannerMain,
                 .getVideos:
             return nil
+        }
+    }
+    
+    var queryItems: [URLQueryItem]? {
+        switch self {
+        case .getVideos(let next, let limit):
+            var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "limit", value: limit)
+            ]
+            
+            if let next = next, !next.isEmpty {
+                queryItems.append(URLQueryItem(name: "next", value: next))
+            }
+            
+            return queryItems
+        default: return nil
         }
     }
     

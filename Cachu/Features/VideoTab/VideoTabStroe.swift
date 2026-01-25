@@ -46,15 +46,14 @@ extension VideoTabStroe {
         Task {
             state.isLoading = true
             
-            defer { state.isLoading = false}
+            defer { state.isLoading = false }
             
             do {
-                async let responseVideoList = try await repository.fetchVideoList()
-                
-                let responseList = try await responseVideoList.data
+                let responseVideoList = try await repository.fetchVideoList()
+                let responseList = responseVideoList.data
                 state.videoList = responseList
                 
-                print(responseList)
+                
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {
