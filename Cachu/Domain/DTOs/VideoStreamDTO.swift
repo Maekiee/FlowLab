@@ -8,7 +8,7 @@ struct VideoStreamDTO: Decodable {
 }
 
 
-struct StreamQualityDTO: Decodable {
+struct StreamQualityDTO: Decodable, Hashable {
     let quality: String
     let url: String
 }

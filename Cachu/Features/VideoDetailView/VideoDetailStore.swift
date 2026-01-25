@@ -10,10 +10,15 @@ final class VideoDetailStore: StoreProtocol {
         var errorMessage: String?
         var videoId: String = ""
         var streamURL: URL?
+        
+        var masterURL: URL?          // "Auto" 모드용 원본 URL (백업용)
+        var qualities: [StreamQualityDTO] = [] // 화질 목록
+        var currentQualityName: String = "Auto" //
     }
     
     enum Intent {
         case onAppear
+        case changeQuality(StreamQualityDTO?)
     }
     
     enum SideEffect {
@@ -38,6 +43,8 @@ final class VideoDetailStore: StoreProtocol {
         switch intent {
         case .onAppear:
             getVideoStream()
+        case .changeQuality(let quality):
+            updateQuality(quality)
         }
     }
 }
@@ -53,16 +60,34 @@ extension VideoDetailStore {
             do {
                 let res = try await repository.fetchVideo(videoId: state.videoId)
                 
-                if let fullPath = URL(string: AppConfig.baseURL + res.stream_url) {
-                    state.streamURL = fullPath
+                if let masterPath = URL(string: AppConfig.baseURL + res.stream_url) {
+                    state.masterURL = masterPath
+                    state.streamURL = masterPath
                     print("재생")
                 }
+                
+                state.qualities = res.qualities
+                state.currentQualityName = "Auto"
                 
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {
                 effectSubject.send(.showErrorAlert(error.localizedDescription))
             }
+        }
+    }
+    
+    private func updateQuality(_ quality: StreamQualityDTO?) {
+        if let quality = quality {
+            if let newPath = URL(string: AppConfig.baseURL + quality.url) {
+                state.streamURL = newPath
+                state.currentQualityName = quality.quality
+                print("화질 변경: \(quality.quality)")
+            }
+        } else {
+            state.streamURL = state.masterURL
+            state.currentQualityName = "Auto"
+            print("화질 변경: Auto")
         }
     }
 }
