@@ -109,9 +109,10 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeVideoDetailStore() -> VideoDetailStore {
+    func makeVideoDetailStore(videoId: String) -> VideoDetailStore {
         return VideoDetailStore(
-            repository: makeVideoDetailRepository()
+            repository: makeVideoDetailRepository(),
+            videoId: videoId
         )
     }
 }
@@ -155,8 +156,8 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeVideoDetailView() -> VideoDetailView {
-        let store = makeVideoDetailStore()
+    func makeVideoDetailView(videoId: String) -> VideoDetailView {
+        let store = makeVideoDetailStore(videoId: videoId)
         return VideoDetailView(store: store)
     }
 }

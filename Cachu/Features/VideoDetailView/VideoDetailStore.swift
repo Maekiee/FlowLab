@@ -28,13 +28,15 @@ final class VideoDetailStore: StoreProtocol {
     }
     
     
-    init(repository: VideoDetailRepositoryProtocol) {
+    init(repository: VideoDetailRepositoryProtocol, videoId: String) {
         self.repository = repository
+        self.state.videoId = videoId
     }
     
     func action(_ intent: Intent) {
         switch intent {
         case .onAppear:
+            getVideoStream()
         }
     }
 }

@@ -11,10 +11,12 @@ final class VideoTabStroe: StoreProtocol {
     
     enum Intent {
         case onAppear
+        case didTapVideo(String)
     }
     
     enum SideEffect {
         case showErrorAlert(String)
+        case routeTo(VideoTabRoute)
     }
     
     private(set) var state = State()
@@ -37,6 +39,8 @@ final class VideoTabStroe: StoreProtocol {
         switch intent {
         case .onAppear:
             getVideoList()
+        case .didTapVideo(let id):
+            effectSubject.send(.routeTo(.detail(id: id)))
         }
     }
 }

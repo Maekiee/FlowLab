@@ -22,8 +22,7 @@ final class VideoTabRouter: TabRouterProtocol {
     func buildView(for route: VideoTabRoute) -> some View {
         switch route {
         case .detail(let id):
-            // TODO: 상세 화면 구현 후 연결
-            Text("Detail: \(id)")
+            container.makeVideoDetailView(videoId: id)
         }
     }
 }

@@ -9,8 +9,18 @@ struct VideoDetailView: View {
     }
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            if store.state.isLoading {
+                ProgressView()
+            } else {
+                Text("Video Detail View")
+                    .font(.title)
+                Text("Video ID: \(store.state.videoId)")
+                    .font(.headline)
+            }
+        }
+        .onAppear {
+            store.action(.onAppear)
+        }
     }
 }
-
-

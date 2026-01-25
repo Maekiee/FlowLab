@@ -21,7 +21,7 @@ struct VideoTabView: View {
                         VideoCardView(video: video)
                             .padding(.bottom, 24)
                             .onTapGesture {
-                                // Navigate to details if needed
+                                store.action(.didTapVideo(video.video_id))
                             }
                     }
                 }
@@ -37,6 +37,14 @@ struct VideoTabView: View {
             }
             .onAppear {
                 store.action(.onAppear)
+            }
+            .onReceive(store.effect) { effect in
+                switch effect {
+                case .showErrorAlert(let message):
+                    print("Error: \(message)") // Handle error appropriately
+                case .routeTo(let route):
+                    tabRouter.push(route)
+                }
             }
         }
     }
@@ -113,9 +121,6 @@ private struct VideoCardView: View {
                 }
             }
             .padding(.horizontal, 12)
-        }.onTapGesture {
-            // VideoDeatilView로 이동 video.video_id 전송
-            print(video.video_id)
         }
     }
     
