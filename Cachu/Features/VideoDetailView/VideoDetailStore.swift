@@ -9,6 +9,7 @@ final class VideoDetailStore: StoreProtocol {
         var isLoading: Bool = false
         var errorMessage: String?
         var videoId: String = ""
+        var streamURL: URL?
     }
     
     enum Intent {
@@ -51,7 +52,11 @@ extension VideoDetailStore {
             
             do {
                 let res = try await repository.fetchVideo(videoId: state.videoId)
-                print("비디오 응답값")
+                
+                if let fullPath = URL(string: AppConfig.baseURLWeb + res.stream_url) {
+                    state.streamURL = fullPath
+                    print("재생")
+                }
                 
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
