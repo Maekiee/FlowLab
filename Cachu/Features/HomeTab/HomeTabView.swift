@@ -136,6 +136,7 @@ private extension HomeTabView {
             ForEach(store.state.homeTabTopItems) { item in
                 ZStack(alignment: .bottomLeading) {
                     KFImage(item.thumbnail)
+                        .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
                         .resizable()
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
