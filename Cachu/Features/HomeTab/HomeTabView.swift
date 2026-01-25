@@ -136,7 +136,7 @@ private extension HomeTabView {
             ForEach(store.state.homeTabTopItems) { item in
                 ZStack(alignment: .bottomLeading) {
                     KFImage(item.thumbnail)
-                        .requestModifier(MyImageDownloadRequestModifier(accessToken: store.state.accessToken ?? ""))
+                        .withHeaders()
                         .resizable()
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -169,6 +169,7 @@ private extension HomeTabView {
         Group {
             if let banner = store.state.mainBanners.first {
                 KFImage(URL(string: AppConfig.baseURL + banner.imageUrl))
+                    .withHeaders()
                     .resizable()
                     .scaledToFill()
                     .frame(height: 80)
@@ -232,6 +233,7 @@ private extension HomeTabView {
     func recentEstateCard(_ item: HomeTabTopItem) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             KFImage(item.thumbnail)
+                .withHeaders()
                 .resizable()
                 .scaledToFill()
                 .frame(width: 140, height: 100)
@@ -273,6 +275,7 @@ private extension HomeTabView {
         ZStack(alignment: .bottomLeading) {
             if let thumbnailURL = item.thumbnails.first {
                 KFImage(URL(string: AppConfig.baseURL + thumbnailURL))
+                    .withHeaders()
                     .resizable()
                     .scaledToFill()
                     .frame(width: 200, height: 140)

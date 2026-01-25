@@ -33,7 +33,7 @@ actor KeychainService: KeychainServiceProtocol {
             }
         }
         
-        func read(service: String, account: String) -> Data? {
+        nonisolated func read(service: String, account: String) -> Data? {
             let query: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
                 kSecAttrService as String: service,

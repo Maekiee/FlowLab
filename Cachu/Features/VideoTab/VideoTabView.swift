@@ -51,6 +51,7 @@ private struct VideoCardView: View {
             // Thumbnail Section
             ZStack(alignment: .bottomTrailing) {
                 KFImage(URL(string: AppConfig.baseURL + video.thumbnail_url))
+                    .withHeaders()
                     .resizable()
                     .placeholder {
                         Rectangle()
@@ -112,6 +113,8 @@ private struct VideoCardView: View {
                 }
             }
             .padding(.horizontal, 12)
+        }.onTapGesture {
+            
         }
     }
     

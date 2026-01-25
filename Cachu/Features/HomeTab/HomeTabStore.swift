@@ -59,7 +59,8 @@ extension HomeTabStore {
     private func fetchHomeTabData() {
         Task {
             state.isLoading = true
-            state.accessToken = await tokenManager.getAccessToken()
+            state.accessToken = await tokenManager.getAccessToken(
+            )
 
             defer { state.isLoading = false }
 
