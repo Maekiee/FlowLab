@@ -55,6 +55,10 @@ extension DIContainer {
     func makeVideoTabRepository() -> VideoTabRepositoryProtocol {
         return VideoTabRepository(apiClient: apiClient)
     }
+    
+    func makeVideoDetailRepository() -> VideoDetailRepositoryProtocol {
+        return VideoDetailRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -103,10 +107,17 @@ extension DIContainer {
             tokenManager: tokenManager,
         )
     }
+    
+    @MainActor
+    func makeVideoDetailStore() -> VideoDetailStore {
+        return VideoDetailStore(
+            repository: makeVideoDetailRepository()
+        )
+    }
 }
 
 
-// MARK: - Auth View Factory
+// MARK: - View
 extension DIContainer {
     @MainActor
     func makeStartAuthView() -> StartAuthView {
@@ -137,9 +148,16 @@ extension DIContainer {
         return HomeTabView(store: store)
     }
     
+    @MainActor
     func makeVideoTabView() -> VideoTabView {
         let store = makeVideoTabStore()
         return VideoTabView(store: store)
+    }
+    
+    @MainActor
+    func makeVideoDetailView() -> VideoDetailView {
+        let store = makeVideoDetailStore()
+        return VideoDetailView(store: store)
     }
 }
 

@@ -114,6 +114,7 @@ private struct VideoCardView: View {
             }
             .padding(.horizontal, 12)
         }.onTapGesture {
+            // VideoDeatilView로 이동 video.video_id 전송
             print(video.video_id)
         }
     }
