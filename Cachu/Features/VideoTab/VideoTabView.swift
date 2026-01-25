@@ -114,7 +114,7 @@ private struct VideoCardView: View {
             }
             .padding(.horizontal, 12)
         }.onTapGesture {
-            
+            print(video.video_id)
         }
     }
     
