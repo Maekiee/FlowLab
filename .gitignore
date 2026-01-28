@@ -1,5 +1,5 @@
-
 Secret/
+!Secret/.gitkeep
 
 
 ### Swift ###
@@ -87,11 +87,6 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
-
-# Secret
-# API Key, URL 등의 추적을 제외
-**/Secret/*.swift
-**/Secret/*.plist
 
 ### SwiftPackageManager ###
 Packages

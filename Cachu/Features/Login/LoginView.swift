@@ -9,35 +9,25 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Spacer()
-
-            // 앱 로고/타이틀
-            Text("Cachu")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            Spacer()
-
             // 입력 필드
-            VStack(spacing: 12) {
-                TextField("이메일", text: Binding(
-                    get: { store.state.email },
-                    set: { store.action(.inputEmail($0)) }
-                ))
-                .textInputAutocapitalization(.never)
-                .keyboardType(.emailAddress)
-                .padding()
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Spacer().frame(height: 20)
+            TextField("이메일", text: Binding(
+                get: { store.state.email },
+                set: { store.action(.inputEmail($0)) }
+            ))
+            .textInputAutocapitalization(.never)
+            .keyboardType(.emailAddress)
+            .padding()
+            .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                SecureField("비밀번호", text: Binding(
-                    get: { store.state.password },
-                    set: { store.action(.inputPassword($0)) }
-                ))
-                .padding()
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
+            SecureField("비밀번호", text: Binding(
+                get: { store.state.password },
+                set: { store.action(.inputPassword($0)) }
+            ))
+            .padding()
+            .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
 
             // 로그인 버튼
             Button {
@@ -56,7 +46,7 @@ struct LoginView: View {
                         .frame(height: 50)
                 }
             }
-            .background(store.state.isLoading ? Color.gray : Color.blue)
+            .background(store.state.isLoading ? .gray60 : .deepCream)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .disabled(store.state.isLoading)
 

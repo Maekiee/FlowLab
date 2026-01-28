@@ -6,17 +6,10 @@ struct StartAuthView: View {
     var body: some View {
         VStack(spacing: 16) {
             Spacer()
-
-            // 앱 로고/타이틀 영역
-            VStack(spacing: 8) {
-                Image(systemName: "building.2")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.blue)
-
-                Text("Cachu")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-            }
+            
+            Text("Cachu")
+                .font(.largeTitle)
+                .fontWeight(.bold)
 
             Spacer()
 
@@ -28,6 +21,7 @@ struct StartAuthView: View {
                     HStack {
                         Image(systemName: "message.fill")
                         Text("카카오로 시작하기")
+                            .dsFont(.title1)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -42,6 +36,7 @@ struct StartAuthView: View {
                     HStack {
                         Image(systemName: "apple.logo")
                         Text("Apple로 시작하기")
+                            .dsFont(.title1)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -56,10 +51,11 @@ struct StartAuthView: View {
                     HStack {
                         Image(systemName: "envelope.fill")
                         Text("이메일로 로그인")
+                            .dsFont(.title1)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(.deepCream)
                     .foregroundStyle(.white)
                     .cornerRadius(10)
                 }
@@ -69,7 +65,7 @@ struct StartAuthView: View {
             HStack {
                 Text("계정이 없으신가요?")
                     .foregroundStyle(.secondary)
-
+                
                 Button {
                     router.pushAuth(.signUp)
                 } label: {
