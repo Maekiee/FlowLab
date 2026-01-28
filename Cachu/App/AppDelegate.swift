@@ -26,6 +26,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
+    func application(_ application: UIApplication,
+                     supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        OrientationLock.allowLandscape ? .allButUpsideDown : .portrait
+    }
+
     // APNs 토큰을 받았을 때 (디바이스 토큰과 Firebase 매핑)
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
