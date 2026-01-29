@@ -1,5 +1,5 @@
-
 import Foundation
+
 
 protocol InterceptorProtocol {
     func adapt(_ request: URLRequest, for endpoint: Endpoint) async -> URLRequest

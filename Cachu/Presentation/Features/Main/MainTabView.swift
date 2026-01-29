@@ -38,22 +38,3 @@ struct MainTabView: View {
         }
     }
 }
-
-// MARK: - Some Tab Container
-/// Some 탭의 NavigationStack 컨테이너
-//struct SomeTab: View {
-//    @Environment(VideoTabRouter.self) private var router
-//
-//    var body: some View {
-//        @Bindable var someRouter = router
-//
-//        NavigationStack(path: $someRouter.path) {
-//            SomeTabView()
-//                .environment(router)
-//                .navigationDestination(for: .self) { route in
-//                    router.buildView(for: route)
-//                }
-//        }
-//    }
-//}
-
