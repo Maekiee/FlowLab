@@ -3,8 +3,6 @@ import Foundation
 
 
 final class HomeTabRepository: HomeTabRepositoryProtocol {
-    
-    
     private let apiClient: ApiClientProtocol
     
     init(apiClient: ApiClientProtocol) {
@@ -13,10 +11,10 @@ final class HomeTabRepository: HomeTabRepositoryProtocol {
 }
 
 extension HomeTabRepository {
-    func fetchHomeTabTopItems() async throws -> HomeTabTopItems {
+    func fetchHomeTabTopItems() async throws -> HomeTabTopViewData {
         let endPoint = ApiEndpoint.homeBanner
         let item = try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
-        return HomeTabTopItems(from: item)
+        return HomeTabTopViewData(from: item)
     }
     
     func fetchHotProperties() async throws -> EstateGeoListResponseDTO {

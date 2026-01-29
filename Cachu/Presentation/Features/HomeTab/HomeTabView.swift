@@ -230,7 +230,7 @@ private extension HomeTabView {
         }
     }
 
-    func recentEstateCard(_ item: HomeTabTopItem) -> some View {
+    func recentEstateCard(_ item: HomeTabTopViewDataItem) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             KFImage(item.thumbnail)
                 .withHeaders()

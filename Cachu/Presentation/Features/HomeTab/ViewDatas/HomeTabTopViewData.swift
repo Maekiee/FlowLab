@@ -1,16 +1,17 @@
 import Foundation
 
 
-struct HomeTabTopItems {
-    let data: [HomeTabTopItem]
+struct HomeTabTopViewData {
+    let data: [HomeTabTopViewDataItem]
     
     init(from dto: EstateGeoListResponseDTO) {
-        self.data = dto.data.map{ HomeTabTopItem(from: $0) }
+        self.data = dto.data.map{ HomeTabTopViewDataItem(from: $0) }
     }
 }
 
-struct HomeTabTopItem: Hashable, Identifiable {
+struct HomeTabTopViewDataItem: Hashable, Identifiable {
     let id: String
+    let towon: String
     let title: String
     let introduction: String
     let thumbnail: URL?
@@ -19,7 +20,7 @@ struct HomeTabTopItem: Hashable, Identifiable {
         self.id = dto.estate_id
         self.title = dto.title
         self.introduction = dto.introduction
-        
+        self.towon = ""
         let url = dto.thumbnails.first ?? ""
         self.thumbnail = URL(string: AppConfig.baseURL + url)
     }

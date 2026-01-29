@@ -8,7 +8,7 @@ final class HomeTabStore: StoreProtocol {
         var isLoading = false
         var accessToken: String?  
         var errorMessage: String?
-        var homeTabTopItems: [HomeTabTopItem] = []
+        var homeTabTopItems: [HomeTabTopViewDataItem] = []
         var hotItems: [EstateSummaryResponseDTO] = []
         var dailyTopics: [DailyRealEstateDTO] = []
         var mainBanners: [BannerDTO] = []
