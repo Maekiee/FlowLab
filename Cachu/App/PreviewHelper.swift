@@ -19,8 +19,8 @@ struct MockHomeTabRepository: HomeTabRepositoryProtocol {
         return BannersDTO(data: [])
     }
     
-    func fetchHomeTabTopItems() async throws -> HomeTabTopViewData {
-        return HomeTabTopViewData(from: EstateGeoListResponseDTO(data: []))
+    func fetchHomeTabTopItems() async throws -> [EstateEntity] {
+        return []
     }
     
     func fetchHotProperties() async throws -> EstateGeoListResponseDTO {

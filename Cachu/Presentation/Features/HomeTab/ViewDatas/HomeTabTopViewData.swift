@@ -1,13 +1,13 @@
 import Foundation
 
 
-struct HomeTabTopViewData {
-    let data: [HomeTabTopViewDataItem]
-    
-    init(from dto: EstateGeoListResponseDTO) {
-        self.data = dto.data.map{ HomeTabTopViewDataItem(from: $0) }
-    }
-}
+//struct HomeTabTopViewData {
+//    let data: [HomeTabTopViewDataItem]
+//    
+//    init(from dto: EstateGeoListResponseDTO) {
+//        self.data = dto.data.map{ HomeTabTopViewDataItem(from: $0) }
+//    }
+//}
 
 struct HomeTabTopViewDataItem: Hashable, Identifiable {
     let id: String
@@ -16,12 +16,12 @@ struct HomeTabTopViewDataItem: Hashable, Identifiable {
     let introduction: String
     let thumbnail: URL?
     
-    init(from dto: EstateSummaryResponseDTO) {
-        self.id = dto.estate_id
-        self.title = dto.title
-        self.introduction = dto.introduction
+    init(entity: EstateEntity) {
+        self.id = entity.id
+        self.title = entity.title
+        self.introduction = entity.introduction
         self.towon = ""
-        let url = dto.thumbnails.first ?? ""
+        let url = entity.thumbnails.first ?? ""
         self.thumbnail = URL(string: AppConfig.baseURL + url)
     }
 }

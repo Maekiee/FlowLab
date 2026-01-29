@@ -11,10 +11,10 @@ final class HomeTabRepository: HomeTabRepositoryProtocol {
 }
 
 extension HomeTabRepository {
-    func fetchHomeTabTopItems() async throws -> HomeTabTopViewData {
+    func fetchHomeTabTopItems() async throws -> [EstateEntity] {
         let endPoint = ApiEndpoint.homeBanner
         let item = try await apiClient.request(endPoint, type: EstateGeoListResponseDTO.self)
-        return HomeTabTopViewData(from: item)
+        return item.data.map { $0.toEntity() }
     }
     
     func fetchHotProperties() async throws -> EstateGeoListResponseDTO {

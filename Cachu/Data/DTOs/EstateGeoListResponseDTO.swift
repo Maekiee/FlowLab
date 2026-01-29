@@ -24,7 +24,40 @@ struct EstateSummaryResponseDTO: Decodable, Sendable {
     let updated_at: String
 }
 
+extension EstateSummaryResponseDTO {
+    func toEntity() -> EstateEntity {
+        return EstateEntity(
+            id: estate_id,
+            category: category,
+            title: title,
+            introduction: introduction,
+            thumbnails: thumbnails,
+            deposit: deposit,
+            monthly_rent: monthly_rent,
+            built_year: built_year,
+            area: area,
+            floors: floors,
+            geolocation: geolocation.toEntity(),
+            distance: distance,
+            likeCount: like_count,
+            isSafeEstate: is_safe_estate,
+            isRecommended: is_recommended,
+            createdAt: created_at,
+            updatedAt: updated_at
+        )
+    }
+}
+
 struct GeolocationDTO: Decodable, Sendable {
     let longitude: Double
     let latitude: Double
+}
+
+extension GeolocationDTO {
+    func toEntity() -> CoordinateEntity {
+        return CoordinateEntity(
+            longitude: latitude,
+            latitude: longitude
+        )
+    }
 }

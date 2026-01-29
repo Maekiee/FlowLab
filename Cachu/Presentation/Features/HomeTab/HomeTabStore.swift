@@ -74,7 +74,7 @@ extension HomeTabStore {
                 let (homeTopItems, hotItem, dailyTopic, banner) = try await (responseHomeTabItems, responseHotProperties, responseDailyEstateTopics, responseBannerMain)
                 
                
-                state.homeTabTopItems = homeTopItems.data
+                state.homeTabTopItems = homeTopItems.map { HomeTabTopViewDataItem(entity: $0) }
                 state.hotItems = hotItem.data
                 state.dailyTopics = dailyTopic.data
                 state.mainBanners = banner.data
