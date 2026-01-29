@@ -1,11 +1,75 @@
 import SwiftUI
 
+
+
+// MARK: - App Root View
+enum AppRootView: Equatable {
+    case auth // 로그인 전
+    case main // 로그인 후
+}
+
+// MARK: - Auth Routes
+enum AuthRoute: Hashable {
+    case login
+    case signUp
+}
+
+// MARK: - Sheet Routes
+enum SheetRoute: Identifiable, Hashable {
+    case sample
+
+    var id: String {
+        switch self {
+        case .sample:
+            return "sample"
+        }
+    }
+}
+
+// MARK: - FullScreen Routes
+enum FullScreenRoute: Identifiable, Hashable {
+    case sample
+
+    var id: String {
+        switch self {
+        case .sample:
+            return "sample"
+        }
+    }
+}
+
+// MARK: - Main Tab
+enum MainTab: Int, Hashable, CaseIterable {
+    case home = 0
+    case video = 1
+    case profile = 2
+
+    var title: String {
+        switch self {
+        case .home:
+            return "홈"
+        case .video:
+            return "탭2"
+        case .profile:
+            return "내 정보"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home:
+            return "house"
+        case .video:
+            return "square.grid.2x2"
+        case .profile:
+            return "person"
+        }
+    }
+}
+
+
+
 // MARK: - AppRouter
-/// 앱 전체 네비게이션을 관리하는 메인 Router
-/// - 루트 뷰 상태 관리 (auth/main)
-/// - Auth 플로우 네비게이션
-/// - 자동 로그인 및 세션 만료 처리
-/// - Tab Routers 보유
 @MainActor
 @Observable
 final class AppRouter {
@@ -15,7 +79,6 @@ final class AppRouter {
     private let tokenManager: TokenManagerProtocol
 
     // MARK: - Root View State
-    /// 현재 루트 뷰 상태 (자동 로그인 결과에 따라 결정)
     private(set) var rootView: AppRootView = .auth
 
     /// 자동 로그인 체크 중 여부
@@ -58,8 +121,6 @@ final class AppRouter {
     }
 
     // MARK: - Auto Login
-    
-    /// 앱 시작 시 자동 로그인 체크
     func checkAutoLogin() async {
         isCheckingAuth = true
         defer { isCheckingAuth = false }
@@ -90,7 +151,7 @@ final class AppRouter {
     }
 
     /// 인증 화면으로 전환 (로그아웃/세션 만료 시)
-    func switchToAuth() {
+    private func switchToAuth() {
         resetAllTabRouters()
         withAnimation {
             rootView = .auth

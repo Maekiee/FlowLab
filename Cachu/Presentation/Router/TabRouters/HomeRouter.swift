@@ -1,5 +1,11 @@
 import SwiftUI
 
+// MARK: - Home Tab Routes
+enum HomeRoute: Hashable {
+    case webView(url: URL)
+}
+
+
 // MARK: - HomeRouter
 /// 홈 탭의 독립적인 네비게이션을 관리하는 Router
 @MainActor

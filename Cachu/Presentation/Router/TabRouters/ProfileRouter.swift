@@ -1,5 +1,12 @@
 import SwiftUI
 
+// MARK: - Profile Tab Routes
+enum ProfileRoute: Hashable {
+    case settings
+    case editProfile
+}
+
+
 // MARK: - ProfileRouter
 /// 프로필 탭의 독립적인 네비게이션을 관리하는 Router
 @MainActor

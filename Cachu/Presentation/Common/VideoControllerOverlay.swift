@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-/// 전체화면(가로 모드) 허용 여부를 AppDelegate에서 참조하기 위한 전역 플래그
 enum OrientationLock {
     @MainActor static var allowLandscape: Bool = false
 }

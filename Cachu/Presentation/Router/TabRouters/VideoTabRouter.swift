@@ -1,5 +1,12 @@
 import SwiftUI
 
+// MARK: - Some Tab Routes
+enum VideoTabRoute: Hashable {
+    case detail(id: String)
+}
+
+
+
 // MARK: - SomeRouter
 /// Some 탭의 독립적인 네비게이션을 관리하는 Router
 /// 추후 기능 확장 시 구체화
