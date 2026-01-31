@@ -1,5 +1,5 @@
 import Foundation
 
 protocol EstateDetailRepositoryProtocol {
-    func fetchSomething() -> String
+    func fetchEstateDetail(estateId: String) async throws -> EstateDetailEntity
 }

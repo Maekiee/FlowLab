@@ -10,7 +10,9 @@ final class EstateDetailRepository: EstateDetailRepositoryProtocol {
 }
 
 extension EstateDetailRepository {
-    func fetchSomething() -> String {
-        return "Hello world"
+    func fetchEstateDetail(estateId: String) async throws -> EstateDetailEntity {
+        let endPoint = ApiEndpoint.getEstateDetail(estateId: estateId)
+        let data = try await apiClient.request(endPoint, type: EstateDetailResponseDTO.self)
+        return data.toEntity()
     }
 }
