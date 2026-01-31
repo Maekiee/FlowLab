@@ -15,9 +15,31 @@ struct CachuApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(router)
-                .environment(container)
+            Group {
+                if router.isCheckingAuth {
+                    ZStack {
+                        Color(.systemBackground)
+                            .ignoresSafeArea()
+
+                        ProgressView()
+                            .scaleEffect(1.2)
+                    }
+                } else {
+                    switch router.rootView {
+                    case .auth:
+                        AuthFlowView()
+                            .environment(router)
+                            .environment(container)
+                    case .main:
+                        MainTabView()
+                            .environment(router)
+                            .environment(container)
+                    }
+                }
+            }
+            .task {
+                await router.checkAutoLogin()
+            }
         }
     }
 }

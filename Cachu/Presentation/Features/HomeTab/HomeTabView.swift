@@ -435,9 +435,4 @@ private enum EstateCategory: CaseIterable {
     }
 }
 
-#Preview {
-    PreviewWrapper { preview in
-        HomeTabView(store: preview.makeHomeTabStore())
-    }
-}
 
