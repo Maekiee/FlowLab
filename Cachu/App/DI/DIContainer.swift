@@ -97,11 +97,12 @@ extension DIContainer {
     
     
     @MainActor
-    func makeHomeTabStore() -> HomeTabStore {
+    func makeHomeTabStore(tabRouter: HomeRouter) -> HomeTabStore {
         let repository = makeHomeTabRepository()
         return HomeTabStore(
             repository: repository,
-            tokenManager: tokenManager
+            tokenManager: tokenManager,
+            tabRouter: tabRouter,
         )
     }
     
@@ -124,10 +125,11 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeEstateDetailStore() -> EstateDetailStore {
+    func makeEstateDetailStore(estateId: String) -> EstateDetailStore {
         let repository = makeEstateDetailRepository()
         return EstateDetailStore(
-            repository: repository
+            repository: repository,
+            estateId: estateId
         )
     }
 }
@@ -159,8 +161,8 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeHomeTabView() -> HomeTabView {
-        let store = makeHomeTabStore()
+    func makeHomeTabView(tabRouter: HomeRouter) -> HomeTabView {
+        let store = makeHomeTabStore(tabRouter: tabRouter)
         return HomeTabView(store: store)
     }
     
@@ -177,8 +179,8 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeEstateDetailView() -> EstateDetailView {
-        let store = makeEstateDetailStore()
+    func makeEstateDetailView(estateId: String) -> EstateDetailView {
+        let store = makeEstateDetailStore(estateId: estateId)
         return EstateDetailView(store: store)
     }
 }

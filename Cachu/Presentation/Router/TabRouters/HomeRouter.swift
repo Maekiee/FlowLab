@@ -1,31 +1,40 @@
 import SwiftUI
 
-// MARK: - Home Tab Routes
+
 enum HomeRoute: Hashable {
     case webView(url: URL)
+    case estateDetail(estateId: String)
 }
 
-
-// MARK: - HomeRouter
-/// 홈 탭의 독립적인 네비게이션을 관리하는 Router
-@MainActor
-@Observable
+@MainActor @Observable
 final class HomeRouter: TabRouterProtocol {
     typealias Route = HomeRoute
 
-    // MARK: - Properties
     var path = NavigationPath()
     let container: DIContainer
 
-    // MARK: - FullScreen WebView
     var fullScreenWebViewURL: URL?
 
-    // MARK: - Initialization
     init(container: DIContainer) {
         self.container = container
     }
+}
 
-    // MARK: - FullScreen Presentation
+
+extension HomeRouter {
+    @ViewBuilder
+    func buildView(for route: HomeRoute) -> some View {
+        switch route {
+        case .estateDetail(let estateId):
+            container.makeEstateDetailView(estateId: estateId)
+        default:
+            Text("")
+        }
+    }
+}
+
+
+extension HomeRouter {
     func presentFullScreenWebView(url: URL) {
         fullScreenWebViewURL = url
     }
@@ -33,13 +42,6 @@ final class HomeRouter: TabRouterProtocol {
     func dismissFullScreenWebView() {
         fullScreenWebViewURL = nil
     }
-
-    // MARK: - View Building
-    @ViewBuilder
-    func buildView(for route: HomeRoute) -> some View {
-        switch route {
-        default:
-            Text("")
-        }
-    }
 }
+
+

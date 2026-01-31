@@ -10,12 +10,14 @@ final class EstateDetailStore: StoreProtocol {
     
     init(
         repository: EstateDetailRepositoryProtocol,
+        estateId: String
     ) {
         self.repository = repository
+        self.state.stateId = estateId
     }
     
     struct State {
-        
+        var stateId: String = ""
     }
     
     enum Intent {

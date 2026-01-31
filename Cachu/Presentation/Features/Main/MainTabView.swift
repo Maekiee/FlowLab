@@ -12,7 +12,7 @@ struct MainTabView: View {
 
         TabView(selection: $appRouter.selectedTab) {
             // MARK: - Home Tab
-            container.makeHomeTabView()
+            container.makeHomeTabView(tabRouter: router.homeRouter)
                 .environment(router.homeRouter)
                 .tabItem {
                     Label(MainTab.home.title, systemImage: MainTab.home.icon)

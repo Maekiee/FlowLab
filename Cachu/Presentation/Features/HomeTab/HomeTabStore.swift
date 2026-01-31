@@ -19,6 +19,7 @@ final class HomeTabStore: StoreProtocol {
         case onAppear
         case searchInput(String)
         case didTapBanner(BannerDTO)
+        case didTapHotEstate(String)
     }
     
     enum SideEffect {
@@ -29,6 +30,7 @@ final class HomeTabStore: StoreProtocol {
     private(set) var state = State()
     private let repository: HomeTabRepositoryProtocol
     private let tokenManager: TokenManagerProtocol
+    private let tabRouter: HomeRouter
     
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
     var effect: AnyPublisher<SideEffect, Never> {
@@ -37,10 +39,12 @@ final class HomeTabStore: StoreProtocol {
     
     init(
         repository: HomeTabRepositoryProtocol,
-        tokenManager: TokenManagerProtocol
+        tokenManager: TokenManagerProtocol,
+        tabRouter: HomeRouter,
     ) {
         self.repository = repository
         self.tokenManager = tokenManager
+        self.tabRouter = tabRouter
     }
     
     func action(_ intent: Intent) {
@@ -51,6 +55,8 @@ final class HomeTabStore: StoreProtocol {
             state.searchInput = input
         case .didTapBanner(let banner):
             handleBannerTap(banner)
+        case .didTapHotEstate(let estateId):
+            tabRouter.push(.estateDetail(estateId: estateId))
         }
     }
 }

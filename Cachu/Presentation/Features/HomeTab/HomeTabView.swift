@@ -57,6 +57,9 @@ struct HomeTabView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
+            .navigationDestination(for: HomeRoute.self) { route in
+                router.buildView(for: route)
+            }
             .ignoresSafeArea(edges: .top)
             .background(Color(.systemGroupedBackground))
             .onAppear {
@@ -70,6 +73,8 @@ struct HomeTabView: View {
                     switch route {
                     case .webView(let url):
                         router.presentFullScreenWebView(url: url)
+                    default:
+                        break
                     }
                 }
             }
@@ -314,6 +319,9 @@ private extension HomeTabView {
         }
         .frame(width: 200, height: 140)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .onTapGesture {
+            store.action(.didTapHotEstate(item.estate_id))
+        }
     }
 
     var dailyTopicSection: some View {

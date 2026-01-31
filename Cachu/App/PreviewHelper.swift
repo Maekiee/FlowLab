@@ -51,7 +51,8 @@ final class PreviewContainer {
     func makeHomeTabStore() -> HomeTabStore {
         return HomeTabStore(
             repository: MockHomeTabRepository(),
-            tokenManager: tokenManager
+            tokenManager: tokenManager,
+            tabRouter: appRouter.homeRouter
         )
     }
 }
