@@ -186,9 +186,13 @@ extension EstateDetailView: View {
 
                                     Spacer()
 
-                                    Image(systemName: "music.note")
-                                        .font(.system(size: 20))
-                                        .foregroundStyle(.secondary)
+                                    Button {
+                                        // 채팅 액션
+                                    } label: {
+                                        Image(systemName: "ellipsis.message")
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
                             }
                         }
