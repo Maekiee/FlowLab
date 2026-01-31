@@ -10,13 +10,13 @@ struct EstateDetailResponseDTO: Decodable, Sendable {
     let reservation_price: Int
     let description: String
     let thumbnails: [String]
-    let deposit: Int
-    let monthly_rent: Int
+    let deposit: Double
+    let monthly_rent: Double
     let built_year: String
-    let maintenance_fee: Int
-    let area: Int
-    let parking_count: Int
-    let floors: Int
+    let maintenance_fee: Double
+    let area: Double
+    let parking_count: Double
+    let floors: Double
     let options: EstateOptionsDTO
     let geolocation: GeolocationDTO
     let creator: UserInfoDTO

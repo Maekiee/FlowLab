@@ -10,13 +10,13 @@ struct EstateDetailEntity: Identifiable, Sendable {
     let reservationPrice: Int
     let description: String
     let thumbnails: [String]
-    let deposit: Int
-    let monthlyRent: Int
+    let deposit: Double
+    let monthlyRent: Double
     let builtYear: String
-    let maintenanceFee: Int
-    let area: Int
-    let parkingCount: Int
-    let floors: Int
+    let maintenanceFee: Double
+    let area: Double
+    let parkingCount: Double
+    let floors: Double
     let options: [String]
     let geolocation: GeolocationEntity
     let creator: UserInfoEntity

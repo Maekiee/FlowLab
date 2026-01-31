@@ -46,7 +46,6 @@ final class EstateDetailStore: StoreProtocol {
 
 extension EstateDetailStore {
     private func getEstateDetail() {
-        print("실행 실행")
         Task {
             state.isLoading = true
             
