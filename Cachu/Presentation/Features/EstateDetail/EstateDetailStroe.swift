@@ -59,7 +59,7 @@ extension EstateDetailStore {
             do {
                 let estateDetail = try await repository.fetchEstateDetail(estateId: state.estateId)
                 state.estate = estateDetail
-                state.orderInfo = OrderInfoDTO(estate_id: estateDetail.id, total_price: 131)
+                state.orderInfo = OrderInfoDTO(estate_id: estateDetail.id, total_price: estateDetail.reservationPrice)
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {
@@ -75,7 +75,7 @@ extension EstateDetailStore {
             
             do {
                 let bookingInfo = try await repository.postOrderReservation(orderInfo: orderInfo)
-                print("에약하기")
+                
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {

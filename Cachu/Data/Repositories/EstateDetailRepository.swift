@@ -18,8 +18,22 @@ extension EstateDetailRepository {
     
     func postOrderReservation(orderInfo: OrderInfoDTO) async throws -> OrderResponseDTO {
         let endPoint = ApiEndpoint.order(orderInfo: orderInfo)
-        let data = try await apiClient.request(endPoint, type: OrderResponseDTO.self)
-        print(" ⭕️⭕️⭕️⭕️ 주문 번호 생성 성공  \(data)")
-        return data
+
+        print("📤 [Order] 요청 바디:", String(data: endPoint.body ?? Data(), encoding: .utf8) ?? "nil")
+
+        do {
+            let data = try await apiClient.request(endPoint, type: OrderResponseDTO.self)
+            print("✅ [Order] 성공:", data)
+            return data
+        } catch let error as NetworkError {
+            print("❌ [Order] NetworkError:", error)
+            throw error
+        } catch let error as DecodingError {
+            print("❌ [Order] DecodingError:", error)
+            throw error
+        } catch {
+            print("❌ [Order] Error:", error)
+            throw error
+        }
     }
 }
