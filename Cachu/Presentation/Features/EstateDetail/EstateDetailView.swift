@@ -209,17 +209,17 @@ extension EstateDetailView: View {
                     }
 
                     Button {
-                        // 예약 액션
                         store.action(.booking)
                     } label: {
-                        Text(estate.isReserved ? "예약완료" : "예약하기")
+                        Text(store.state.isReserved ? "예약완료" : "예약하기")
                             .dsFont(.title1)
                             .foregroundStyle(.gray0)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(estate.isReserved ? .gray45 : .deepCream)
+                            .background(store.state.isReserved ? .gray45 : .deepCream)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .disabled(store.state.isReserved)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)

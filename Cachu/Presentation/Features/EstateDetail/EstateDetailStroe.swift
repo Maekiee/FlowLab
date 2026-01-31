@@ -24,6 +24,7 @@ final class EstateDetailStore: StoreProtocol {
         var isLoading = false
         var estateId = ""
         var estate: EstateDetailEntity?
+        var isReserved = false
         var errorMessage: String?
         var orderInfo: OrderInfoDTO?
     }
@@ -59,6 +60,7 @@ extension EstateDetailStore {
             do {
                 let estateDetail = try await repository.fetchEstateDetail(estateId: state.estateId)
                 state.estate = estateDetail
+                state.isReserved = estateDetail.isReserved
                 state.orderInfo = OrderInfoDTO(estate_id: estateDetail.id, total_price: estateDetail.reservationPrice)
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
@@ -74,8 +76,8 @@ extension EstateDetailStore {
             guard let orderInfo = state.orderInfo else { return }
             
             do {
-                let bookingInfo = try await repository.postOrderReservation(orderInfo: orderInfo)
-                
+                let _ = try await repository.postOrderReservation(orderInfo: orderInfo)
+                state.isReserved = true
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {
