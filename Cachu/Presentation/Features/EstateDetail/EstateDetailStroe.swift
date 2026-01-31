@@ -23,6 +23,7 @@ final class EstateDetailStore: StoreProtocol {
     struct State {
         var isLoading = false
         var estateId = ""
+        var estate: EstateDetailEntity?
         var errorMessage: String?
     }
     
@@ -53,7 +54,7 @@ extension EstateDetailStore {
             
             do {
                 let estateDetail = try await repository.fetchEstateDetail(estateId: state.estateId)
-                print(estateDetail)
+                state.estate = estateDetail
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {
