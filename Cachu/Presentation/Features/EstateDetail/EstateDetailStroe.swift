@@ -25,10 +25,12 @@ final class EstateDetailStore: StoreProtocol {
         var estateId = ""
         var estate: EstateDetailEntity?
         var errorMessage: String?
+        var orderInfo: OrderInfoDTO?
     }
     
     enum Intent {
         case onAppear
+        case booking
         
     }
     
@@ -40,6 +42,8 @@ final class EstateDetailStore: StoreProtocol {
         switch intent {
         case .onAppear:
             getEstateDetail()
+        case .booking:
+            booking()
         }
     }
 }
@@ -55,6 +59,22 @@ extension EstateDetailStore {
             do {
                 let estateDetail = try await repository.fetchEstateDetail(estateId: state.estateId)
                 state.estate = estateDetail
+            } catch let error as NetworkError {
+                effectSubject.send(.showErrorAlert(error.errorDescription))
+            } catch {
+                effectSubject.send(.showErrorAlert(error.localizedDescription))
+            }
+        }
+    }
+    
+    private func booking() {
+        Task {
+            
+            guard let orderInfo = state.orderInfo else { return }
+            
+            do {
+                let bookingInfo = try await repository.postOrderReservation(orderInfo: orderInfo)
+                
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {

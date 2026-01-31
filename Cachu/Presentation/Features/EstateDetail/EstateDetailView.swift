@@ -210,6 +210,7 @@ extension EstateDetailView: View {
 
                     Button {
                         // 예약 액션
+                        store.action(.booking)
                     } label: {
                         Text(estate.isReserved ? "예약완료" : "예약하기")
                             .dsFont(.title1)
