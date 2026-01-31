@@ -212,11 +212,11 @@ extension EstateDetailView: View {
                         // 예약 액션
                     } label: {
                         Text(estate.isReserved ? "예약완료" : "예약하기")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
+                            .dsFont(.title1)
+                            .foregroundStyle(.gray0)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(estate.isReserved ? Color.blue : Color(.systemGray3))
+                            .frame(height: 48)
+                            .background(estate.isReserved ? .gray45 : .deepCream)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
