@@ -1,7 +1,6 @@
 import SwiftUI
 
-@MainActor
-@Observable
+@MainActor @Observable
 final class DIContainer {
     let tokenManager: TokenManagerProtocol
     let apiClient: ApiClientProtocol
@@ -18,7 +17,6 @@ final class DIContainer {
         )
         self.tokenManager = tokenManager
 
-        // 일반 API용 ApiClient (Interceptor 포함)
         let interceptor = Interceptor(tokenManager: tokenManager)
         self.apiClient = ApiClient(interceptor: interceptor)
     }
@@ -59,6 +57,10 @@ extension DIContainer {
     func makeVideoDetailRepository() -> VideoDetailRepositoryProtocol {
         return VideoDetailRepository(apiClient: apiClient)
     }
+    
+    func makeEstateDetailRepository() -> EstateDetailRepositoryProtocol {
+        return EstateDetailRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -66,8 +68,9 @@ extension DIContainer {
 extension DIContainer {
     @MainActor
     func makeSignUpStore(router: AppRouter) -> SignUpStore {
+        let repository = makeSignUpRepository()
         return SignUpStore(
-            repository: makeSignUpRepository(),
+            repository: repository,
             tokenManager: tokenManager,
             router: router
         )
@@ -75,8 +78,9 @@ extension DIContainer {
 
     @MainActor
     func makeLoginStore(router: AppRouter) -> LoginStore {
+        let repository = makeLoginRepository()
         return LoginStore(
-            repository: makeLoginRepository(),
+            repository: repository,
             tokenManager: tokenManager,
             router: router
         )
@@ -84,8 +88,9 @@ extension DIContainer {
     
     @MainActor
     func makeProfileTabStore() -> ProfileTabStore {
+        let repository = makeProfileTabRepository()
         return ProfileTabStore(
-            repository: makeProfileTabRepository(),
+            repository: repository,
             tokenManager: tokenManager
         )
     }
@@ -93,31 +98,37 @@ extension DIContainer {
     
     @MainActor
     func makeHomeTabStore() -> HomeTabStore {
+        let repository = makeHomeTabRepository()
         return HomeTabStore(
-            repository: makeHomeTabRepository(),
+            repository: repository,
             tokenManager: tokenManager
         )
     }
     
     @MainActor
     func makeVideoTabStore() -> VideoTabStroe {
+        let repository = makeVideoTabRepository()
         return VideoTabStroe(
-            repository: makeVideoTabRepository(),
+            repository: repository,
             tokenManager: tokenManager,
         )
     }
     
     @MainActor
     func makeVideoDetailStore(videoId: String) -> VideoDetailStore {
+        let repository = makeVideoDetailRepository()
         return VideoDetailStore(
-            repository: makeVideoDetailRepository(),
+            repository: repository,
             videoId: videoId
         )
     }
     
     @MainActor
     func makeEstateDetailStore() -> EstateDetailStore {
-        return EstateDetailStore()
+        let repository = makeEstateDetailRepository()
+        return EstateDetailStore(
+            repository: repository
+        )
     }
 }
 
