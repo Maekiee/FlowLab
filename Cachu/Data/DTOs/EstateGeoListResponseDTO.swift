@@ -48,16 +48,3 @@ extension EstateSummaryResponseDTO {
     }
 }
 
-struct GeolocationDTO: Decodable, Sendable {
-    let longitude: Double
-    let latitude: Double
-}
-
-extension GeolocationDTO {
-    func toEntity() -> CoordinateEntity {
-        return CoordinateEntity(
-            longitude: latitude,
-            latitude: longitude
-        )
-    }
-}

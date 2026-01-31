@@ -12,7 +12,7 @@ struct EstateEntity: Identifiable, Sendable {
     let built_year: String
     let area: Double
     let floors: Int
-    let geolocation: CoordinateEntity
+    let geolocation: GeolocationEntity
     let distance: Double?
     let likeCount: Int
     let isSafeEstate: Bool
@@ -21,11 +21,3 @@ struct EstateEntity: Identifiable, Sendable {
     let updatedAt: String
 }
 
-struct CoordinateEntity: Sendable {
-    let longitude: Double
-    let latitude: Double
-    
-    var toCLLocationCoordinate2D: CLLocationCoordinate2D {
-        .init(latitude: latitude, longitude: longitude)
-    }
-}

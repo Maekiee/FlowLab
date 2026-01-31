@@ -56,6 +56,7 @@ final class HomeTabStore: StoreProtocol {
         case .didTapBanner(let banner):
             handleBannerTap(banner)
         case .didTapHotEstate(let estateId):
+            print("매물 아이디:", estateId)
             tabRouter.push(.estateDetail(estateId: estateId))
         }
     }
