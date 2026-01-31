@@ -87,7 +87,6 @@ extension DIContainer {
         return ProfileTabStore(
             repository: makeProfileTabRepository(),
             tokenManager: tokenManager
-//            router: router
         )
     }
     
@@ -114,6 +113,11 @@ extension DIContainer {
             repository: makeVideoDetailRepository(),
             videoId: videoId
         )
+    }
+    
+    @MainActor
+    func makeEstateDetailStore() -> EstateDetailStore {
+        return EstateDetailStore()
     }
 }
 
@@ -160,13 +164,10 @@ extension DIContainer {
         let store = makeVideoDetailStore(videoId: videoId)
         return VideoDetailView(store: store)
     }
-}
-
-
-// MARK: - Main View Factory
-extension DIContainer {
+    
     @MainActor
-    func makeMainTabView() -> MainTabView {
-        return MainTabView()
+    func makeEstateDetailView() -> EstateDetailView {
+        let store = makeEstateDetailStore()
+        return EstateDetailView(store: store)
     }
 }
