@@ -27,16 +27,18 @@ final class EstateDetailStore: StoreProtocol {
         var isReserved = false
         var errorMessage: String?
         var orderInfo: OrderInfoDTO?
+        var reservationInfo: ReservationInfoEntity?
     }
-    
+
     enum Intent {
         case onAppear
         case booking
-        
+        case dismissPayment
     }
-    
+
     enum SideEffect {
         case showErrorAlert(String)
+        case showPayment
     }
     
     func action(_ intent: Intent) {
@@ -45,6 +47,8 @@ final class EstateDetailStore: StoreProtocol {
             getEstateDetail()
         case .booking:
             booking()
+        case .dismissPayment:
+            state.reservationInfo = nil
         }
     }
 }
@@ -76,8 +80,9 @@ extension EstateDetailStore {
             guard let orderInfo = state.orderInfo else { return }
             
             do {
-                let reservationInfo = try await repository.postOrderReservation(orderInfo: orderInfo)
-                state.isReserved = true
+                let response = try await repository.postOrderReservation(orderInfo: orderInfo)
+                state.reservationInfo = response.toEntity()
+                effectSubject.send(.showPayment)
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
             } catch {

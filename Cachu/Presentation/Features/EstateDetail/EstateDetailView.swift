@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import Kingfisher
 
 struct EstateDetailView {
@@ -241,6 +242,17 @@ extension EstateDetailView: View {
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             store.action(.onAppear)
+        }
+        .onReceive(store.effect) { effect in
+            switch effect {
+            case .showPayment:
+                guard let reservation = store.state.reservationInfo else { return }
+                PaymentManager.requestPayment(totalPrice: reservation.totalPrice) { response in
+                    store.action(.dismissPayment)
+                }
+            case .showErrorAlert:
+                break
+            }
         }
     }
 }
