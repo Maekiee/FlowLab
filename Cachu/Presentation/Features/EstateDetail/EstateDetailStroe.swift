@@ -85,4 +85,8 @@ extension EstateDetailStore {
             }
         }
     }
+    
+    private func payment() {
+        
+    }
 }

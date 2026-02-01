@@ -57,3 +57,8 @@
   - 엄격한 `access control` (private, fileprivate) 적용.
 * **Memory Management:** `weak self`, `unowned` 등을 적절히 사용하여 Retain Cycle(메모리 누수) 방지.
 * **Error Handling:** Result Type 또는 Swift Error를 통한 명시적 에러 처리.
+
+## 외부 라이브러리 및 문서 참조
+- **포트원(Iamport) iOS SDK**: [https://github.com/iamport/iamport-ios](https://github.com/iamport/iamport-ios)
+  - 결제 관련 코드 작성 시 위 저장소의 가이드 및 예제 코드를 최우선으로 참고할 것.
+  - `IamportSDK`를 활용하여 결제 요청 및 결과 처리를 구현함.
