@@ -76,7 +76,7 @@ extension EstateDetailStore {
             guard let orderInfo = state.orderInfo else { return }
             
             do {
-                let _ = try await repository.postOrderReservation(orderInfo: orderInfo)
+                let reservationInfo = try await repository.postOrderReservation(orderInfo: orderInfo)
                 state.isReserved = true
             } catch let error as NetworkError {
                 effectSubject.send(.showErrorAlert(error.errorDescription))
