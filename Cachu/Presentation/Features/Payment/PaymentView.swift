@@ -1,21 +1,135 @@
-import UIKit
+import SwiftUI
+import WebKit
+import Combine
 import iamport_ios
 
-@MainActor
-final class PaymentManager {
+struct PaymentView: View {
+    let totalPrice: Int
+    let onFinish: (IamportResponse?) -> Void
+    let onDismiss: () -> Void
 
-    private init() {}
+    @State private var isWebViewLoading = true
 
-    private static weak var loadingOverlay: UIView?
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                PaymentWebViewContainer(
+                    totalPrice: totalPrice,
+                    isLoading: $isWebViewLoading,
+                    onFinish: onFinish
+                )
+                .opacity(isWebViewLoading ? 0 : 1)
 
-    static func requestPayment(
-        totalPrice: Int,
-        onFinish: @escaping (IamportResponse?) -> Void
-    ) {
-        guard let viewController = topViewController() else { return }
+                if isWebViewLoading {
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .controlSize(.large)
 
-        showLoadingOverlay(on: viewController)
+                        Text("결제 화면을 불러오는 중...")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(.systemBackground))
+                }
+            }
+            .navigationTitle("결제")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        Iamport.shared.close()
+                        onDismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.primary)
+                    }
+                }
+            }
+        }
+    }
+}
 
+// MARK: - UIViewControllerRepresentable
+
+private struct PaymentWebViewContainer: UIViewControllerRepresentable {
+    let totalPrice: Int
+    @Binding var isLoading: Bool
+    let onFinish: (IamportResponse?) -> Void
+
+    func makeUIViewController(context: Context) -> PaymentWebViewController {
+        let vc = PaymentWebViewController()
+        vc.totalPrice = totalPrice
+        vc.onFinish = onFinish
+        vc.onLoadingChanged = { [self] loading in
+            isLoading = loading
+        }
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: PaymentWebViewController, context: Context) {}
+}
+
+// MARK: - Payment UIViewController
+
+private final class PaymentWebViewController: UIViewController {
+    var totalPrice = 0
+    var onFinish: ((IamportResponse?) -> Void)?
+    var onLoadingChanged: ((Bool) -> Void)?
+
+    private var isPaymentRequested = false
+    private var loadingObservation: NSKeyValueObservation?
+
+    private lazy var wkWebView: WKWebView = {
+        let webView = WKWebView()
+        webView.backgroundColor = .clear
+        return webView
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        attachWebView()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        guard !isPaymentRequested else { return }
+        isPaymentRequested = true
+        observeWebViewLoading()
+        requestPayment()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        loadingObservation?.invalidate()
+        loadingObservation = nil
+    }
+
+    private func attachWebView() {
+        view.addSubview(wkWebView)
+        wkWebView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            wkWebView.topAnchor.constraint(equalTo: view.topAnchor),
+            wkWebView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            wkWebView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            wkWebView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+
+    private func observeWebViewLoading() {
+        loadingObservation = wkWebView.observe(\.isLoading, options: [.new]) { [weak self] _, change in
+            guard let isLoading = change.newValue else { return }
+            DispatchQueue.main.async {
+                if !isLoading {
+                    self?.onLoadingChanged?(false)
+                }
+            }
+        }
+    }
+
+    private func requestPayment() {
         let payment = IamportPayment(
             pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
             merchant_uid: "mid_\(Int(Date().timeIntervalSince1970 * 1000))",
@@ -28,55 +142,12 @@ final class PaymentManager {
         let userCode = "imp14511373"
 
         Iamport.shared.useNavigationButton(enable: false)
-        Iamport.shared.payment(
-            viewController: viewController,
+        Iamport.shared.paymentWebView(
+            webViewMode: wkWebView,
             userCode: userCode,
             payment: payment
-        ) { response in
-            removeLoadingOverlay()
-            onFinish(response)
+        ) { [weak self] response in
+            self?.onFinish?(response)
         }
-    }
-
-    // MARK: - Loading Overlay
-
-    private static func showLoadingOverlay(on viewController: UIViewController) {
-        let overlay = UIView(frame: viewController.view.bounds)
-        overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-
-        let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = .white
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        indicator.startAnimating()
-
-        overlay.addSubview(indicator)
-        NSLayoutConstraint.activate([
-            indicator.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
-        ])
-
-        viewController.view.addSubview(overlay)
-        loadingOverlay = overlay
-    }
-
-    private static func removeLoadingOverlay() {
-        loadingOverlay?.removeFromSuperview()
-        loadingOverlay = nil
-    }
-
-    // MARK: - Top ViewController
-
-    private static func topViewController() -> UIViewController? {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene }).first,
-              let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController
-        else { return nil }
-
-        var top = rootVC
-        while let presented = top.presentedViewController {
-            top = presented
-        }
-        return top
     }
 }

@@ -6,6 +6,7 @@ struct EstateDetailView {
     @Environment(AppRouter.self) private var appRouter
 
     @State var store: EstateDetailStore
+    @State private var showPaymentSheet = false
 
     init(store: EstateDetailStore) {
         self._store = State(initialValue: store)
@@ -246,12 +247,24 @@ extension EstateDetailView: View {
         .onReceive(store.effect) { effect in
             switch effect {
             case .showPayment:
-                guard let reservation = store.state.reservationInfo else { return }
-                PaymentManager.requestPayment(totalPrice: reservation.totalPrice) { response in
-                    store.action(.dismissPayment)
-                }
+                showPaymentSheet = true
             case .showErrorAlert:
                 break
+            }
+        }
+        .fullScreenCover(isPresented: $showPaymentSheet) {
+            if let reservation = store.state.reservationInfo {
+                PaymentView(
+                    totalPrice: reservation.totalPrice,
+                    onFinish: { response in
+                        showPaymentSheet = false
+                        store.action(.dismissPayment)
+                    },
+                    onDismiss: {
+                        showPaymentSheet = false
+                        store.action(.dismissPayment)
+                    }
+                )
             }
         }
     }
