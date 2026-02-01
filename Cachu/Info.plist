@@ -49,6 +49,8 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>payment.portone</string>
 			<key>CFBundleURLSchemes</key>
@@ -59,7 +61,7 @@
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
