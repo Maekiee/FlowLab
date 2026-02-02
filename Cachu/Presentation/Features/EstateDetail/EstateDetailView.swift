@@ -247,7 +247,12 @@ extension EstateDetailView: View {
             switch effect {
             case .showPayment:
                 if let reservation = store.state.reservationInfo {
-                    appRouter.presentFullScreen(.payment(totalPrice: reservation.totalPrice))
+                    appRouter.presentFullScreen(
+                        .payment(
+                            totalPrice: reservation.totalPrice,
+                            orderCode: reservation.orderCode
+                        )
+                    )
                 }
             case .showErrorAlert:
                 break

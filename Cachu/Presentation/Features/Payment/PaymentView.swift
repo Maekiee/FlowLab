@@ -5,6 +5,7 @@ import iamport_ios
 
 struct PaymentView: View {
     let totalPrice: Int
+    let orderCode: String
     let onFinish: (IamportResponse?) -> Void
     let onDismiss: () -> Void
 
@@ -15,6 +16,7 @@ struct PaymentView: View {
             ZStack {
                 PaymentWebViewContainer(
                     totalPrice: totalPrice,
+                    orderCode: orderCode,
                     isLoading: $isWebViewLoading,
                     onFinish: onFinish
                 )
@@ -54,12 +56,14 @@ struct PaymentView: View {
 
 private struct PaymentWebViewContainer: UIViewControllerRepresentable {
     let totalPrice: Int
+    let orderCode: String
     @Binding var isLoading: Bool
     let onFinish: (IamportResponse?) -> Void
 
     func makeUIViewController(context: Context) -> PaymentWebViewController {
         let vc = PaymentWebViewController()
         vc.totalPrice = totalPrice
+        vc.orderCode = orderCode
         vc.onFinish = onFinish
         vc.onLoadingChanged = { [self] loading in
             isLoading = loading
@@ -74,6 +78,7 @@ private struct PaymentWebViewContainer: UIViewControllerRepresentable {
 
 private final class PaymentWebViewController: UIViewController {
     var totalPrice = 0
+    var orderCode = ""
     var onFinish: ((IamportResponse?) -> Void)?
     var onLoadingChanged: ((Bool) -> Void)?
 
@@ -132,7 +137,7 @@ private final class PaymentWebViewController: UIViewController {
     private func requestPayment() {
         let payment = IamportPayment(
             pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
-            merchant_uid: "mid_\(Int(Date().timeIntervalSince1970 * 1000))",
+            merchant_uid: orderCode,
             amount: "\(totalPrice)"
         )
         payment.pay_method = PayMethod.card.rawValue

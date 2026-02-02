@@ -34,7 +34,7 @@ enum SheetRoute: Identifiable, Hashable {
 
 // MARK: - FullScreen Routes
 enum FullScreenRoute: Identifiable, Hashable {
-    case payment(totalPrice: Int)
+    case payment(totalPrice: Int, orderCode: String)
     var id: String {
         switch self {
         case .payment:

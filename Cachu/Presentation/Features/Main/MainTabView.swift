@@ -33,9 +33,10 @@ struct MainTabView: View {
         }
         .fullScreenCover(item: $appRouter.fullScreenRoute) { route in
             switch route {
-            case .payment(let totalPrice):
+            case .payment(let totalPrice, let orderCode):
                 PaymentView(
                     totalPrice: totalPrice,
+                    orderCode: orderCode,
                     onFinish: { response in
                         router.completePayment(response: response)
                     },

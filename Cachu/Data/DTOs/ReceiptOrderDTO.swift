@@ -31,6 +31,6 @@ struct ReceiptEstateDTO: Decodable, Sendable {
     let area: Double
     let floors: Double
     let geolocation: GeolocationDTO
-    let created_at: String
-    let updated_at: String
+    let created_at: String?
+    let updated_at: String?
 }
