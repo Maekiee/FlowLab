@@ -28,12 +28,11 @@ enum SheetRoute: Identifiable, Hashable {
 
 // MARK: - FullScreen Routes
 enum FullScreenRoute: Identifiable, Hashable {
-    case sample
-
+    case payment(totalPrice: Int)
     var id: String {
         switch self {
-        case .sample:
-            return "sample"
+        case .payment:
+            return "payment"
         }
     }
 }
