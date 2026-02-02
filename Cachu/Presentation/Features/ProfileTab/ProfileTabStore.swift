@@ -47,7 +47,6 @@ final class ProfileTabStore: StoreProtocol {
         Task {
             do {
                 let res = try await repository.logout()
-                print(res)
                 print("로그 아웃 성공")
             } catch let error as NetworkError {
                 print("에러", error.errorDescription)

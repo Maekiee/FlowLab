@@ -15,6 +15,7 @@ enum ApiEndpoint: Endpoint {
     case getVideoStream(videoId: String)
     case getEstateDetail(estateId: String)
     case order(orderInfo: OrderInfoDTO)
+    case receiptValid(uid: ValidationPayDTO)
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -35,12 +36,13 @@ enum ApiEndpoint: Endpoint {
         case .getVideoStream(let id): return "/videos/\(id)/stream"
         case .getEstateDetail(let estateId): return "/estates/\(estateId)"
         case .order: return "/orders"
+        case .receiptValid: return "/payments/validation"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .login, .join, .validEmail, .logout, .order:
+        case .login, .join, .validEmail, .logout, .order, .receiptValid:
             return .post
         case
                 .refresh,
@@ -79,6 +81,8 @@ enum ApiEndpoint: Endpoint {
             return try? JSONEncoder().encode(emailDTO)
         case .order(let orderInfo):
             return try? JSONEncoder().encode(orderInfo)
+        case .receiptValid(let uid):
+            return try? JSONEncoder().encode(uid)
         case
                 .refresh,
                 .logout,
@@ -114,7 +118,7 @@ enum ApiEndpoint: Endpoint {
         case .login, .join, .refresh, .validEmail:
             return false
         case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain, .getVideos,
-                .getVideoStream, .getEstateDetail, .order:
+                .getVideoStream, .getEstateDetail, .order, .receiptValid:
             return true
         }
     }
