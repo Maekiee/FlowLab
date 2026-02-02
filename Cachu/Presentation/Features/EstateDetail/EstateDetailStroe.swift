@@ -33,12 +33,15 @@ final class EstateDetailStore: StoreProtocol {
     enum Intent {
         case onAppear
         case booking
+        case verifyPayment(impUid: String)
         case dismissPayment
     }
 
     enum SideEffect {
         case showErrorAlert(String)
         case showPayment
+        case showPaymentSuccess
+        case showPaymentFailure(String)
     }
     
     func action(_ intent: Intent) {
@@ -47,6 +50,8 @@ final class EstateDetailStore: StoreProtocol {
             getEstateDetail()
         case .booking:
             booking()
+        case .verifyPayment(let impUid):
+            verifyReceipt(impUid: impUid)
         case .dismissPayment:
             state.reservationInfo = nil
         }
@@ -91,7 +96,18 @@ extension EstateDetailStore {
         }
     }
     
-    private func payment() {
-        
+    private func verifyReceipt(impUid: String) {
+        Task {
+            do {
+                let _ = try await repository.postValidationReceipt(impUid: ValidationPayDTO(imp_uid: impUid))
+                state.isReserved = true
+                state.reservationInfo = nil
+                effectSubject.send(.showPaymentSuccess)
+            } catch let error as NetworkError {
+                effectSubject.send(.showPaymentFailure(error.errorDescription))
+            } catch {
+                effectSubject.send(.showPaymentFailure(error.localizedDescription))
+            }
+        }
     }
 }

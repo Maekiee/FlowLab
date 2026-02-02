@@ -1,6 +1,12 @@
 import SwiftUI
+import iamport_ios
 
-
+// MARK: - Payment Response
+struct PaymentResponseData {
+    let impUid: String?
+    let merchantUid: String?
+    let success: Bool
+}
 
 // MARK: - App Root View
 enum AppRootView: Equatable {
@@ -82,6 +88,7 @@ final class AppRouter {
 
     var sheetRoute: SheetRoute?
     var fullScreenRoute: FullScreenRoute?
+    var paymentResponse: PaymentResponseData?
 
     var selectedTab: MainTab = .home
 
@@ -174,6 +181,15 @@ final class AppRouter {
 
     func dismissFullScreen() {
         fullScreenRoute = nil
+    }
+
+    func completePayment(response: IamportResponse?) {
+        paymentResponse = PaymentResponseData(
+            impUid: response?.imp_uid,
+            merchantUid: response?.merchant_uid,
+            success: response?.success ?? false
+        )
+        dismissFullScreen()
     }
 
     func switchTab(to tab: MainTab) {

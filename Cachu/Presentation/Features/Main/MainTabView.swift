@@ -36,9 +36,8 @@ struct MainTabView: View {
             case .payment(let totalPrice):
                 PaymentView(
                     totalPrice: totalPrice,
-                    onFinish: { resValue in
-                        router.dismissFullScreen()
-                        print("⭕️⭕️⭕️⭕️⭕️⭕️ 결제 완료 응답 값: \(resValue) ⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️")
+                    onFinish: { response in
+                        router.completePayment(response: response)
                     },
                     onDismiss: {
                         router.dismissFullScreen()

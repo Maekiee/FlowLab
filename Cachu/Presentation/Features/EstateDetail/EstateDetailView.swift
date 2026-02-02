@@ -251,11 +251,16 @@ extension EstateDetailView: View {
                 }
             case .showErrorAlert:
                 break
+            case .showPaymentSuccess:
+                break
+            case .showPaymentFailure(_):
+                break
             }
         }
-        .onChange(of: appRouter.fullScreenRoute) { oldValue, newValue in
-            if oldValue != nil && newValue == nil {
-                store.action(.dismissPayment)
+        .onChange(of: appRouter.paymentResponse?.impUid) { _, newValue in
+            if let impUid = newValue {
+                store.action(.verifyPayment(impUid: impUid))
+                appRouter.paymentResponse = nil
             }
         }
     }
