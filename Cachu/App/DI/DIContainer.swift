@@ -116,6 +116,11 @@ extension DIContainer {
     }
     
     @MainActor
+    func makeChattingTabStore() -> ChattingTabStore {
+        return ChattingTabStore()
+    }
+    
+    @MainActor
     func makeVideoDetailStore(videoId: String) -> VideoDetailStore {
         let repository = makeVideoDetailRepository()
         return VideoDetailStore(
@@ -170,6 +175,12 @@ extension DIContainer {
     func makeVideoTabView() -> VideoTabView {
         let store = makeVideoTabStore()
         return VideoTabView(store: store)
+    }
+    
+    @MainActor
+    func makeChattingTabView() -> ChattingTabView {
+        let store = makeChattingTabStore()
+        return ChattingTabView(store: store)
     }
     
     @MainActor

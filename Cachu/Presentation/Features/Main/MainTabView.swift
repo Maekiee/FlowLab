@@ -23,6 +23,17 @@ struct MainTabView: View {
                 }
                 .tag(MainTab.video)
             
+            container.makeChattingTabView()
+                .tabItem {
+                    Label {
+                        Text(MainTab.chatting.title)
+                    } icon: {
+                        Image(MainTab.chatting.icon)
+                            .renderingMode(.template)
+                    }
+                }
+                .tag(MainTab.chatting)
+            
             container.makeProfileTabView()
                 .environment(router)
                 .environment(router.profileRouter)

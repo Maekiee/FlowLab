@@ -47,14 +47,17 @@ enum FullScreenRoute: Identifiable, Hashable {
 enum MainTab: Int, Hashable, CaseIterable {
     case home = 0
     case video = 1
-    case profile = 2
+    case chatting = 2
+    case profile = 3
 
     var title: String {
         switch self {
         case .home:
             return "홈"
         case .video:
-            return "탭2"
+            return "비디오"
+        case .chatting:
+            return "채팅"
         case .profile:
             return "내 정보"
         }
@@ -66,6 +69,8 @@ enum MainTab: Int, Hashable, CaseIterable {
             return "house"
         case .video:
             return "square.grid.2x2"
+        case .chatting:
+            return "chat_frame"
         case .profile:
             return "person"
         }
