@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A4DEAB12F31EF4400792425 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5A4DEAB02F31EF4400792425 /* RealmSwift */; };
 		76879F4E2F1FC386008C0B48 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 76879F4D2F1FC386008C0B48 /* Kingfisher */; };
 		769AC3EE2EE967A3002C5582 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 769AC3ED2EE967A3002C5582 /* FirebaseAnalytics */; };
 		769AC3F02EE967A3002C5582 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 769AC3EF2EE967A3002C5582 /* FirebaseCore */; };
@@ -47,6 +48,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				76C423872F2F25D9009C4ED6 /* iamport-ios in Frameworks */,
+				5A4DEAB12F31EF4400792425 /* RealmSwift in Frameworks */,
 				76879F4E2F1FC386008C0B48 /* Kingfisher in Frameworks */,
 				769AC3F22EE967A3002C5582 /* FirebaseMessaging in Frameworks */,
 				769AC3F02EE967A3002C5582 /* FirebaseCore in Frameworks */,
@@ -99,6 +101,7 @@
 				769AC3F12EE967A3002C5582 /* FirebaseMessaging */,
 				76879F4D2F1FC386008C0B48 /* Kingfisher */,
 				76C423862F2F25D9009C4ED6 /* iamport-ios */,
+				5A4DEAB02F31EF4400792425 /* RealmSwift */,
 			);
 			productName = Cachu;
 			productReference = 769AC3DE2EE9656D002C5582 /* Cachu.app */;
@@ -132,6 +135,7 @@
 				769AC3EC2EE967A3002C5582 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				76879F4C2F1FC386008C0B48 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				76C423852F2F25D9009C4ED6 /* XCRemoteSwiftPackageReference "iamport-ios" */,
+				5A4DEAAD2F31EF4400792425 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 769AC3DF2EE9656D002C5582 /* Products */;
@@ -388,6 +392,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5A4DEAAD2F31EF4400792425 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		76879F4C2F1FC386008C0B48 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -415,6 +427,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5A4DEAB02F31EF4400792425 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A4DEAAD2F31EF4400792425 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		76879F4D2F1FC386008C0B48 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 76879F4C2F1FC386008C0B48 /* XCRemoteSwiftPackageReference "Kingfisher" */;

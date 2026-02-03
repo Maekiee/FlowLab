@@ -188,11 +188,17 @@ extension EstateDetailView: View {
                                     Spacer()
 
                                     Button {
-                                        // 채팅 액션
+                                        // 전화 액션
                                     } label: {
-                                        Image(systemName: "ellipsis.message")
-                                            .font(.system(size: 20))
-                                            .foregroundStyle(.secondary)
+                                        Image("phone")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 24, height: 24)
+                                            .foregroundStyle(.white)
+                                            .frame(width: 48, height: 48)
+                                            .background(.deepCream)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
                                 }
                             }
