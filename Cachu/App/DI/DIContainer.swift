@@ -61,6 +61,10 @@ extension DIContainer {
     func makeEstateDetailRepository() -> EstateDetailRepositoryProtocol {
         return EstateDetailRepository(apiClient: apiClient)
     }
+    
+    func makeChattingTabRepository() -> ChattingTabRepositoryProtocol {
+        return ChattingTabRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -117,7 +121,10 @@ extension DIContainer {
     
     @MainActor
     func makeChattingTabStore() -> ChattingTabStore {
-        return ChattingTabStore()
+        let repository = makeChattingTabRepository()
+        return ChattingTabStore(
+            repository: repository
+        )
     }
     
     @MainActor

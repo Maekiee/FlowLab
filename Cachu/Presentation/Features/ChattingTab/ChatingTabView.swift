@@ -13,11 +13,14 @@ struct ChattingTabView: View {
         
         NavigationStack(path: $tabRouter.path) {
             ScrollView {
-                Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                Text("Hello, World!")
             }
         }
         .navigationDestination(for: ChattingTabRoute.self) { route in
             tabRouter.buildView(for: route)
+        }
+        .onAppear {
+            store.action(.onAppear)
         }
     }
 }

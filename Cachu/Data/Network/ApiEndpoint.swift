@@ -16,6 +16,7 @@ enum ApiEndpoint: Endpoint {
     case getEstateDetail(estateId: String)
     case order(orderInfo: OrderInfoDTO)
     case receiptValid(uid: ValidationPayDTO)
+    case getChats
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -37,6 +38,7 @@ enum ApiEndpoint: Endpoint {
         case .getEstateDetail(let estateId): return "/estates/\(estateId)"
         case .order: return "/orders"
         case .receiptValid: return "/payments/validation"
+        case .getChats: return "/chats"
         }
     }
     
@@ -52,7 +54,8 @@ enum ApiEndpoint: Endpoint {
                 .bannerMain,
                 .getVideos,
                 .getVideoStream,
-                .getEstateDetail:
+                .getEstateDetail,
+                .getChats:
             return .get
         }
     }
@@ -92,7 +95,8 @@ enum ApiEndpoint: Endpoint {
                 .bannerMain,
                 .getVideos,
                 .getVideoStream,
-                .getEstateDetail:
+                .getEstateDetail,
+                .getChats:
             return nil
         }
     }
@@ -118,7 +122,7 @@ enum ApiEndpoint: Endpoint {
         case .login, .join, .refresh, .validEmail:
             return false
         case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain, .getVideos,
-                .getVideoStream, .getEstateDetail, .order, .receiptValid:
+                .getVideoStream, .getEstateDetail, .order, .receiptValid, .getChats:
             return true
         }
     }
