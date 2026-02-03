@@ -24,6 +24,7 @@ struct MainTabView: View {
                 .tag(MainTab.video)
             
             container.makeChattingTabView()
+                .environment(router.chattingTabRouter)
                 .tabItem {
                     Label {
                         Text(MainTab.chatting.title)

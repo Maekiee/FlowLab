@@ -99,6 +99,7 @@ final class AppRouter {
 
     let homeRouter: HomeRouter
     let videoRouter: VideoTabRouter
+    let chattingTabRouter: ChattingTabRouter
     let profileRouter: ProfileRouter
 
     nonisolated(unsafe) private var authEventTask: Task<Void, Never>?
@@ -110,6 +111,7 @@ final class AppRouter {
         // Tab Routers 초기화
         self.homeRouter = HomeRouter(container: container)
         self.videoRouter = VideoTabRouter(container: container)
+        self.chattingTabRouter = ChattingTabRouter(container: container)
         self.profileRouter = ProfileRouter(container: container)
 
         subscribeAuthEvents()
@@ -222,6 +224,7 @@ final class AppRouter {
         homeRouter.popToRoot()
         videoRouter.popToRoot()
         profileRouter.popToRoot()
+        chattingTabRouter.popToRoot()
         selectedTab = .home
     }
 }
