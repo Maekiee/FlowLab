@@ -190,7 +190,7 @@ extension EstateDetailView: View {
                                     Button {
                                         // 전화 액션
                                     } label: {
-                                        Image("phone")
+                                        Image("chat_frame")
                                             .renderingMode(.template)
                                             .resizable()
                                             .scaledToFit()
