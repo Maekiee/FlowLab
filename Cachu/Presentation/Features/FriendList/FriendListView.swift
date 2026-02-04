@@ -16,12 +16,12 @@ struct Friend: Identifiable {
 
 extension Friend {
     static let mockData: [Friend] = [
-        Friend(userId: "user001", nick: "김철수", thumbnail: ""),
-        Friend(userId: "user002", nick: "이영희"),
-        Friend(userId: "user003", nick: "박민수", thumbnail: ""),
-        Friend(userId: "user004", nick: "정수진"),
-        Friend(userId: "user005", nick: "최동욱", thumbnail: ""),
-        Friend(userId: "user006", nick: "홍길동"),
+        Friend(userId: "69402d006648c4142c28cbb0", nick: "쿠키", thumbnail: ""),
+        Friend(userId: "6950fcfca18bc2cef1ba3d9f", nick: "쿠키4"),
+        Friend(userId: "6950fd51a18bc2cef1ba3da8", nick: "쿠키5", thumbnail: ""),
+        Friend(userId: "694bf89da18bc2cef1ba36cb", nick: "쿠키공인중개사"),
+        Friend(userId: "6953dca9a18bc2cef1ba4b93", nick: "쿠키뉴이열", thumbnail: ""),
+        Friend(userId: "694b277ea18bc2cef1ba3621", nick: "친절한도원공인중개사"),
         Friend(userId: "user007", nick: "강지민", thumbnail: "")
     ]
 }
