@@ -28,11 +28,14 @@ struct ChattingTabView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        
+                        chattingTabRouter.fullScreenRoute = .friendList
                     } label: {
                         Image("list")
                     }
                 }
+            }
+            .fullScreenCover(item: $tabRouter.fullScreenRoute) { route in
+                tabRouter.buildFullScreenView(for: route)
             }
             .onReceive(store.effect) { effect in
                 switch effect {
