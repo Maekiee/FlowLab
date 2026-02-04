@@ -18,7 +18,7 @@ struct ChattingTabView: View {
                 Button {
                     store.action(.onTapRoom)
                 } label: {
-                    Text("네비게이션 텝 이동")
+                    Text("채팅방 이동")
                 }
 
             }
