@@ -17,6 +17,7 @@ enum ApiEndpoint: Endpoint {
     case order(orderInfo: OrderInfoDTO)
     case receiptValid(uid: ValidationPayDTO)
     case getChats
+    case postChats(userId: CreateChatRoomDTO)
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -39,12 +40,16 @@ enum ApiEndpoint: Endpoint {
         case .order: return "/orders"
         case .receiptValid: return "/payments/validation"
         case .getChats: return "/chats"
+        case .postChats: return "/chats"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .login, .join, .validEmail, .logout, .order, .receiptValid:
+        case
+                .login, .join, .validEmail,
+                .logout, .order, .receiptValid,
+                .postChats:
             return .post
         case
                 .refresh,
@@ -86,6 +91,8 @@ enum ApiEndpoint: Endpoint {
             return try? JSONEncoder().encode(orderInfo)
         case .receiptValid(let uid):
             return try? JSONEncoder().encode(uid)
+        case .postChats(let userId):
+            return try? JSONEncoder().encode(userId)
         case
                 .refresh,
                 .logout,
@@ -119,10 +126,15 @@ enum ApiEndpoint: Endpoint {
     
     var requiresAuth: Bool {
         switch self {
-        case .login, .join, .refresh, .validEmail:
+        case
+                .login, .join, .refresh,
+                .validEmail:
             return false
-        case .logout, .homeBanner, .hotProperties, .dailyRealEstateTopics, .bannerMain, .getVideos,
-                .getVideoStream, .getEstateDetail, .order, .receiptValid, .getChats:
+        case
+                .logout, .homeBanner, .hotProperties,
+                .dailyRealEstateTopics, .bannerMain, .getVideos,
+                .getVideoStream, .getEstateDetail, .order,
+                .receiptValid, .getChats, .postChats:
             return true
         }
     }

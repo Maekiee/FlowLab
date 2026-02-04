@@ -65,6 +65,10 @@ extension DIContainer {
     func makeChattingTabRepository() -> ChattingTabRepositoryProtocol {
         return ChattingTabRepository(apiClient: apiClient)
     }
+    
+    func makeFriendListRepository() -> FriendListRepositoryProtocol {
+        return FriendListRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -152,7 +156,8 @@ extension DIContainer {
     
     @MainActor
     func makeFriendListStore() -> FriendListStore {
-        return FriendListStore()
+        let repository = makeFriendListRepository()
+        return FriendListStore(repository: repository)
     }
 }
 

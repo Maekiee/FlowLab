@@ -10,6 +10,4 @@ extension CreateChatRoomDTO: EntityConvertible {
     }
 }
 
-struct CreateChatRoomEntity {
-    let opponentId: String
-}
+
