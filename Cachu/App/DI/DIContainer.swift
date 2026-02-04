@@ -149,6 +149,11 @@ extension DIContainer {
     func makeChattingRoomStore() -> ChattingRoomStore {
         return ChattingRoomStore()
     }
+    
+    @MainActor
+    func makeFriendListStore() -> FriendListStore {
+        return FriendListStore()
+    }
 }
 
 
@@ -210,5 +215,11 @@ extension DIContainer {
     @MainActor
     func makeChattingRoomView() -> ChattingRoomView {
         return ChattingRoomView()
+    }
+    
+    @MainActor
+    func makeFriendListView() -> FriendListView {
+        let store = makeFriendListStore()
+        return FriendListView(store: store)
     }
 }

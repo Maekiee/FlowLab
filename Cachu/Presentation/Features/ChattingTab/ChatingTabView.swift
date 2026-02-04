@@ -25,6 +25,15 @@ struct ChattingTabView: View {
             .navigationDestination(for: ChattingTabRoute.self) { route in
                 tabRouter.buildView(for: route)
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image("list")
+                    }
+                }
+            }
             .onReceive(store.effect) { effect in
                 switch effect {
                 case .showAlert(let message):
@@ -34,7 +43,6 @@ struct ChattingTabView: View {
                 }
             }
         }
-        
         .onAppear {
             store.action(.onAppear)
         }
