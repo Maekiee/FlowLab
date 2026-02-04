@@ -2,7 +2,8 @@ import SwiftUI
 
 struct ChattingRoomView: View {
     var body: some View {
-        Text("Hello Chatting Room")
+        Text("hello Chatting")
+            .toolbar(.hidden, for:.tabBar)
     }
 }
 

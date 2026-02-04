@@ -14,11 +14,27 @@ struct ChattingTabView: View {
         NavigationStack(path: $tabRouter.path) {
             ScrollView {
                 Text("Hello, World!")
+                
+                Button {
+                    store.action(.onTapRoom)
+                } label: {
+                    Text("네비게이션 텝 이동")
+                }
+
+            }
+            .navigationDestination(for: ChattingTabRoute.self) { route in
+                tabRouter.buildView(for: route)
+            }
+            .onReceive(store.effect) { effect in
+                switch effect {
+                case .showAlert(let message):
+                    print("에러 메세지")
+                case .routeTo(let route):
+                    chattingTabRouter.push(route)
+                }
             }
         }
-        .navigationDestination(for: ChattingTabRoute.self) { route in
-            tabRouter.buildView(for: route)
-        }
+        
         .onAppear {
             store.action(.onAppear)
         }

@@ -24,16 +24,20 @@ final class ChattingTabStore: StoreProtocol {
     
     enum Intent {
         case onAppear
+        case onTapRoom
     }
     
     enum SideEffect {
         case showAlert(String)
+        case routeTo(ChattingTabRoute)
     }
     
     func action(_ intent: Intent) {
         switch intent {
         case .onAppear:
             getChattingRoomList()
+        case .onTapRoom:
+            effectSubject.send(.routeTo(.chattingRoom))
         }
     }
 }

@@ -17,13 +17,13 @@ final class ChattingTabRouter: TabRouterProtocol {
 }
 
 extension ChattingTabRouter {
+    
     @ViewBuilder
     func buildView(for route: ChattingTabRoute) -> some View {
         switch route {
         case .chattingRoom:
-            return Text("hello llll")
-        default:
-            Text("")
+            container.makeChattingRoomView()
         }
     }
+    
 }

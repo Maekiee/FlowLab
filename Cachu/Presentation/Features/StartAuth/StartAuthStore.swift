@@ -1,9 +1,15 @@
 import Foundation
-
+import Combine
 
 @MainActor
 @Observable
 final class StartAuthStore: StoreProtocol {
+    private(set) var state = State()
+    private let effectSubject = PassthroughSubject<SideEffect, Never>()
+    var effect: AnyPublisher<SideEffect, Never> {
+        effectSubject.eraseToAnyPublisher()
+    }
+    
     struct State {
         
     }
@@ -15,8 +21,6 @@ final class StartAuthStore: StoreProtocol {
     enum SideEffect: Equatable {
         
     }
-    
-    private(set) var state = State()
     
     func action(_ intent: Intent) {
         
