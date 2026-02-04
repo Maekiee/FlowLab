@@ -144,6 +144,11 @@ extension DIContainer {
             estateId: estateId
         )
     }
+    
+    @MainActor
+    func makeChattingRoomStore() -> ChattingRoomStore {
+        return ChattingRoomStore()
+    }
 }
 
 
@@ -200,5 +205,10 @@ extension DIContainer {
     func makeEstateDetailView(estateId: String) -> EstateDetailView {
         let store = makeEstateDetailStore(estateId: estateId)
         return EstateDetailView(store: store)
+    }
+    
+    @MainActor
+    func makeChattingRoomView() -> ChattingRoomView {
+        return ChattingRoomView()
     }
 }
