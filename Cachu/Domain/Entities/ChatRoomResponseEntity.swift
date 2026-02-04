@@ -6,5 +6,5 @@ struct ChatRoomResponseEntity: Sendable {
     let createdAt: String
     let updatedAt: String
     let participants: [UserInfoEntity]
-    let lastChat: ChatResponseEntity
+    let lastChat: ChatResponseEntity?
 }

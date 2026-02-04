@@ -169,7 +169,7 @@ extension EstateDetailView: View {
                                     .font(.system(size: 18, weight: .bold))
 
                                 HStack(spacing: 14) {
-                                    KFImage(URL(string: AppConfig.baseURL + estate.creator.profileImage))
+                                    KFImage(URL(string: AppConfig.baseURL + (estate.creator.profileImage ?? "")))
                                         .withHeaders()
                                         .resizable()
                                         .scaledToFill()

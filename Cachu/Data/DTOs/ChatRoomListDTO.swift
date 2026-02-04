@@ -9,7 +9,7 @@ struct ChatRoomDTO: Decodable, Sendable {
     let createdAt: String
     let updatedAt: String
     let participants: [UserInfoDTO]
-    let lastChat: ChatDTO
+    let lastChat: ChatDTO?
 }
 
 struct ChatDTO: Decodable, Sendable {
@@ -36,7 +36,7 @@ extension ChatRoomDTO: EntityConvertible {
             createdAt: createdAt,
             updatedAt: updatedAt,
             participants: participants.map { $0.toEntity() },
-            lastChat: lastChat.toEntity()
+            lastChat: lastChat?.toEntity()
         )
     }
 }

@@ -38,8 +38,7 @@ struct FriendListView: View {
         NavigationStack {
             List(Friend.mockData) { friend in
                 Button {
-                    // TODO: 친구 선택 이벤트 처리
-                    print("선택된 친구: \(friend.nick)")
+                    store.action(.createRoom(friend.userId))
                 } label: {
                     FriendRow(friend: friend)
                 }

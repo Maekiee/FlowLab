@@ -36,20 +36,19 @@ final class FriendListStore: StoreProtocol {
 
 extension FriendListStore {
     private func createChatRoom(userId: String) {
-        print("만들기 만들기")
-//        Task {
-//            state.isLoading = true
-//            
-//            defer { state.isLoading = false }
-//            
-//            do {
-//                let userIdDTO = CreateChatRoomDTO(opponent_id: userId)
-//                let res = try await repository.postCreateChatRoom(userId: userIdDTO)
-//                
-//                print("채팅방 조회 및 생성 성공 :: \(res)")
-//            } catch let error as NetworkError {
-//                print(error)
-//            }
-//        }
+        Task {
+            state.isLoading = true
+            
+            defer { state.isLoading = false }
+            
+            do {
+                let userIdDTO = CreateChatRoomDTO(opponent_id: userId)
+                let res = try await repository.postCreateChatRoom(userId: userIdDTO)
+                
+                print("채팅방 조회 및 생성 성공 :: \(res)")
+            } catch let error as NetworkError {
+                print(error)
+            }
+        }
     }
 }
