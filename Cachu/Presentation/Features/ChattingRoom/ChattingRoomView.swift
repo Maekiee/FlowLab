@@ -99,6 +99,9 @@ struct ChattingRoomView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            store.action(.onAppear)
+        }
     }
 
     private func sendMessage() {

@@ -156,7 +156,7 @@ extension DIContainer {
     @MainActor
     func makeChattingRoomStore(roomId: String) -> ChattingRoomStore {
         let repository = makeChattingRoomRepository()
-        return ChattingRoomStore(repository: repository, roomId: roomId)
+        return ChattingRoomStore(repository: repository, roomId: roomId, next: nil)
     }
 
     @MainActor
