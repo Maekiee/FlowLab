@@ -1,6 +1,8 @@
 import Foundation
 import Combine
 
+
+@MainActor @Observable
 final class ChattingRoomStore: StoreProtocol {
     private let repository: ChattingRoomRepositoryProtocol
     private let roomId: String
@@ -24,11 +26,13 @@ final class ChattingRoomStore: StoreProtocol {
 
     struct State {
         var isLoading = false
+        var chatText = ""
     }
     
     enum Intent {
         case onAppear
-        case sendChat(ChatMessageDTO)
+        case inputText(String)
+        case sendChat
     }
     
     enum SideEffect {
@@ -38,19 +42,21 @@ final class ChattingRoomStore: StoreProtocol {
     func action(_ intent: Intent) {
         switch intent {
         case .onAppear:
-            getMessages(roomId: self.roomId, next: self.next)
-        case .sendChat(let message):
-            sendMessage(roomId: self.roomId, message: message)
+            getMessages()
+        case .sendChat:
+            sendMessage()
+        case .inputText(let text):
+            state.chatText = text
         }
     }
 }
 
 
 extension ChattingRoomStore {
-    private func getMessages(roomId: String, next: String?) {
+    private func getMessages() {
         Task {
             do {
-                let res = try await repository.getChatMessages(roomId: roomId, next: next)
+                let res = try await repository.getChatMessages(roomId: self.roomId, next: self.next)
                 print("대화방 채팅 내용 리스트 :: \(res)")
             } catch let error as NetworkError {
                 print(error.errorDescription)
@@ -58,10 +64,12 @@ extension ChattingRoomStore {
         }
     }
     
-    private func sendMessage(roomId: String, message: ChatMessageDTO) {
+    private func sendMessage() {
         Task {
             do {
-                let res = try await repository.postSendMessage(roomId: roomId, message: message)
+                let message = ChatMessageDTO(content: state.chatText, files: nil)
+                
+                let res = try await repository.postSendMessage(roomId: self.roomId, message: message)
                 print("채팅 보내기 성공:\(res)")
             } catch let error as NetworkError {
                 print(error.errorDescription)

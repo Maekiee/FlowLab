@@ -47,7 +47,10 @@ struct ChattingRoomView: View {
 
                 // 텍스트 입력 필드
                 HStack {
-                    TextField("메시지를 입력하세요", text: $messageText)
+                    TextField("메시지를 입력하세요", text: Binding(
+                        get: { store.state.chatText },
+                        set: { store.action(.inputText($0)) },
+                    ))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
                 }
@@ -56,13 +59,13 @@ struct ChattingRoomView: View {
 
                 // 전송 버튼
                 Button {
-                    sendMessage()
+                    store.action(.sendChat)
                 } label: {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 20))
-                        .foregroundStyle(messageText.isEmpty ? .gray : .orange)
+                        .foregroundStyle(store.state.chatText.isEmpty ? .gray : .deepCoast)
                 }
-                .disabled(messageText.isEmpty)
+                .disabled(store.state.chatText.isEmpty)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -71,31 +74,8 @@ struct ChattingRoomView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                VStack(spacing: 2) {
-                    Text("김철수")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("매너온도 36.5°C")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.gray)
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 16) {
-                    Button {
-                        // 전화
-                    } label: {
-                        Image(systemName: "phone")
-                            .foregroundStyle(.black)
-                    }
-
-                    Button {
-                        // 메뉴
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .foregroundStyle(.black)
-                    }
-                }
+                Text("김철수")
+                    .font(.system(size: 16, weight: .semibold))
             }
         }
         .toolbar(.hidden, for: .tabBar)
