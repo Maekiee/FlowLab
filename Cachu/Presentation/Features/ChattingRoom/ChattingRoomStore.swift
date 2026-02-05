@@ -28,6 +28,7 @@ final class ChattingRoomStore: StoreProtocol {
     
     enum Intent {
         case onAppear
+        case sendChat(ChatMessageDTO)
     }
     
     enum SideEffect {
@@ -38,6 +39,8 @@ final class ChattingRoomStore: StoreProtocol {
         switch intent {
         case .onAppear:
             getMessages(roomId: self.roomId, next: self.next)
+        case .sendChat(let message):
+            sendMessage(roomId: self.roomId, message: message)
         }
     }
 }
@@ -49,6 +52,17 @@ extension ChattingRoomStore {
             do {
                 let res = try await repository.getChatMessages(roomId: roomId, next: next)
                 print("대화방 채팅 내용 리스트 :: \(res)")
+            } catch let error as NetworkError {
+                print(error.errorDescription)
+            }
+        }
+    }
+    
+    private func sendMessage(roomId: String, message: ChatMessageDTO) {
+        Task {
+            do {
+                let res = try await repository.postSendMessage(roomId: roomId, message: message)
+                print("채팅 보내기 성공:\(res)")
             } catch let error as NetworkError {
                 print(error.errorDescription)
             }
