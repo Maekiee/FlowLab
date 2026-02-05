@@ -29,9 +29,11 @@ extension Friend {
 struct FriendListView: View {
     @Environment(\.dismiss) private var dismiss
     @State var store: FriendListStore
+    var onRoomCreated: ((String) -> Void)?
 
-    init(store: FriendListStore) {
+    init(store: FriendListStore, onRoomCreated: ((String) -> Void)? = nil) {
         self._store = State(initialValue: store)
+        self.onRoomCreated = onRoomCreated
     }
 
     var body: some View {
@@ -45,6 +47,12 @@ struct FriendListView: View {
             }
             .listStyle(.plain)
             .navigationTitle("친구 목록")
+            .onReceive(store.effect) { effect in
+                switch effect {
+                case .roomCreated(let roomId):
+                    onRoomCreated?(roomId)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {

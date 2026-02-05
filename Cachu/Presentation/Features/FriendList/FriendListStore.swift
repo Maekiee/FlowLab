@@ -9,21 +9,21 @@ final class FriendListStore: StoreProtocol {
     var effect: AnyPublisher<SideEffect, Never> {
         effectSubject.eraseToAnyPublisher()
     }
-    
+
     init(repository: FriendListRepositoryProtocol) {
         self.repository = repository
     }
-    
+
     struct State {
         var isLoading = false
     }
-    
+
     enum Intent {
         case createRoom(String)
     }
-    
+
     enum SideEffect {
-        
+        case roomCreated(roomId: String)
     }
     
     func action(_ intent: Intent) {
@@ -38,14 +38,15 @@ extension FriendListStore {
     private func createChatRoom(userId: String) {
         Task {
             state.isLoading = true
-            
+
             defer { state.isLoading = false }
-            
+
             do {
                 let userIdDTO = CreateChatRoomDTO(opponent_id: userId)
                 let res = try await repository.postCreateChatRoom(userId: userIdDTO)
-                
+
                 print("채팅방 조회 및 생성 성공 :: \(res)")
+                effectSubject.send(.roomCreated(roomId: res.roomId))
             } catch let error as NetworkError {
                 print(error)
             }

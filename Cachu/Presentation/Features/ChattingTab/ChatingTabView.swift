@@ -16,7 +16,7 @@ struct ChattingTabView: View {
                 Text("Hello, World!")
                 
                 Button {
-                    store.action(.onTapRoom)
+                    store.action(.onTapRoom(roomId: "test-room-id"))
                 } label: {
                     Text("채팅방 이동")
                 }
@@ -34,7 +34,9 @@ struct ChattingTabView: View {
                     }
                 }
             }
-            .fullScreenCover(item: $tabRouter.fullScreenRoute) { route in
+            .fullScreenCover(item: $tabRouter.fullScreenRoute, onDismiss: {
+                chattingTabRouter.handlePendingNavigation()
+            }) { route in
                 tabRouter.buildFullScreenView(for: route)
             }
             .onReceive(store.effect) { effect in

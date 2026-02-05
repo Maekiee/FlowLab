@@ -150,10 +150,10 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeChattingRoomStore() -> ChattingRoomStore {
-        return ChattingRoomStore()
+    func makeChattingRoomStore(roomId: String) -> ChattingRoomStore {
+        return ChattingRoomStore(roomId: roomId)
     }
-    
+
     @MainActor
     func makeFriendListStore() -> FriendListStore {
         let repository = makeFriendListRepository()
@@ -218,13 +218,13 @@ extension DIContainer {
     }
     
     @MainActor
-    func makeChattingRoomView() -> ChattingRoomView {
-        return ChattingRoomView()
+    func makeChattingRoomView(roomId: String) -> ChattingRoomView {
+        return ChattingRoomView(roomId: roomId)
     }
-    
+
     @MainActor
-    func makeFriendListView() -> FriendListView {
+    func makeFriendListView(onRoomCreated: @escaping (String) -> Void) -> FriendListView {
         let store = makeFriendListStore()
-        return FriendListView(store: store)
+        return FriendListView(store: store, onRoomCreated: onRoomCreated)
     }
 }

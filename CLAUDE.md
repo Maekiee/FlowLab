@@ -62,3 +62,7 @@
 - **포트원(Iamport) iOS SDK**: [https://github.com/iamport/iamport-ios](https://github.com/iamport/iamport-ios)
   - 결제 관련 코드 작성 시 위 저장소의 가이드 및 예제 코드를 최우선으로 참고할 것.
   - `IamportSDK`를 활용하여 결제 요청 및 결과 처리를 구현함.
+
+### 추가 규칙
+* 작업후 빌드를 해보겠다는 제안 금지
+* 요청한 코드 작업을 마무리하면 단순히 마무리 되었으니 확인해보라는 안내로 대체
