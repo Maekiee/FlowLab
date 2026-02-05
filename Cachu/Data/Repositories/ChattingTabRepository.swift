@@ -14,7 +14,6 @@ extension ChattingTabRepository: ChattingTabRepositoryProtocol {
         let endPoint = ApiEndpoint.getChats
         do {
             let res = try await apiClient.request(endPoint, type: ChatRoomListDTO.self)
-            print("데이터 가져옴 \(res)")
             return res.data.map { $0.toEntity() }
         } catch let error as NetworkError {
             print("네트워크 에러:", error)

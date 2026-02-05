@@ -54,6 +54,8 @@ extension ChattingTabStore {
             do {
                 let chatList = try await repository.fetchChatRoomList()
                 print("----- 데이터 가져옴 ---- ")
+                dump(chatList)
+                print("----- 데이터 가져옴 ---- ")
                 state.chatRooms = chatList
             } catch let error as NetworkError {
                 print("네트워크 에러 입니다")
