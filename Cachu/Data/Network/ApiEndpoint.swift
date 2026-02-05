@@ -18,6 +18,7 @@ enum ApiEndpoint: Endpoint {
     case receiptValid(uid: ValidationPayDTO)
     case getChats
     case postChats(userId: CreateChatRoomDTO)
+    case getMessage(roomId: String, next: String?)
     
     var baseURL: URL {
         return URL(string: AppConfig.baseURL)!
@@ -41,6 +42,7 @@ enum ApiEndpoint: Endpoint {
         case .receiptValid: return "/payments/validation"
         case .getChats: return "/chats"
         case .postChats: return "/chats"
+        case .getMessage(let roomId, let next): return "/chats/\(roomId)"
         }
     }
     
@@ -60,7 +62,8 @@ enum ApiEndpoint: Endpoint {
                 .getVideos,
                 .getVideoStream,
                 .getEstateDetail,
-                .getChats:
+                .getChats,
+                .getMessage:
             return .get
         }
     }
@@ -103,7 +106,8 @@ enum ApiEndpoint: Endpoint {
                 .getVideos,
                 .getVideoStream,
                 .getEstateDetail,
-                .getChats:
+                .getChats,
+                .getMessage:
             return nil
         }
     }
@@ -120,6 +124,9 @@ enum ApiEndpoint: Endpoint {
             }
             
             return queryItems
+        case .getMessage(_, let next):
+            guard let next = next, !next.isEmpty else { return nil }
+            return [URLQueryItem(name: "next", value: next)]
         default: return nil
         }
     }
@@ -134,7 +141,7 @@ enum ApiEndpoint: Endpoint {
                 .logout, .homeBanner, .hotProperties,
                 .dailyRealEstateTopics, .bannerMain, .getVideos,
                 .getVideoStream, .getEstateDetail, .order,
-                .receiptValid, .getChats, .postChats:
+                .receiptValid, .getChats, .postChats, .getMessage: 
             return true
         }
     }

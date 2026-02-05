@@ -69,6 +69,10 @@ extension DIContainer {
     func makeFriendListRepository() -> FriendListRepositoryProtocol {
         return FriendListRepository(apiClient: apiClient)
     }
+    
+    func makeChattingRoomRepository() -> ChattingRoomRepositoryProtocol {
+        return ChattingRoomRepository(apiClient: apiClient)
+    }
 }
 
 
@@ -151,7 +155,8 @@ extension DIContainer {
     
     @MainActor
     func makeChattingRoomStore(roomId: String) -> ChattingRoomStore {
-        return ChattingRoomStore(roomId: roomId)
+        let repository = makeChattingRoomRepository()
+        return ChattingRoomStore(repository: repository, roomId: roomId)
     }
 
     @MainActor
@@ -219,7 +224,8 @@ extension DIContainer {
     
     @MainActor
     func makeChattingRoomView(roomId: String) -> ChattingRoomView {
-        return ChattingRoomView(roomId: roomId)
+        let store = makeChattingRoomStore(roomId: roomId)
+        return ChattingRoomView(store: store ,roomId: roomId)
     }
 
     @MainActor

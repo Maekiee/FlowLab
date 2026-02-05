@@ -2,10 +2,14 @@ import SwiftUI
 
 struct ChattingRoomView: View {
     let roomId: String
-
+    @State var store: ChattingRoomStore
     @State private var messageText: String = ""
     @State private var messages: [ChatMessage] = ChatMessage.mockMessages
-
+    
+    init(store: ChattingRoomStore) {
+        self._store = State(initialValue: store)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // 메시지 리스트

@@ -2,6 +2,7 @@ import Foundation
 import Combine
 
 final class ChattingRoomStore: StoreProtocol {
+    private let repository: ChattingRoomRepositoryProtocol
     let roomId: String
     private(set) var state = State()
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
@@ -9,7 +10,8 @@ final class ChattingRoomStore: StoreProtocol {
         effectSubject.eraseToAnyPublisher()
     }
 
-    init(roomId: String) {
+    init(repository: ChattingRoomRepositoryProtocol, roomId: String) {
+        self.repository = repository
         self.roomId = roomId
     }
 
