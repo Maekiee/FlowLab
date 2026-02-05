@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ChattingRoomView: View {
-    let roomId: String
     @State var store: ChattingRoomStore
     @State private var messageText: String = ""
     @State private var messages: [ChatMessage] = ChatMessage.mockMessages
@@ -231,8 +230,8 @@ struct ChatMessage: Identifiable {
     ]
 }
 
-#Preview {
-    NavigationStack {
-        ChattingRoomView(roomId: "preview-room-id")
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        ChattingRoomView(roomId: "preview-room-id")
+//    }
+//}

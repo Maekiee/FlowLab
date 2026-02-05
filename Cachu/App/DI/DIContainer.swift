@@ -225,7 +225,7 @@ extension DIContainer {
     @MainActor
     func makeChattingRoomView(roomId: String) -> ChattingRoomView {
         let store = makeChattingRoomStore(roomId: roomId)
-        return ChattingRoomView(store: store ,roomId: roomId)
+        return ChattingRoomView(store: store)
     }
 
     @MainActor
