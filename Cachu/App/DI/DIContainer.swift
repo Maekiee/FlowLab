@@ -5,6 +5,7 @@ final class DIContainer {
     let tokenManager: TokenManagerProtocol
     let apiClient: ApiClientProtocol
     let keychainManager: KeychainServiceProtocol
+    let chatLocalDataSource: ChatLocalDataSourceProtocol
 
     init() {
         self.keychainManager = KeychainService()
@@ -19,6 +20,13 @@ final class DIContainer {
 
         let interceptor = Interceptor(tokenManager: tokenManager)
         self.apiClient = ApiClient(interceptor: interceptor)
+
+        // Realm 로컬 데이터 소스 초기화
+        do {
+            self.chatLocalDataSource = try ChatLocalDataSource()
+        } catch {
+            fatalError("Realm 초기화 실패: \(error)")
+        }
     }
 }
 
@@ -71,7 +79,7 @@ extension DIContainer {
     }
     
     func makeChattingRoomRepository() -> ChattingRoomRepositoryProtocol {
-        return ChattingRoomRepository(apiClient: apiClient)
+        return ChattingRoomRepository(apiClient: apiClient, localDataSource: chatLocalDataSource)
     }
 }
 
