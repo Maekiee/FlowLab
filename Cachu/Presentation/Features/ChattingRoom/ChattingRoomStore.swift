@@ -27,6 +27,7 @@ final class ChattingRoomStore: StoreProtocol {
     struct State {
         var isLoading = false
         var chatText = ""
+        var chatList:[ChatResponseEntity] = []
     }
     
     enum Intent {
@@ -56,8 +57,9 @@ extension ChattingRoomStore {
     private func getMessages() {
         Task {
             do {
-                let res = try await repository.getChatMessages(roomId: self.roomId, next: self.next)
-                print("대화방 채팅 내용 리스트 :: \(res)")
+                let chatList = try await repository.getChatMessages(roomId: self.roomId, next: self.next)
+                print("대화방 채팅 내용 리스트 :: \(chatList)")
+                state.chatList = chatList
             } catch let error as NetworkError {
                 print(error.errorDescription)
             }
