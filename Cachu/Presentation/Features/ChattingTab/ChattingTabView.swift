@@ -72,7 +72,7 @@ struct ChatRoomListCell: View {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
-        guard let date = formatter.date(from: lastChat.createAt) else { return "" }
+        guard let date = formatter.date(from: lastChat.createdAt) else { return "" }
 
         let calendar = Calendar.current
         let now = Date()

@@ -18,8 +18,8 @@ struct ChatEntity: Sendable {
     let chat_id: String
     let room_id: String
     let content: String
-    let createAt: String
-    let updateAt: String
+    let createdAt: String
+    let updatedAt: String
     let sender: UserInfoEntity
     let files: [String]
 }

@@ -16,8 +16,8 @@ struct ChatDTO: Decodable, Sendable {
     let chat_id: String
     let room_id: String
     let content: String
-    let createAt: String
-    let updateAt: String
+    let createdAt: String
+    let updatedAt: String
     let sender: UserInfoDTO
     let files: [String]
 }
@@ -47,8 +47,8 @@ extension ChatDTO: EntityConvertible {
             chat_id: chat_id,
             room_id: room_id,
             content: content,
-            createAt: createAt,
-            updateAt: updateAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
             sender: sender.toEntity(),
             files: files
         )
