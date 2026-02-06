@@ -5,9 +5,11 @@ import Combine
 @MainActor @Observable
 final class ChattingRoomStore: StoreProtocol {
     private let repository: ChattingRoomRepositoryProtocol
+    private let tokenManager: TokenManagerProtocol
     private let roomId: String
-    private let next: String?
-    
+    private var currentUserId: String = ""
+    private var nextCursor: String?
+
     private(set) var state = State()
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
     var effect: AnyPublisher<SideEffect, Never> {
@@ -16,12 +18,18 @@ final class ChattingRoomStore: StoreProtocol {
 
     init(
         repository: ChattingRoomRepositoryProtocol,
-        roomId: String,
-        next: String?
+        tokenManager: TokenManagerProtocol,
+        roomId: String
     ) {
         self.repository = repository
+        self.tokenManager = tokenManager
         self.roomId = roomId
-        self.next = next
+    }
+
+    func isFromMe(_ message: ChatResponseEntity) -> Bool {
+        let result = message.sender.userId == currentUserId
+        print("🔍 isFromMe 체크 - sender.userId: \(message.sender.userId), currentUserId: \(currentUserId), result: \(result)")
+        return result
     }
 
     struct State {
@@ -57,22 +65,28 @@ extension ChattingRoomStore {
     private func getMessages() {
         Task {
             do {
-                let chatList = try await repository.getChatMessages(roomId: self.roomId, next: self.next)
-                print("대화방 채팅 내용 리스트 :: \(chatList)")
+                state.isLoading = true
+                currentUserId = await tokenManager.getUserId() ?? ""
+                print("📱 현재 사용자 ID: \(currentUserId.isEmpty ? "없음 (빈 문자열)" : currentUserId)")
+                let chatList = try await repository.getChatMessages(roomId: roomId, next: nextCursor)
                 state.chatList = chatList
+                state.isLoading = false
             } catch let error as NetworkError {
+                state.isLoading = false
                 print(error.errorDescription)
             }
         }
     }
-    
+
     private func sendMessage() {
+        guard !state.chatText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+
         Task {
             do {
                 let message = ChatMessageDTO(content: state.chatText, files: nil)
-                
-                let res = try await repository.postSendMessage(roomId: self.roomId, message: message)
-                print("채팅 보내기 성공:\(res)")
+                let res = try await repository.postSendMessage(roomId: roomId, message: message)
+                state.chatList.append(res)
+                state.chatText = ""
             } catch let error as NetworkError {
                 print(error.errorDescription)
             }

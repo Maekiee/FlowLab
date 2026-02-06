@@ -46,6 +46,26 @@ actor TokenManager: TokenManagerProtocol {
         return String(data: data, encoding: .utf8)
     }
 
+    // MARK: - User ID
+    func getUserId() -> String? {
+        guard let data = keychain.read(
+            service: AppConfig.bundleID,
+            account: AppConfig.userIdKey
+        ) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
+    func saveUserId(_ userId: String) async throws {
+        guard let data = userId.data(using: .utf8) else { return }
+        try await keychain.save(
+            data: data,
+            service: AppConfig.bundleID,
+            account: AppConfig.userIdKey
+        )
+    }
+
     /// 토큰 저장
     func saveTokens(accessToken: String, refreshToken: String) async throws {
         if let accessData = accessToken.data(using: .utf8) {
@@ -69,6 +89,7 @@ actor TokenManager: TokenManagerProtocol {
     func clearTokens() async throws {
         try await keychain.delete(service: AppConfig.bundleID, account: AppConfig.accessTokenKey)
         try await keychain.delete(service: AppConfig.bundleID, account: AppConfig.refreshTokenKey)
+        try await keychain.delete(service: AppConfig.bundleID, account: AppConfig.userIdKey)
     }
     
     // MARK: - Refresh Logic (Task Coalescing Applied)

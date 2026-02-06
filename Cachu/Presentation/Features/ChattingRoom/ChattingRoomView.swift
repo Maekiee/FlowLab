@@ -2,31 +2,32 @@ import SwiftUI
 
 struct ChattingRoomView: View {
     @State var store: ChattingRoomStore
-    @State private var messageText: String = ""
-    @State private var messages: [ChatMessage] = ChatMessage.mockMessages
-    
+
     init(store: ChattingRoomStore) {
         self._store = State(initialValue: store)
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 메시지 리스트
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(messages) { message in
-                            MessageBubbleView(message: message)
-                                .id(message.id)
+                        ForEach(store.state.chatList, id: \.chatId) { message in
+                            MessageBubbleView(
+                                message: message,
+                                isFromMe: store.isFromMe(message)
+                            )
+                            .id(message.chatId)
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
-                .onChange(of: messages.count) { _, _ in
-                    if let lastMessage = messages.last {
+                .onChange(of: store.state.chatList.count) { _, _ in
+                    if let lastMessage = store.state.chatList.last {
                         withAnimation {
-                            proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                            proxy.scrollTo(lastMessage.chatId, anchor: .bottom)
                         }
                     }
                 }
@@ -49,10 +50,10 @@ struct ChattingRoomView: View {
                 HStack {
                     TextField("메시지를 입력하세요", text: Binding(
                         get: { store.state.chatText },
-                        set: { store.action(.inputText($0)) },
+                        set: { store.action(.inputText($0)) }
                     ))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
                 }
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -74,7 +75,7 @@ struct ChattingRoomView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("김철수")
+                Text("채팅")
                     .font(.system(size: 16, weight: .semibold))
             }
         }
@@ -83,33 +84,20 @@ struct ChattingRoomView: View {
             store.action(.onAppear)
         }
     }
-
-    private func sendMessage() {
-        guard !messageText.isEmpty else { return }
-
-        let newMessage = ChatMessage(
-            id: UUID().uuidString,
-            content: messageText,
-            timestamp: Date(),
-            isFromMe: true,
-            senderProfileImage: nil
-        )
-        messages.append(newMessage)
-        messageText = ""
-    }
 }
 
 // MARK: - 메시지 버블 뷰
 struct MessageBubbleView: View {
-    let message: ChatMessage
+    let message: ChatResponseEntity
+    let isFromMe: Bool
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            if message.isFromMe {
+            if isFromMe {
                 Spacer(minLength: 60)
 
                 // 시간
-                Text(message.formattedTime)
+                Text(formattedTime)
                     .font(.system(size: 11))
                     .foregroundStyle(.gray)
 
@@ -123,14 +111,27 @@ struct MessageBubbleView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18))
             } else {
                 // 상대방 프로필 이미지
-                Circle()
-                    .fill(Color(.systemGray4))
-                    .frame(width: 36, height: 36)
-                    .overlay {
-                        Image(systemName: "person.fill")
-                            .foregroundStyle(.gray)
-                            .font(.system(size: 18))
+                if let profileImage = message.sender.profileImage,
+                   let url = URL(string: profileImage) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        Color(.systemGray4)
                     }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+                } else {
+                    Circle()
+                        .fill(Color(.systemGray4))
+                        .frame(width: 36, height: 36)
+                        .overlay {
+                            Image(systemName: "person.fill")
+                                .foregroundStyle(.gray)
+                                .font(.system(size: 18))
+                        }
+                }
 
                 // 상대방 메시지 버블
                 Text(message.content)
@@ -142,7 +143,7 @@ struct MessageBubbleView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18))
 
                 // 시간
-                Text(message.formattedTime)
+                Text(formattedTime)
                     .font(.system(size: 11))
                     .foregroundStyle(.gray)
 
@@ -150,71 +151,16 @@ struct MessageBubbleView: View {
             }
         }
     }
-}
 
-// MARK: - 채팅 메시지 모델
-struct ChatMessage: Identifiable {
-    let id: String
-    let content: String
-    let timestamp: Date
-    let isFromMe: Bool
-    let senderProfileImage: String?
+    private var formattedTime: String {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
-    var formattedTime: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "a h:mm"
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: timestamp)
+        guard let date = isoFormatter.date(from: message.createdAt) else { return "" }
+
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateFormat = "a h:mm"
+        displayFormatter.locale = Locale(identifier: "ko_KR")
+        return displayFormatter.string(from: date)
     }
-
-    static let mockMessages: [ChatMessage] = [
-        ChatMessage(
-            id: "1",
-            content: "안녕하세요! 혹시 물건 아직 있나요?",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -30, to: Date())!,
-            isFromMe: false,
-            senderProfileImage: nil
-        ),
-        ChatMessage(
-            id: "2",
-            content: "네 아직 있어요!",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -28, to: Date())!,
-            isFromMe: true,
-            senderProfileImage: nil
-        ),
-        ChatMessage(
-            id: "3",
-            content: "직거래 가능하신가요?",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -25, to: Date())!,
-            isFromMe: false,
-            senderProfileImage: nil
-        ),
-        ChatMessage(
-            id: "4",
-            content: "네 직거래 가능합니다. 강남역 근처로 오실 수 있으신가요?",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -20, to: Date())!,
-            isFromMe: true,
-            senderProfileImage: nil
-        ),
-        ChatMessage(
-            id: "5",
-            content: "좋아요! 내일 오후 3시에 가능할까요?",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -15, to: Date())!,
-            isFromMe: false,
-            senderProfileImage: nil
-        ),
-        ChatMessage(
-            id: "6",
-            content: "네 좋습니다 👍",
-            timestamp: Calendar.current.date(byAdding: .minute, value: -10, to: Date())!,
-            isFromMe: true,
-            senderProfileImage: nil
-        )
-    ]
 }
-
-//#Preview {
-//    NavigationStack {
-//        ChattingRoomView(roomId: "preview-room-id")
-//    }
-//}

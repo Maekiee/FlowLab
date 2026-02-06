@@ -83,6 +83,7 @@ final class LoginStore: StoreProtocol {
                     accessToken: response.accessToken,
                     refreshToken: response.refreshToken
                 )
+                try await tokenManager.saveUserId(response.user_id)
 
                 // Router를 통해 직접 네비게이션
                 router.switchToMain()

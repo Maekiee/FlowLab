@@ -100,6 +100,7 @@ final class SignUpStore: StoreProtocol {
                     accessToken: response.accessToken,
                     refreshToken: response.refreshToken
                 )
+                try await tokenManager.saveUserId(response.userId)
 
                 // Router를 통해 직접 네비게이션
                 router.switchToMain()

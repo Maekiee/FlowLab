@@ -10,4 +10,8 @@ protocol TokenManagerProtocol: Sendable {
 
     // MARK: - FCM Token
     func getFCMToken() async -> String?
+
+    // MARK: - User ID
+    func getUserId() async -> String?
+    func saveUserId(_ userId: String) async throws
 }
