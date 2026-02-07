@@ -83,6 +83,9 @@ struct ChattingRoomView: View {
         .onAppear {
             store.action(.onAppear)
         }
+        .onDisappear {
+            store.onDisappear()
+        }
     }
 }
 

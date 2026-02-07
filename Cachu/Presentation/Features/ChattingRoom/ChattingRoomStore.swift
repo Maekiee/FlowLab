@@ -6,8 +6,11 @@ import Combine
 final class ChattingRoomStore: StoreProtocol {
     private let repository: ChattingRoomRepositoryProtocol
     private let tokenManager: TokenManagerProtocol
+    private let socketManager: SocketIOManagerProtocol
+    private let localDataSource: ChatLocalDataSourceProtocol
     private let roomId: String
     private var currentUserId: String = ""
+    private var cancellables = Set<AnyCancellable>()
 
     private(set) var state = State()
     private let effectSubject = PassthroughSubject<SideEffect, Never>()
@@ -18,11 +21,17 @@ final class ChattingRoomStore: StoreProtocol {
     init(
         repository: ChattingRoomRepositoryProtocol,
         tokenManager: TokenManagerProtocol,
+        socketManager: SocketIOManagerProtocol,
+        localDataSource: ChatLocalDataSourceProtocol,
         roomId: String
     ) {
         self.repository = repository
         self.tokenManager = tokenManager
+        self.socketManager = socketManager
+        self.localDataSource = localDataSource
         self.roomId = roomId
+
+        subscribeToSocketMessages()
     }
 
     func isFromMe(_ message: ChatResponseEntity) -> Bool {
@@ -46,7 +55,7 @@ final class ChattingRoomStore: StoreProtocol {
     enum SideEffect {
         case showError(String)
     }
-    
+
     func action(_ intent: Intent) {
         switch intent {
         case .onAppear:
@@ -57,9 +66,59 @@ final class ChattingRoomStore: StoreProtocol {
             state.chatText = text
         }
     }
+
+    func onDisappear() {
+        disconnectSocket()
+    }
 }
 
 
+// MARK: - Socket
+extension ChattingRoomStore {
+    private func subscribeToSocketMessages() {
+        socketManager.messageReceived
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                Task { @MainActor in
+                    await self.handleSocketMessage(message)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleSocketMessage(_ message: ChatResponseEntity) async {
+        // 중복 메시지 체크
+        guard !state.chatList.contains(where: { $0.chatId == message.chatId }) else {
+            print("⚠️ 중복 메시지 무시: \(message.chatId)")
+            return
+        }
+
+        // 로컬 DB에 저장
+        await localDataSource.saveMessage(message)
+
+        // UI 업데이트
+        state.chatList.append(message)
+        print("📩 소켓 메시지 추가: \(message.content)")
+    }
+
+    private func connectSocket() async {
+        guard let accessToken = await tokenManager.getAccessToken() else {
+            print("❌ 소켓 연결 실패: 액세스 토큰 없음")
+            return
+        }
+
+        socketManager.connect(roomId: roomId, accessToken: accessToken)
+    }
+
+    private func disconnectSocket() {
+        socketManager.disconnect()
+        cancellables.removeAll()
+    }
+}
+
+
+// MARK: - Messages
 extension ChattingRoomStore {
     private func getMessages() {
         Task {
@@ -87,6 +146,9 @@ extension ChattingRoomStore {
                 print("알 수 없는 에러: \(error)")
             }
             state.isLoading = false
+
+            // 4. 데이터 로드 완료 후 소켓 연결
+            await connectSocket()
         }
     }
 

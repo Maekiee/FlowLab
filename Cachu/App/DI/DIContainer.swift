@@ -28,6 +28,11 @@ final class DIContainer {
             fatalError("Realm 초기화 실패: \(error)")
         }
     }
+
+    // MARK: - SocketIOManager Factory
+    func makeSocketIOManager() -> SocketIOManagerProtocol {
+        return SocketIOManager()
+    }
 }
 
 
@@ -164,7 +169,14 @@ extension DIContainer {
     @MainActor
     func makeChattingRoomStore(roomId: String) -> ChattingRoomStore {
         let repository = makeChattingRoomRepository()
-        return ChattingRoomStore(repository: repository, tokenManager: tokenManager, roomId: roomId)
+        let socketManager = makeSocketIOManager()
+        return ChattingRoomStore(
+            repository: repository,
+            tokenManager: tokenManager,
+            socketManager: socketManager,
+            localDataSource: chatLocalDataSource,
+            roomId: roomId
+        )
     }
 
     @MainActor
