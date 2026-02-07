@@ -20,14 +20,19 @@ struct ChattingRoomView: View {
                             )
                             .id(message.chatId)
                         }
+
+                        // 스크롤 앵커용 빈 뷰
+                        Color.clear
+                            .frame(height: 1)
+                            .id("bottomAnchor")
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
                 .onChange(of: store.state.chatList.count) { _, _ in
-                    if let lastMessage = store.state.chatList.last {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         withAnimation {
-                            proxy.scrollTo(lastMessage.chatId, anchor: .bottom)
+                            proxy.scrollTo("bottomAnchor", anchor: .bottom)
                         }
                     }
                 }
