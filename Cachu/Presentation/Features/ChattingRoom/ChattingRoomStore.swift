@@ -163,7 +163,12 @@ extension ChattingRoomStore {
                 let message = ChatMessageDTO(content: messageText, files: nil)
                 let res = try await repository.postSendMessage(roomId: roomId, message: message)
 
-                // 전송 성공 시 로컬 DB에서 전체 목록 다시 로드 (이미 Repository에서 저장됨)
+                // 중복 체크 (소켓으로 이미 수신된 경우 무시)
+                guard !state.chatList.contains(where: { $0.chatId == res.chatId }) else {
+                    print("⚠️ API 응답 메시지 중복 무시 (소켓으로 이미 수신됨): \(res.chatId)")
+                    return
+                }
+
                 state.chatList.append(res)
                 print("✅ 메시지 전송 성공 및 로컬 DB 저장 완료")
             } catch let error as NetworkError {
