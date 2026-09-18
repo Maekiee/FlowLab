@@ -7,7 +7,7 @@ struct StartAuthView: View {
         VStack(spacing: 16) {
             Spacer()
             
-            Text("Cachu")
+            Text("FlowLab")
                 .font(.largeTitle)
                 .fontWeight(.bold)
 

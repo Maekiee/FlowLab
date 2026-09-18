@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct CachuApp: App {
+struct FlowLabApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     @State private var container: DIContainer

@@ -42,7 +42,3 @@ enum DSTypography {
         }
     }
 }
-
-// 이런 식으로 사용
-//Text("새싹아 일어나 어서 코딩 해야지")
-//                .dsFont(.title1)

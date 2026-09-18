@@ -99,7 +99,7 @@ private struct VideoCardView: View {
                         .multilineTextAlignment(.leading)
                     
                     HStack(spacing: 4) {
-                        Text("Cachu 부동산")
+                        Text("FlowLab 부동산")
                         Text("•")
                         Text("조회수 \(formatViewCount(video.view_count))회")
                         Text("•")

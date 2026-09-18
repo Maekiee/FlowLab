@@ -11,7 +11,7 @@ struct SignUpView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // 앱 로고/타이틀
-                Text("Cachu")
+                Text("FlowLab")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top, 20)
