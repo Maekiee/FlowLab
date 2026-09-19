@@ -44,7 +44,7 @@
   - `Intent → Store → State / SideEffect` 단방향 흐름
   - `AppRouter` + 탭별 `TabRouter`로 화면 전환 책임 분리
 - **로그인 인증 및 토큰 만료 동시성 로직**
-  - `actor` 기반 갱신 Task 공유 → 동시 만료 시 재발급 1회
+  - `actor` 기반 갱신 Task 공유 → 갱신 진행 중 만료된 요청은 재발급 1회로 합류
   - 세션 만료 시 앱 전역 화면 스택 초기화
 - **실시간 1:1 채팅**
   - Realm 로컬 우선 표시 + 커서 기반 증분 동기화
@@ -113,7 +113,7 @@ flowchart LR
 - `private(set) var state` → View는 읽기만 가능, 상태 변경은 Store 내부에서만 발생
 - SideEffect는 `PassthroughSubject`로 방출 → View가 `.onReceive`로 1회 처리
   - State에 남기지 않아 화면 재구성 시 중복 실행 방지
-- Repository 프로토콜 + `DIContainer` 생성자 주입 → Store의 구체 타입 의존 제거
+- Repository 프로토콜 + `DIContainer` 생성자 주입 → Store의 Repository 구체 타입 의존 제거
 
 ```swift
 protocol StoreProtocol {
@@ -237,7 +237,7 @@ flowchart TD
   - 진행 중 Task 있음 → 새 요청 없이 기존 Task 결과 대기
   - 없음 → Task 생성 · 저장 후 1회 실행, 완료 시 `defer`로 해제
   - Task 확인 ~ 저장 사이 `await` 없음 → actor 재진입 상황에서도 중복 생성 불가
-- **결과**: N개 요청 동시 만료 → 재발급 API 1회 호출, 모든 요청이 새 토큰으로 재시도
+- **결과**: 갱신 진행 중 만료 응답을 받은 N개 요청 → 재발급 API 1회 호출, 모든 요청이 새 토큰으로 재시도
 
 ```swift
 func refreshTokens() async throws -> Bool {
@@ -287,9 +287,9 @@ sequenceDiagram
 
 #### 2-4. 세션 만료 전역 처리
 
-- 리프레시 토큰 만료(418) · 로그아웃 → `AuthEventManager`(actor)가 `AsyncStream`으로 `sessionExpired` 방출
+- 인증이 필요한 API의 418 응답(리프레시 토큰 만료) · 로그아웃 → `AuthEventManager`(actor)가 `AsyncStream`으로 `sessionExpired` 방출
 - `AppRouter`가 `for await`로 구독 → 화면 단위가 아닌 앱 전역 1곳에서 처리
-- 재로그인 후 이전 세션의 네비게이션 스택 · 모달 잔존 방지
+- 재로그인 후 이전 세션의 네비게이션 스택 · 앱 전역 시트 · 풀스크린 잔존 방지
 
 ```mermaid
 sequenceDiagram
@@ -363,7 +363,7 @@ return await localDataSource.getMessages(roomId: roomId)
 - 송신: 입력창 즉시 초기화 → `POST /chats/{roomId}` → 응답 메시지 Realm 저장 → 목록 반영
 - 수신: 소켓 `chat` 이벤트 → DTO 디코딩 → Entity 변환 → Combine으로 Store 전달 → Realm 저장 → 목록 반영
 - 내가 보낸 메시지는 REST 응답 · 소켓 수신 두 경로로 도착 → `chatId` 존재 여부로 중복 추가 차단 (도착 순서 무관)
-- 전송 실패 시 입력 텍스트 복원 + 에러 SideEffect
+- 전송 실패 시 입력 텍스트 복원
 - 화면 이탈(`onDisappear`) 시 소켓 해제 · 구독 정리
 - Keychain `userId`와 발신자 비교로 말풍선 좌우 구분
 
