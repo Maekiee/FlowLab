@@ -1,42 +1,36 @@
 # FlowLab
 
-> 부동산 매물 예약금 결제 · 실시간 1:1 채팅 · 영상 스트리밍을 **MVI 단방향 상태 흐름**으로 구현한 iOS 앱
+> 인증, 결제, 실시간 채팅 등 핵심 기능 흐름을 설계하고 구현한 토이 프로젝트
 
-<br>
 
 ## 📅 개발 기간
 
 - **2025.12.15 ~ 2026.02.07** (약 8주)
 - 개발 인원: 1인 (iOS)
 
-<br>
 
 ## 📌 개요
 
-- **한 줄 소개**: 사용자 입력, 서버 응답, 결제 SDK 콜백, 소켓 수신이 한 화면의 상태를 동시에 바꾸는 예약 · 미디어 앱
+- 사용자 입력, 서버 응답, 결제 SDK, 서버 영수증 검증, 소켓 수신이 한 화면의 상태를 동시에 바꾸는 예약 · 미디어 앱
 - **구현 목표**: 상태 변경 진입점을 `Intent` 하나로 모아, 화면 값이 어디서 바뀌었는지 추적 가능한 구조
-- **탭 구성**
 
-| 탭 | 주요 화면 |
+
+## 🧰 기술 스택
+
+| 분류 | 기술 |
 | --- | --- |
-| 홈 | 배너 · 인기 매물 · 오늘의 토픽, 매물 상세 → 예약금 결제, 출석 체크 웹뷰 |
-| 비디오 | 영상 목록 · 상세, 화질 변경 · 전체 화면 재생 |
-| 채팅 | 채팅방 목록, 친구 목록 → 1:1 채팅방 |
-| 내 정보 | 로그아웃 |
+| UI | SwiftUI, Observation(`@Observable`), UIKit(`UIViewControllerRepresentable`) |
+| Architecture | MVI (Intent · State · SideEffect), Router, Repository, DIContainer |
+| Concurrency | Swift Concurrency (`async/await`, `actor`, `async let`, `AsyncStream`), Combine |
+| Network | URLSession 기반 `ApiClient` · `Endpoint` · `Interceptor` |
+| Realtime | Socket.IO |
+| Local Storage | Realm (채팅 메시지), Keychain (토큰 · userId · FCM 토큰) |
+| Payment | iamport-ios 1.4.7 (KG이니시스 테스트 PG) |
+| Web | WKWebView, WKScriptMessageHandler |
+| Media | AVKit, AVFoundation |
+| Image | Kingfisher 8.6.2 |
+| Push | Firebase Cloud Messaging 12.6.0 |
 
-<br>
-
-## 🛠 개발 환경
-
-| 항목 | 내용 |
-| --- | --- |
-| Minimum Target | iOS 17.0 |
-| Device | iPhone |
-| IDE | Xcode 26.1 |
-| Language | Swift 5 |
-| Dependency Manager | Swift Package Manager |
-
-<br>
 
 ## ✨ 주요 기능
 
@@ -54,23 +48,6 @@
 - **웹뷰 기반 출석 체크 기능**
   - `WKScriptMessageHandler` 기반 웹 ↔ 앱 양방향 메시지 브릿지
 
-<br>
-
-## 🧰 기술 스택
-
-| 분류 | 기술 |
-| --- | --- |
-| UI | SwiftUI, Observation(`@Observable`), UIKit(`UIViewControllerRepresentable`) |
-| Architecture | MVI (Intent · State · SideEffect), Router, Repository, DIContainer |
-| Concurrency | Swift Concurrency (`async/await`, `actor`, `async let`, `AsyncStream`), Combine |
-| Network | URLSession 기반 `ApiClient` · `Endpoint` · `Interceptor` |
-| Realtime | Socket.IO |
-| Local Storage | Realm (채팅 메시지), Keychain (토큰 · userId · FCM 토큰) |
-| Payment | iamport-ios 1.4.7 (KG이니시스 테스트 PG) |
-| Web | WKWebView, WKScriptMessageHandler |
-| Media | AVKit, AVFoundation |
-| Image | Kingfisher 8.6.2 |
-| Push | Firebase Cloud Messaging 12.6.0 |
 
 <br>
 
@@ -241,7 +218,7 @@ flowchart TD
 
 ```swift
 func refreshTokens() async throws -> Bool {
-    if let existingTask = refreshTask {      // 진행 중인 갱신이 있으면 결과만 대기
+    if let existingTask = refreshTask {      
         return try await existingTask.value
     }
 
@@ -250,7 +227,7 @@ func refreshTokens() async throws -> Bool {
         return try await performRefreshToken()
     }
 
-    self.refreshTask = task                  // 새 Task가 재발급 1회 실행
+    self.refreshTask = task                  
     return try await task.value
 }
 ```
@@ -354,7 +331,7 @@ let cursor = await localDataSource.getLastMessageTimestamp(roomId: roomId)
 let endPoint = ApiEndpoint.getMessage(roomId: roomId, next: cursor)
 let res = try await apiClient.request(endPoint, type: ChatListResponseDTO.self)
 
-await localDataSource.saveMessages(res.data.map { $0.toEntity() })  // chatId 기준 upsert
+await localDataSource.saveMessages(res.data.map { $0.toEntity() })  
 return await localDataSource.getMessages(roomId: roomId)
 ```
 
@@ -391,8 +368,6 @@ sequenceDiagram
     end
     Note over S: 먼저 도착한 쪽만 목록에 반영
 ```
-
-<br>
 
 ### 4. Iamport 활용 PG 결제 및 서버 영수증 검증
 
@@ -449,7 +424,7 @@ private func verifyReceipt(impUid: String) {
     Task {
         do {
             _ = try await repository.postValidationReceipt(impUid: ValidationPayDTO(imp_uid: impUid))
-            state.isReserved = true                    // 서버 검증 성공 후에만 상태 전이
+            state.isReserved = true                    
             effectSubject.send(.showPaymentSuccess)
         } catch {
             effectSubject.send(.showPaymentFailure(error.localizedDescription))
