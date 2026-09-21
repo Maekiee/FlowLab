@@ -1,6 +1,8 @@
 Secret/
 !App/Secret/.gitkeep
 Claude outputs/
+output/
+tmp/
 
 
 ### Swift ###
